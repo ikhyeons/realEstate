@@ -29,12 +29,15 @@ const SCardPeriod = styled.div`
   font-size: 25px;
   font-weight: bold;
   margin: 1px 0;
+  user-select: none;
 `
 const SCardValue = styled.div`
   font-size: 20px;
+  user-select: none;
 `
 const SCardLocation = styled.div`
   font-size: 20px;
+  user-select: none;
 `
 
 const SideListCard: React.FC<CardPropsStateProp> = (props: {
