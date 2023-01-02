@@ -31,8 +31,8 @@ const SideList: React.FC = () => {
       location: '진주시 칠암동',
       content: '우리집 너무 이쁘죠1',
       period: {
-        start: '22.12.08',
-        end: '23.02.06',
+        start: '22.12',
+        end: '23.02',
       },
     },
     {
@@ -41,8 +41,8 @@ const SideList: React.FC = () => {
       location: '진주시 칠암동',
       content: '우리집 너무 이쁘죠2',
       period: {
-        start: '22.12.08',
-        end: '23.02.06',
+        start: '22.12',
+        end: '23.02',
       },
     },
     {
@@ -51,45 +51,15 @@ const SideList: React.FC = () => {
       location: '진주시 칠암동',
       content: '우리집 너무 이쁘죠3',
       period: {
-        start: '22.12.08',
-        end: '23.02.06',
-      },
-    },
-    {
-      id: 3,
-      value: '10000/150',
-      location: '진주시 칠암동',
-      content: '우리집 너무 이쁘죠3',
-      period: {
-        start: '22.12.08',
-        end: '23.02.06',
-      },
-    },
-    {
-      id: 3,
-      value: '10000/150',
-      location: '진주시 칠암동',
-      content: '우리집 너무 이쁘죠3',
-      period: {
-        start: '22.12.08',
-        end: '23.02.06',
-      },
-    },
-    {
-      id: 3,
-      value: '10000/150',
-      location: '진주시 칠암동',
-      content: '우리집 너무 이쁘죠3',
-      period: {
-        start: '22.12.08',
-        end: '23.02.06',
+        start: '22.12',
+        end: '23.02',
       },
     },
   ])
   return (
     <SSideList>
       {list.map((value, i) => (
-        <SideListCard data={value} />
+        <SideListCard key={i} data={value} />
       ))}
     </SSideList>
   )

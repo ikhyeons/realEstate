@@ -18,6 +18,7 @@ module.exports = (env, argv) => {
     devServer: {
       port: 3000, // 웹팩 개발서버를 돌렸을 때 돌아갈 포트번호
       hot: true, // 저장시 바로 화면에 적용되게 끔 하기위한 핫 리로더
+      historyApiFallback: true, // 라우팅된 페이지에서 중간 새로고침 시 화면 유지
     },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx'], // 배열 안 확장자에 따라서 번들링을 처리함

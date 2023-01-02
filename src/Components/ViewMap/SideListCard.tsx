@@ -40,9 +40,7 @@ const SCardLocation = styled.div`
   user-select: none;
 `
 
-const SideListCard: React.FC<CardPropsStateProp> = (props: {
-  data: CardPropsState
-}) => {
+const SideListCard: React.FC<CardPropsStateProp> = (props) => {
   return (
     <SCard>
       <SCardTop>

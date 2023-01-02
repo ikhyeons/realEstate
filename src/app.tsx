@@ -1,10 +1,10 @@
 import { createGlobalStyle } from 'styled-components'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Header from './Components/Header'
+import { RecoilRoot } from 'recoil'
+
 import ViewMap from './page/ViewMapPage'
 import CommunityPage from './page/CommunityPage'
 import JoinPage from './page/JoinPage'
-import RoomPage from './page/RoomPage'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -17,15 +17,16 @@ const GlobalStyle = createGlobalStyle`
 const App: React.FC = () => {
   return (
     <>
-      <GlobalStyle />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ViewMap />} />
-          <Route path="/community" element={<CommunityPage />} />
-          <Route path="/join" element={<JoinPage />} />
-          <Route path="/room" element={<RoomPage />} />
-        </Routes>
-      </BrowserRouter>
+      <RecoilRoot>
+        <GlobalStyle />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ViewMap />} />
+            <Route path="/join" element={<JoinPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+          </Routes>
+        </BrowserRouter>
+      </RecoilRoot>
     </>
   )
 }

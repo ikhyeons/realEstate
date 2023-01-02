@@ -13,6 +13,19 @@ declare global {
       end: string
     }
   }
+
+  interface addressCompleteData {
+    address: string
+    zonecode: string
+  }
+
+  interface JoinValue {
+    email: string
+    password: string
+    address: string
+    zonecode: string
+    detail: string
+  }
 }
 
 export = {}

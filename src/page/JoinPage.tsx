@@ -1,30 +1,27 @@
-import React from 'react'
-import Header from '../Components/Header'
+import React, { useState } from 'react'
+import Header from '../Components/Common/Header/Header'
 import styled from 'styled-components'
+import InfoInputPage from '../Components/JoinPage/InfoInputPage'
+import { useRecoilState } from 'recoil'
+import { joinPageNum } from '../AtomStorage'
+import Tos from '../Components/JoinPage/Tos'
 
 const SJoin = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100vw;
   height: 93vh;
   margin-top: 7vh;
   align-items: center;
 `
 
-const SForm = styled.form`
-  width: 1000px;
-  height: 800px;
-  background: #ffef87;
-  padding: 20px;
-  margin: 0 auto;
-`
-
 const JoinPage: React.FC = () => {
+  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(joinPageNum)
+
   return (
     <>
       <Header />
-      <SJoin>
-        <SForm>Join Page</SForm>
-      </SJoin>
+      <SJoin>{currentPage === 1 ? <InfoInputPage /> : <Tos />}</SJoin>
     </>
   )
 }

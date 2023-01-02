@@ -2,7 +2,7 @@ import React from 'react'
 import MapBody from '../Components/ViewMap/MapBody'
 import SideList from '../Components/ViewMap/SideList'
 import styled from 'styled-components'
-import Header from '../Components/Header'
+import Header from '../Components/Common/Header/Header'
 
 const SViewMap = styled.div`
   display: flex;
