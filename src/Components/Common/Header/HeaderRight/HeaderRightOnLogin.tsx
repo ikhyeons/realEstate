@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import { HiBellAlert } from 'react-icons/hi2'
-import ReleaseRoom from './ReleaseRoom'
+import ReleaseRoom from './ReleaseRoom/ReleaseRoom'
 
 const SLoginedDiv = styled.div`
   width: 260px;
