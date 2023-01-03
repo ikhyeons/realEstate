@@ -14,7 +14,7 @@ const HeaderRight: React.FC = () => {
     <>
       <Button
         onClick={() => {
-          navigate('/community')
+          navigate('/community/List')
         }}
         disabled={false}
         sx={{

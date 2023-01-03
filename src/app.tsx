@@ -23,7 +23,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<ViewMap />} />
             <Route path="/join" element={<JoinPage />} />
-            <Route path="/community" element={<CommunityPage />} />
+            <Route path="/community/:docpageType" element={<CommunityPage />} />
           </Routes>
         </BrowserRouter>
       </RecoilRoot>

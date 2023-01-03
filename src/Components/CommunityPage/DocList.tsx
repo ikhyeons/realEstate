@@ -1,7 +1,9 @@
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 const SOl = styled.ol`
   width: 100%;
+  position: relative;
 `
 
 const SLi = styled.li`
@@ -32,13 +34,25 @@ const STitle = styled.span`
   width: 0px;
   flex-grow: 5;
   padding-left: 10px;
+  cursor: pointer;
+  :hover {
+    text-decoration: underline;
+  }
 `
 const SDate = styled.span`
   width: 0px;
   flex-grow: 0.8;
   text-align: center;
   border-left: 1px solid black;
+  position: relative;
 `
+
+const SWriteBtn = styled.button`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+`
+
 const SWriter = styled.span`
   width: 0px;
   flex-grow: 0.8;
@@ -51,6 +65,7 @@ const SView = styled.span`
 `
 
 const DocList: React.FC = () => {
+  const navigate = useNavigate()
   return (
     <>
       <STag>
@@ -64,7 +79,13 @@ const DocList: React.FC = () => {
       <SOl>
         <SLi>
           <SNum>1</SNum>
-          <STitle>적당한 글 제목1</STitle>
+          <STitle
+            onClick={() => {
+              navigate('/community/View')
+            }}
+          >
+            적당한 글 제목1
+          </STitle>
           <SDate>22.12.29</SDate>
           <SWriter>성익현</SWriter>
           <SView>9999</SView>
@@ -91,6 +112,13 @@ const DocList: React.FC = () => {
           <SView>9999</SView>
         </SLi>
       </SOl>
+      <SWriteBtn
+        onClick={() => {
+          navigate(`/community/Write`)
+        }}
+      >
+        글쓰기
+      </SWriteBtn>
     </>
   )
 }

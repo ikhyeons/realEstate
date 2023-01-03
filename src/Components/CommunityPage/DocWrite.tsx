@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 const SDocHeader = styled.div`
   height: 30px;
@@ -41,15 +42,28 @@ const SCompleteBtn = styled.button`
 `
 
 const DocWrite = () => {
+  const navigate = useNavigate()
   return (
     <SViewMain>
       <SDocHeader>
-        <SDocListBtn>←글목록</SDocListBtn>
+        <SDocListBtn
+          onClick={() => {
+            navigate('/community/List')
+          }}
+        >
+          ←글목록
+        </SDocListBtn>
       </SDocHeader>
       <STitle />
       <hr />
       <SContent />
-      <SCompleteBtn>작성완료!</SCompleteBtn>
+      <SCompleteBtn
+        onClick={() => {
+          navigate('/community/View')
+        }}
+      >
+        작성완료!
+      </SCompleteBtn>
     </SViewMain>
   )
 }
