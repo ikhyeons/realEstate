@@ -1,6 +1,7 @@
 const path = require('path') // 파일 주소 작업을 위한 라이브러리
 const HtmlWebpackPlugin = require('html-webpack-plugin') // Html 번들링 아웃풋을 위한 모듈을 가져옴
 const { CleanWebpackPlugin } = require('clean-webpack-plugin') // clean-webpack-plugin을 가져옴 이전 번들링 파일 제거를 위함
+const MiniCssExtractPlugin = require('mini-css-extract-plugin') // css 로더
 const webpack = require('webpack') // 웹팩을 가져옴
 
 module.exports = (env, argv) => {
@@ -21,7 +22,7 @@ module.exports = (env, argv) => {
       historyApiFallback: true, // 라우팅된 페이지에서 중간 새로고침 시 화면 유지
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx'], // 배열 안 확장자에 따라서 번들링을 처리함
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'], // 배열 안 확장자에 따라서 번들링을 처리함
     },
     module: {
       //loader 설정
@@ -30,6 +31,10 @@ module.exports = (env, argv) => {
           test: /\.tsx?$/, //tsx 확장자의 모든 모듈을 포함함
           use: ['babel-loader', 'ts-loader'], //어떤 로더를 사용할지를 설정함 왼쪽부터 오른쪽 순서로 먼저 적용함.
           //즉 tsx라는 확장자를 가지고 있을 경우 ts-loader를 이용하여 트랜스 파일링 한 후 babel-loader로 es5 트랜스 파일링 함
+        },
+        {
+          test: /\.css?$/,
+          use: ['style-loader', 'css-loader'],
         },
       ],
     },

@@ -1,10 +1,15 @@
 import styled from 'styled-components'
 import { HiBellAlert } from 'react-icons/hi2'
 import { useState } from 'react'
+import { useRecoilState } from 'recoil'
+import Chat from './Chat/Chat'
+
+import { isChatAtom } from '../../../../../AtomStorage'
 
 import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
-import AlarmChatCard from './AlarmChatCard'
+
+import AlarmCardList from './CardList/AlarmCardList'
 
 const SAlarm = styled.div`
   border-radius: 50%;
@@ -21,8 +26,16 @@ const SAlarm = styled.div`
     border: 2px solid black;
   }
 `
+
 const SAlarmNumber = styled.div`
   font-weight: normal;
+`
+const SFilterBtns = styled.div`
+  margin-bottom: 3px;
+`
+const SFilterBtn = styled.button`
+  padding: 5px;
+  margin-right: 3px;
 `
 
 const AlarmBtn = () => {
@@ -31,6 +44,7 @@ const AlarmBtn = () => {
 
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
+  const [isChat, setIsChat] = useRecoilState(isChatAtom)
 
   return (
     <>
@@ -65,9 +79,18 @@ const AlarmBtn = () => {
         }}
       >
         <Box sx={{ padding: '6px', width: '600px' }}>
-          <AlarmChatCard />
-          <AlarmChatCard />
-          <AlarmChatCard />
+          {isChat === false ? (
+            <>
+              <SFilterBtns>
+                <SFilterBtn>전체</SFilterBtn>
+                <SFilterBtn>채팅</SFilterBtn>
+                <SFilterBtn>커뮤니티</SFilterBtn>
+              </SFilterBtns>
+              <AlarmCardList />
+            </>
+          ) : (
+            <Chat />
+          )}
         </Box>
       </Popover>
     </>

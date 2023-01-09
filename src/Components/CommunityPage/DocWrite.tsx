@@ -1,6 +1,9 @@
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 
+import '@toast-ui/editor/dist/toastui-editor.css'
+import { Editor } from '@toast-ui/react-editor'
+
 const SDocHeader = styled.div`
   height: 30px;
 `
@@ -20,18 +23,10 @@ const SViewMain = styled.div`
 const STitle = styled.input`
   font-weight: bold;
   font-size: 20px;
-  margin: 5px;
   width: 100%;
+  margin: 5px 0;
   height: 40px;
   padding: 5px;
-`
-
-const SContent = styled.textarea`
-  padding: 5px;
-  font-size: 17px;
-  min-height: 500px;
-  margin: 5px;
-  width: 100%;
 `
 
 const SCompleteBtn = styled.button`
@@ -54,9 +49,13 @@ const DocWrite = () => {
           ←글목록
         </SDocListBtn>
       </SDocHeader>
-      <STitle />
+      <STitle placeholder="제목" />
       <hr />
-      <SContent />
+      <Editor
+        height="700px"
+        initialEditType="wysiwyg"
+        useCommandShortcut={true}
+      />
       <SCompleteBtn
         onClick={() => {
           navigate('/community/View')

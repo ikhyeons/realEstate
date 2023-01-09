@@ -23,3 +23,8 @@ export const joinValues = atom({
     detail: '',
   },
 })
+
+export const isChatAtom = atom({
+  key: 'chat/isChat',
+  default: false,
+})

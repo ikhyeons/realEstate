@@ -1,8 +1,10 @@
 import styled from 'styled-components'
+import { useRecoilState } from 'recoil'
+import { isChatAtom } from '../../../../../../AtomStorage'
 
-const SAlarmCard = styled.div`
+const SAlarmCard = styled.li`
   padding: 5px;
-  border-raidus: 5px;
+  border-radius: 4px;
   background: #eee;
   position: relative;
   border-bottom: 1px solid black;
@@ -20,7 +22,7 @@ const SAlarmCardName = styled.div`
   width: 30px;
   height: 30px;
   text-align: center;
-  margin-right: 15px;
+  margin-right: 10px;
 `
 const SAlarmCardAddress = styled.div``
 
@@ -46,13 +48,18 @@ const SAlarmCardNum = styled.div`
 `
 
 const AlarmChatCard = () => {
+  const [isChat, setIsChat] = useRecoilState(isChatAtom)
   return (
-    <SAlarmCard>
+    <SAlarmCard
+      onClick={() => {
+        setIsChat(true)
+      }}
+    >
       <SAlarmCardHeader>
         <SAlarmCardName>성</SAlarmCardName>
         <SAlarmCardAddress>양덕동 서안양덕타운</SAlarmCardAddress>
       </SAlarmCardHeader>
-      <SAlarmCardDate>23. 1. 4 오후6시 9분</SAlarmCardDate>
+      <SAlarmCardDate>23. 1. 4 오후 6시 9분</SAlarmCardDate>
       <SAlarmCardContent>내용</SAlarmCardContent>
       <SAlarmCardNum>99</SAlarmCardNum>
     </SAlarmCard>
