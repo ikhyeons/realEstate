@@ -1,10 +1,12 @@
+import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { HiBellAlert } from 'react-icons/hi2'
 import { useState } from 'react'
 import { useRecoilState } from 'recoil'
 import Chat from './Chat/Chat'
 
-import { isChatAtom } from '../../../../../AtomStorage'
+import { AisAlarmPopOpen } from '../../../../../AtomStorage'
+import { AisChatAtom } from '../../../../../AtomStorage'
 
 import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
@@ -39,16 +41,23 @@ const SFilterBtn = styled.button`
 `
 
 const AlarmBtn = () => {
-  const [isPopOpen, setIsPopOpen] = useState(false)
+  const [isPopOpen, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
-  const [isChat, setIsChat] = useRecoilState(isChatAtom)
+  const [isChat, setIsChat] = useRecoilState(AisChatAtom)
+
+  const AlarmBtnRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setAnchorEl(AlarmBtnRef.current)
+  }, [])
 
   return (
     <>
       <SAlarm
+        ref={AlarmBtnRef}
         onClick={(event: React.MouseEvent<HTMLElement>) => {
           /*클릭 했을 때*/
           setAnchorEl(
@@ -57,6 +66,7 @@ const AlarmBtn = () => {
           setIsPopOpen(
             (prev) => !prev,
           ) /*isPopOpen은 팝업창을 열림, 닫음을 결정함, 이전값이 열림이면 닫힘으로, 닫힘이면 열림으로*/
+          setIsChat(false)
         }}
       >
         <HiBellAlert

@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Address, useDaumPostcodePopup } from 'react-daum-postcode'
 import { useRecoilState, useResetRecoilState } from 'recoil'
-import { joinPageNum, joinValues } from '../../AtomStorage'
+import { AjoinPageNum, AjoinValues } from '../../AtomStorage'
 import { useNavigate } from 'react-router-dom'
 import { TextField } from '@mui/material'
 import Button from '@mui/material/Button'
@@ -19,9 +19,9 @@ const SForm = styled.form`
 const InfoInputPage: React.FC = () => {
   const open = useDaumPostcodePopup()
   const navigate = useNavigate() /*react route dom url바꿔주는 함수*/
-  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(joinPageNum)
-  const [joinValue, setJoinValue] = useRecoilState<JoinValue>(joinValues)
-  const resetJoinValue = useResetRecoilState(joinValues)
+  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(AjoinPageNum)
+  const [joinValue, setJoinValue] = useRecoilState<JoinValue>(AjoinValues)
+  const resetJoinValue = useResetRecoilState(AjoinValues)
 
   const onCompleteF = (e: Address) => {
     setJoinValue((prev) => {

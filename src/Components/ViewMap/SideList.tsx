@@ -5,7 +5,7 @@ import SideListCard from './SideListCard'
 const SSideList = styled.ul`
   position: fixed;
   z-index: 2;
-  padding: 5px 0;
+  padding: 0px 0;
   width: 21%;
   min-width: 375px;
   height: 93%;

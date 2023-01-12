@@ -8,12 +8,12 @@ export const ASelectedAddredss = atom({
   },
 })
 
-export const joinPageNum = atom<0 | 1>({
+export const AjoinPageNum = atom<0 | 1>({
   key: 'join/joinPage',
   default: 0,
 })
 
-export const joinValues = atom({
+export const AjoinValues = atom({
   key: 'join/joinValue',
   default: {
     email: '',
@@ -24,7 +24,17 @@ export const joinValues = atom({
   },
 })
 
-export const isChatAtom = atom({
+export const AisChatAtom = atom({
   key: 'chat/isChat',
+  default: false,
+})
+
+export const AIsInfoOn = atom({
+  key: 'viewMap/isInfoOn',
+  default: true,
+})
+
+export const AisAlarmPopOpen = atom({
+  key: 'alarm/isAlarmPopOpen',
   default: false,
 })

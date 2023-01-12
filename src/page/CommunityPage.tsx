@@ -10,8 +10,7 @@ import { useParams } from 'react-router-dom'
 const SCommunity = styled.div`
   display: flex;
   width: 100vw;
-  height: 93vh;
-  margin-top: max(7vh, 60px);
+  height: 100%;
   overflow: hidden;
 `
 
@@ -34,11 +33,16 @@ const Smain = styled.div`
     background: #ee8;
   }
 `
+const SWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+`
 
 const CommunityPage: React.FC = () => {
   const { docpageType } = useParams()
   return (
-    <>
+    <SWrap>
       <Header />
       <SCommunity>
         <Smain>
@@ -47,7 +51,7 @@ const CommunityPage: React.FC = () => {
           {docpageType === 'Write' && <DocWrite />}
         </Smain>
       </SCommunity>
-    </>
+    </SWrap>
   )
 }
 

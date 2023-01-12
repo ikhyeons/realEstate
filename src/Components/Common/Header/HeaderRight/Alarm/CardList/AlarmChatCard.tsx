@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil'
-import { isChatAtom } from '../../../../../../AtomStorage'
+import { AisChatAtom } from '../../../../../../AtomStorage'
 
 const SAlarmCard = styled.li`
   padding: 5px;
@@ -48,7 +48,7 @@ const SAlarmCardNum = styled.div`
 `
 
 const AlarmChatCard = () => {
-  const [isChat, setIsChat] = useRecoilState(isChatAtom)
+  const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   return (
     <SAlarmCard
       onClick={() => {

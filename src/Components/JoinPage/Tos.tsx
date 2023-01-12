@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import Button from '@mui/material/Button'
 import { useRecoilState } from 'recoil'
-import { joinPageNum } from '../../AtomStorage'
+import { AjoinPageNum } from '../../AtomStorage'
 import Checkbox from '@mui/material/Checkbox'
 
 const Sform = styled.form`
@@ -16,7 +16,7 @@ const Sform = styled.form`
 
 const Tos: React.FC = () => {
   const [isCheck, setIsCheck] = useState<boolean>(false)
-  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(joinPageNum)
+  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(AjoinPageNum)
   return (
     <Sform>
       <p>저장 정보 : 아이디, 비밀번호, 주소</p>

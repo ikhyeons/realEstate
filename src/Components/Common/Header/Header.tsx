@@ -6,8 +6,7 @@ import HeaderLeft from './HeaderLeft/HeaderLeft'
 import HeaderRight from './HeaderRight/HeaderRight'
 
 const SHeader = styled.header`
-  position: fixed;
-  top: 0px;
+  flex: 1;
   left: 0px;
   z-index: 3;
   width: 100vw;

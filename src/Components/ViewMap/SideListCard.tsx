@@ -1,11 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { useRecoilState } from 'recoil'
+import { AIsInfoOn } from '../../AtomStorage'
+
 const SCard = styled.li`
   width: 100%;
   height: 160px;
   border-bottom: 1px solid black;
-  margin: 1px 0;
+  :hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
 `
 
 const SCardTop = styled.div`
@@ -41,8 +46,13 @@ const SCardLocation = styled.div`
 `
 
 const SideListCard: React.FC<CardPropsStateProp> = (props) => {
+  const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
   return (
-    <SCard>
+    <SCard
+      onClick={() => {
+        setIsInfoOn(true)
+      }}
+    >
       <SCardTop>
         <SCardMainImg src="" alt="" />
         <SCardTopRight>

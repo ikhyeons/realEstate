@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil'
-import { isChatAtom } from '../../../../../../AtomStorage'
+import { AisChatAtom } from '../../../../../../AtomStorage'
 
 const SChatHeader = styled.div`
   margin-bottom: 5px;
@@ -29,11 +29,13 @@ const SMyChat = styled.div`
   text-align: right;
   background: gray;
   margin-bottom: 5px;
+  padding: 5px;
 `
 const SOtherChat = styled.div`
   text-align: left;
   background: lightgray;
   margin-bottom: 5px;
+  padding: 5px;
 `
 
 const SChatInput = styled.textarea`
@@ -44,7 +46,7 @@ const SChatInput = styled.textarea`
 `
 
 const Chat = () => {
-  const [isChat, setIsChat] = useRecoilState(isChatAtom)
+  const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   return (
     <>
       <SChatHeader>
