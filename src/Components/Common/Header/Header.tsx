@@ -6,7 +6,6 @@ import HeaderLeft from './HeaderLeft/HeaderLeft'
 import HeaderRight from './HeaderRight/HeaderRight'
 
 const SHeader = styled.header`
-  flex: 1;
   left: 0px;
   z-index: 3;
   width: 100vw;
@@ -16,6 +15,7 @@ const SHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   background: linear-gradient(45deg, #ffdf65, #f0d060);
+  flex: 1;
 `
 
 const SHeaderLeft = styled.div`
