@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import styled from 'styled-components'
+import { kakaoKey } from '../../../../secretKeys'
 
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
+
+import axios from 'axios'
 
 const SBoxLeft = styled.div`
   width: 360px;
@@ -62,13 +65,38 @@ const HeaderLeft: React.FC = () => {
   const [endYear, setEndYear] = useState<number>()
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
+  const [value, setValue] = useState('')
 
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
 
   return (
     <>
-      <input type="text" placeholder="Search" />
+      <input
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value)
+        }}
+        type="text"
+        placeholder="Search"
+        onKeyDown={(e) => {
+          console.log(e)
+          if (e.code == 'Enter') {
+            axios
+              .get(
+                `https://dapi.kakao.com/v2/local/search/keyword.json?&query=${value}`,
+                {
+                  headers: {
+                    Authorization: `KakaoAK ${kakaoKey.restAPI}`,
+                  },
+                },
+              )
+              .then((data) => {
+                console.log(data)
+              })
+          }
+        }}
+      />
       <Button /*mui 버튼*/
         disabled={false} /*버튼 작동, 미작동 설정*/
         sx={{
