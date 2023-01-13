@@ -1,7 +1,6 @@
 const path = require('path') // 파일 주소 작업을 위한 라이브러리
 const HtmlWebpackPlugin = require('html-webpack-plugin') // Html 번들링 아웃풋을 위한 모듈을 가져옴
 const { CleanWebpackPlugin } = require('clean-webpack-plugin') // clean-webpack-plugin을 가져옴 이전 번들링 파일 제거를 위함
-const MiniCssExtractPlugin = require('mini-css-extract-plugin') // css 로더
 const webpack = require('webpack') // 웹팩을 가져옴
 
 module.exports = (env, argv) => {

@@ -1,12 +1,13 @@
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 
-import '@toast-ui/editor/dist/toastui-editor.css'
 import { Editor } from '@toast-ui/react-editor'
+
 import '@toast-ui/chart/dist/toastui-chart.css'
 import 'tui-color-picker/dist/tui-color-picker.css'
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css'
 import '@toast-ui/editor-plugin-table-merged-cell/dist/toastui-editor-plugin-table-merged-cell.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
 
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell'
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax'
