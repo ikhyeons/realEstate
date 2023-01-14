@@ -15,7 +15,7 @@ const SInfoModalBack = styled.div`
 `
 
 const SInfoMain = styled.div`
-  width: 800px;
+  width: min(800px, 45%);
   height: 100%;
   align-items: center;
   background: white;

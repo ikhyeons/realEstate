@@ -9,7 +9,8 @@ import { AIsInfoOn } from '../AtomStorage'
 
 const SViewMap = styled.div`
   display: flex;
-  width: 100vw;
+  width: 100%;
+  min-width: 1000px;
   height: 100%;
   position: relative;
 `

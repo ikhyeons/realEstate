@@ -11,6 +11,7 @@ const SHeader = styled.header`
   width: 100vw;
   height: 7vh;
   min-height: 60px;
+  min-width: 1000px;
   display: flex;
   justify-content: space-between;
   align-items: center;

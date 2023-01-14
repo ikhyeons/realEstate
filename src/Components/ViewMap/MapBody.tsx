@@ -1,7 +1,13 @@
-import React, { useState } from 'react'
-import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk'
+import React, { useEffect, useState } from 'react'
+import {
+  Map,
+  MapMarker,
+  MarkerClusterer,
+  ZoomControl,
+} from 'react-kakao-maps-sdk'
 import { AIsInfoOn } from '../../AtomStorage'
 import { useRecoilState } from 'recoil'
+import { AselectedPoint } from '../../AtomStorage'
 
 const MapBody: React.FC = () => {
   const [markerData, setMakerData] = useState([
@@ -11,20 +17,22 @@ const MapBody: React.FC = () => {
   ])
 
   const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
+  const [selectedPoint, setSelectedPoint] = useRecoilState(AselectedPoint)
+
+  useEffect(() => {
+    console.log(selectedPoint)
+  }, [selectedPoint])
 
   return (
     <Map // 지도를 표시할 Container
-      center={{
-        // 지도의 중심좌표
-        lat: 35.1807266,
-        lng: 128.0940397,
-      }}
+      center={selectedPoint}
       style={{
         // 지도의 크기
         width: '100%',
         height: '100%',
       }}
       level={3} // 지도의 확대 레벨
+      isPanto={true} // 지도 부드럽게 이동
     >
       <MarkerClusterer
         averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
@@ -42,6 +50,7 @@ const MapBody: React.FC = () => {
           ></MapMarker>
         ))}
       </MarkerClusterer>
+      <ZoomControl position={kakao.maps.ControlPosition.TOPRIGHT} />
     </Map>
   )
 }

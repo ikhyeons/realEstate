@@ -3,13 +3,13 @@ import styled from 'styled-components'
 import SideListCard from './SideListCard'
 
 const SSideList = styled.ul`
-  position: fixed;
+  position: absolute;
   z-index: 2;
-  padding: 0px 0;
   width: 21%;
   min-width: 375px;
-  height: 93%;
+  height: calc(100vh - 60px);
   background: rgba(255, 255, 255, 0.83);
+
   overflow-y: scroll;
   &::-webkit-scrollbar {
     background: none;

@@ -31,10 +31,15 @@ export const AisChatAtom = atom({
 
 export const AIsInfoOn = atom({
   key: 'viewMap/isInfoOn',
-  default: true,
+  default: false,
 })
 
 export const AisAlarmPopOpen = atom({
   key: 'alarm/isAlarmPopOpen',
   default: false,
+})
+
+export const AselectedPoint = atom({
+  key: 'map/selectedPoint',
+  default: { lat: 35.1807266, lng: 128.0940397 },
 })
