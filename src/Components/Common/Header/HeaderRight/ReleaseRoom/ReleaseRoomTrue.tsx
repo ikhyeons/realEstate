@@ -48,7 +48,7 @@ const ReleaseRoomTrue = () => {
         <SInfoRight>
           <p>기간 ~ 기간</p>
           <p>가격 / 가격</p>
-          <p>위치</p>
+          <p>주소</p>
           <p>옵션</p>
         </SInfoRight>
       </SInfoMain>

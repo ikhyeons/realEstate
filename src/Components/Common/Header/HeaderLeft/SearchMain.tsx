@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { kakaoKey } from '../../../../secretKeys'
+import { kakaoKey } from '../../../../../secretKeys'
 import axios from 'axios'
 import { useEffect, useState, useRef } from 'react'
 import { useRecoilState } from 'recoil'
@@ -22,13 +22,14 @@ interface Iaddress {
 
 const Sul = styled.ul`
   position: absolute;
-  left: 2px;
+  left: 5px;
   top: 63px;
   background: white;
   border-radius: 5px;
-  min-width: 400px;
+  min-width: 450px;
   max-height: min(500px, 100vh - 62px);
   overflow-y: auto;
+  border: 2px solid black;
   &::-webkit-scrollbar {
     width: 5px;
     padding-right: 2px;
@@ -49,6 +50,12 @@ const Sli = styled.li`
   :hover {
     background: rgba(0, 0, 0, 0.1);
   }
+`
+
+const Sinput = styled.input`
+  padding: 5px;
+  font-size: 20px;
+  width: 173px;
 `
 
 const SearchMain = () => {
@@ -72,7 +79,7 @@ const SearchMain = () => {
       .then((data) => {
         setOnSearch(true)
         setAddressData(data.data.documents)
-        if (value === '') {
+        if (value === '' || data.data.documents.length === 0) {
           setOnSearch(false)
         }
       })
@@ -100,7 +107,7 @@ const SearchMain = () => {
 
   return (
     <>
-      <input
+      <Sinput
         ref={inputRef}
         value={value}
         onChange={(e) => {
@@ -125,7 +132,6 @@ const SearchMain = () => {
                       lng: Number(data.x),
                       lat: Number(data.y),
                     })
-                    setOnSearch(false)
                   }}
                   key={i}
                 >

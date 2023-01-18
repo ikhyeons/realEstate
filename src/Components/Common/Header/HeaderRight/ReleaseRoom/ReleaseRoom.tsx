@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import styled from 'styled-components'
 
 import Button from '@mui/material/Button'
 import Popover from '@mui/material/Popover'
@@ -6,6 +7,7 @@ import Box from '@mui/material/Box'
 import Switch from '@mui/material/Switch'
 
 import ReleaseRoomTrue from './ReleaseRoomTrue'
+import ReleaseRoomModify from './ReleaseRoomModify'
 
 const ReleaseRoom = () => {
   const [isPopOpen, setIsPopOpen] = useState(false)
@@ -13,6 +15,7 @@ const ReleaseRoom = () => {
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
   const [isRelease, setIsRelease] = useState(true)
+  const [isMOdify, setIsModify] = useState(false)
 
   const dropdownSX = {
     padding: '6px',
@@ -20,6 +23,11 @@ const ReleaseRoom = () => {
     display: 'flex',
     flexDirection: 'column',
   }
+
+  const STop = styled.div`
+    display: flex;
+    justify-content: space-between;
+  `
 
   return (
     <>
@@ -61,16 +69,43 @@ const ReleaseRoom = () => {
         }}
       >
         <Box sx={dropdownSX}>
-          <p>
-            방을 내놓으시겠습니까?
-            <Switch
-              checked={isRelease}
-              onChange={() => {
-                setIsRelease((prev) => !prev)
-              }}
-            />
-          </p>
-          {isRelease === true ? <ReleaseRoomTrue /> : null}
+          <STop>
+            <div>
+              방을 내놓으시겠습니까?
+              <Switch
+                checked={isRelease}
+                onChange={() => {
+                  setIsRelease((prev) => !prev)
+                }}
+              />
+            </div>
+            {isRelease === true ? (
+              isMOdify === true ? (
+                <button
+                  onClick={() => {
+                    setIsModify(false)
+                  }}
+                >
+                  저장
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsModify(true)
+                  }}
+                >
+                  수정
+                </button>
+              )
+            ) : null}
+          </STop>
+          {isRelease === true ? (
+            isMOdify === true ? (
+              <ReleaseRoomModify />
+            ) : (
+              <ReleaseRoomTrue />
+            )
+          ) : null}
         </Box>
       </Popover>
     </>
