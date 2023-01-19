@@ -12,6 +12,7 @@ const SInfoLeft = styled.div`
 `
 const SMainImg = styled.img`
   width: 100%;
+  height: 160px;
 `
 const SInfoRight = styled.div`
   width: 60%;
@@ -39,16 +40,6 @@ const SAddressInput = styled.input`
     background: rgba(0, 0, 0, 0.1);
   }
 `
-
-const Sinput = styled.input`
-  border: none;
-  font-family: none;
-  font-size: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  :hover {
-    background: rgba(0, 0, 0, 0.1);
-  }
-`
 const SPictures = styled.div`
   margin-top: 5px;
   margin-bottom: 5px;
@@ -60,27 +51,35 @@ const SPictureView = styled.img`
 const SPictureLists = styled.ol`
   display: flex;
   height: 100px;
+  width: 100%;
+  overflow-x: auto;
 `
 const SPictureList = styled.li`
-  height: 100%;
+  height: 95%;
   margin-right: 5px;
   list-style: none;
 `
-const SPictureAddbox = styled.li`
+const SImageLabel = styled.label`
   height: 100%;
   margin-right: 5px;
   cursor: pointer;
   width: 130px;
   text-align: center;
-  alitn-items: center;
+  align-items: center;
   list-style: none;
-  display: flex;
+  display: block;
   flex-direction: column;
+  border: 1px solid black;
   justify-content: center;
+`
+
+const SImageInput = styled.input`
+  display: none;
 `
 
 const SInnerPicture = styled.img`
   height: 100%;
+  width: 130px;
 `
 
 const SContent = styled.textarea`
@@ -123,13 +122,39 @@ const ReleaseRoomModify = () => {
   const [endMonth, setEndMonth] = useState('')
   const [options, setOptions] = useState('')
   const [selectedOption, setSelectedOption] = useState<string[]>([])
+  const [nowImage, setNowImage] = useState<string>('')
+
+  const [inputImages, setInputImages] = useState<string[]>([])
+  const handleChangeFile = (e: any) => {
+    console.log(e.target.files)
+    console.log(e.target.files.length)
+    if (e.target.files.length) {
+      for (let i = 0; i < e.target.files.length; i++) {
+        let reader = new FileReader()
+        reader.readAsDataURL(e.target.files[i])
+        reader.onloadend = () => {
+          const resultImage: string = reader.result as string
+          setInputImages((prev) => {
+            if (!inputImages.includes(resultImage)) {
+              return [...prev, resultImage]
+            } else {
+              return [...prev]
+            }
+          })
+        }
+      }
+    }
+  }
+  useEffect(() => {
+    setNowImage(inputImages[0])
+  }, [inputImages])
 
   return (
     <>
       <hr />
       <SInfoMain>
         <SInfoLeft>
-          <SMainImg src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
+          <SMainImg src={`${inputImages[0]}`} />
         </SInfoLeft>
         <SInfoRight>
           <div>
@@ -220,17 +245,28 @@ const ReleaseRoomModify = () => {
       </SInfoMain>
       <hr />
       <SPictures>
-        <SPictureView src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
+        <SPictureView src={`${nowImage}`} />
         <SPictureLists>
-          <SPictureAddbox>
-            <div>사진추가+</div>
-          </SPictureAddbox>
           <SPictureList>
-            <SInnerPicture src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
+            <SImageLabel htmlFor="imageInput">
+              <span>이미지 추가+</span>
+            </SImageLabel>
+            <SImageInput
+              id="imageInput"
+              type="file"
+              multiple
+              onChange={handleChangeFile}
+            />
           </SPictureList>
-          <SPictureList>
-            <SInnerPicture src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
-          </SPictureList>
+          {inputImages.map((data, i) => (
+            <SPictureList
+              onClick={() => {
+                setNowImage(data)
+              }}
+            >
+              <SInnerPicture key={i} src={`${data}`} />
+            </SPictureList>
+          ))}
         </SPictureLists>
       </SPictures>
       <hr />

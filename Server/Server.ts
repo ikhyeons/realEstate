@@ -1,6 +1,13 @@
 import { Request, Response } from 'express'
+const cors = require('cors')
 const express = require('express')
 const app = express()
+app.use(express.json())
+app.use(
+  cors({
+    origin: '*', // 모든 출처 허용 옵션. true 를 써도 된다.
+  }),
+)
 
 const session = require('./Routers/session')
 const user = require('./Routers/user')
@@ -16,22 +23,10 @@ app.use('/document', document)
 app.use('/reply', reply)
 app.use('/chat', chat)
 
-const { getConnection } = require('./dbConnection')
-
-const router = express.Router()
-
 app.get('/', (req: Request, res: Response) => {
   res.send('hi')
 })
 
 app.listen(3001, () => {
   console.log(`server is listening at localhost:3001`)
-})
-
-app.get('/1', async (req: Request, res: Response) => {
-  const connection = await getConnection()
-  const [
-    userData,
-  ] = await connection.query('select * from user where userName = ?', [1])
-  res.send(userData)
 })

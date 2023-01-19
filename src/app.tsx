@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
+import Check from './Components/Check'
 
 import ViewMap from './page/ViewMapPage'
 import CommunityPage from './page/CommunityPage'
@@ -19,6 +20,8 @@ const App: React.FC = () => {
     <>
       <RecoilRoot>
         <GlobalStyle />
+        <Check />
+
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<ViewMap />} />
