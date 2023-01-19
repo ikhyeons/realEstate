@@ -125,13 +125,12 @@ const ReleaseRoomModify = () => {
   const [nowImage, setNowImage] = useState<string>('')
 
   const [inputImages, setInputImages] = useState<string[]>([])
+
   const handleChangeFile = (e: any) => {
-    console.log(e.target.files)
-    console.log(e.target.files.length)
     if (e.target.files.length) {
-      for (let i = 0; i < e.target.files.length; i++) {
+      Array.from(e.target.files).map((data: any) => {
         let reader = new FileReader()
-        reader.readAsDataURL(e.target.files[i])
+        reader.readAsDataURL(data)
         reader.onloadend = () => {
           const resultImage: string = reader.result as string
           setInputImages((prev) => {
@@ -142,7 +141,7 @@ const ReleaseRoomModify = () => {
             }
           })
         }
-      }
+      })
     }
   }
   useEffect(() => {
@@ -260,6 +259,7 @@ const ReleaseRoomModify = () => {
           </SPictureList>
           {inputImages.map((data, i) => (
             <SPictureList
+              key={i}
               onClick={() => {
                 setNowImage(data)
               }}

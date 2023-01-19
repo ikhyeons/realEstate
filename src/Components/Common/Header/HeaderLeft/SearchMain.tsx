@@ -67,22 +67,24 @@ const SearchMain = () => {
   const [selectedPoint, setSelectedPoint] = useRecoilState(AselectedPoint)
 
   useEffect(() => {
-    axios
-      .get(
-        `https://dapi.kakao.com/v2/local/search/keyword.json?&query=${value}`,
-        {
-          headers: {
-            Authorization: `KakaoAK ${kakaoKey.restAPI}`,
+    if (value !== '') {
+      axios
+        .get(
+          `https://dapi.kakao.com/v2/local/search/keyword.json?&query=${value}`,
+          {
+            headers: {
+              Authorization: `KakaoAK ${kakaoKey.restAPI}`,
+            },
           },
-        },
-      )
-      .then((data) => {
-        setOnSearch(true)
-        setAddressData(data.data.documents)
-        if (value === '' || data.data.documents.length === 0) {
-          setOnSearch(false)
-        }
-      })
+        )
+        .then((data) => {
+          setOnSearch(true)
+          setAddressData(data.data.documents)
+          if (value === '' || data.data.documents.length === 0) {
+            setOnSearch(false)
+          }
+        })
+    }
   }, [value])
 
   const outFocusHandler = (e: MouseEvent) => {
