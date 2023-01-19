@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import Button from '@mui/material/Button'
@@ -39,8 +39,8 @@ const SDeleteButton = styled.button`
   border: none;
   cursor: pointer;
 `
-var now = new Date() // 현재 날짜 및 시간
-var year = now.getFullYear() // 연도
+let now = new Date() // 현재 날짜 및 시간
+let year = now.getFullYear() // 연도
 
 const HeaderLeft: React.FC = () => {
   const Month: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -147,6 +147,7 @@ const HeaderLeft: React.FC = () => {
                 value={startYear}
                 label="Start Month"
                 onChange={(e) => {
+                  console.log(e.target.value)
                   setStartYear(e.target.value as number)
                 }}
               >

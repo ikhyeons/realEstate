@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const SInfoMain = styled.div`
@@ -29,7 +29,7 @@ const SPayInput = styled.input`
 `
 
 const SAddressInput = styled.input`
-  width: 200px;
+  width: 250px;
   border: none;
   font-family: none;
   font-size: 16px;
@@ -93,7 +93,37 @@ const SContent = styled.textarea`
   }
 `
 
+let now = new Date() // 현재 날짜 및 시간
+let year = now.getFullYear() // 연도
+
 const ReleaseRoomModify = () => {
+  const Month: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  const Year: number[] = [
+    year,
+    year + 1,
+    year + 2,
+    year + 3,
+    year + 4,
+    year + 5,
+    year + 6,
+    year + 7,
+    year + 8,
+  ]
+  const OptionList: string[] = [
+    '',
+    '세탁기',
+    '가스레인지',
+    '전자레인지',
+    '침대',
+    '싱크대',
+  ]
+  const [startYear, setStartYear] = useState('')
+  const [startMonth, setStartMonth] = useState('')
+  const [endYear, setEndYear] = useState('')
+  const [endMonth, setEndMonth] = useState('')
+  const [options, setOptions] = useState('')
+  const [selectedOption, setSelectedOption] = useState<string[]>([])
+
   return (
     <>
       <hr />
@@ -107,13 +137,84 @@ const ReleaseRoomModify = () => {
             <SPayInput placeholder="월세" />
           </div>
           <div>
-            기간 : <Sinput />
+            기간 :{' '}
+            <select
+              value={startYear}
+              onChange={(e) => {
+                setStartYear(e.target.value)
+              }}
+              name="startYear"
+              id=""
+            >
+              {Year.map((data, i) => (
+                <option key={i}>{data}</option>
+              ))}
+            </select>
+            <select
+              value={startMonth}
+              onChange={(e) => {
+                setStartMonth(e.target.value)
+              }}
+              name="startMonth"
+              id=""
+            >
+              {Month.map((data, i) => (
+                <option key={i}>{data}</option>
+              ))}
+            </select>{' '}
+            ~{' '}
+            <select
+              value={endYear}
+              onChange={(e) => {
+                setEndYear(e.target.value)
+              }}
+              name="endYear"
+              id=""
+            >
+              {Year.map((data, i) => (
+                <option key={i}>{data}</option>
+              ))}
+            </select>
+            <select
+              value={endMonth}
+              onChange={(e) => {
+                setEndMonth(e.target.value)
+              }}
+              name="endMonth"
+              id=""
+            >
+              {Month.map((data, i) => (
+                <option key={i}>{data}</option>
+              ))}
+            </select>
           </div>
           <div>
             주소 : <SAddressInput />
           </div>
           <div>
-            옵션 : <Sinput />
+            옵션 :{' '}
+            <select
+              value={options}
+              onChange={(e) => {
+                setOptions(e.target.value)
+                if (e.target.value !== '')
+                  setSelectedOption((prev) => [...prev, e.target.value])
+              }}
+              name="endMonth"
+              id=""
+            >
+              {OptionList.map((data, i) => (
+                <option key={i}>{data}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            {selectedOption.map((data, i) => (
+              <span key={i}>
+                {data}
+                <span>x</span>{' '}
+              </span>
+            ))}
           </div>
         </SInfoRight>
       </SInfoMain>
