@@ -27,6 +27,8 @@ app.get('/', (req: Request, res: Response) => {
   res.send('hi')
 })
 
+//get → url요청
+
 app.listen(3001, () => {
   console.log(`server is listening at localhost:3001`)
 })

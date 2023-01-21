@@ -1,10 +1,10 @@
 const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
-const { getConnection } = require('../dbConnection')
+import { getConnection } from '../dbConnection'
 
 //방 내놓기 on off 설정을 하기위한 라우팅
-router.post('/setRelease', async (req: Request, res: Response) => {
+router.get('/setRelease', async (req: Request, res: Response) => {
   //const userNum = session.id // 유저번호는 세션에서 가져옴
   //const isRelease = req.body.isRelease // 변경된 Release 상태
 
@@ -12,7 +12,10 @@ router.post('/setRelease', async (req: Request, res: Response) => {
   const connection = await getConnection()
   try {
     //데이터를 입력하는 쿼리
-    connection.query('UPDATE user SET isRelease = ? WHERE userNum = ?', [1, 2])
+    await connection.query('UPDATE user SET isRelease = ? WHERE userNum = ?', [
+      1,
+      1,
+    ])
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release()
     //결과가 성공이면 result 0
@@ -43,14 +46,14 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
   const connection = await getConnection()
   try {
     //옵션 데이터를 입력하는 쿼리
-    options.map((data) => {
-      connection.query('insert into roomOption values(default, ?, ?)', [
+    options.map(async (data) => {
+      await connection.query('insert into roomOption values(default, ?, ?)', [
         1,
         data,
       ])
     })
     //옵션을 제외한 나머지 데이터를 입력하는 쿼리
-    connection.query(
+    await connection.query(
       'UPDATE user SET roomPay = ?, roomAddress = ?, roomPeriod = ?, roomDoc = ?  WHERE userNum = ?',
       [1, 1, 1, 1, 1],
     )

@@ -129,10 +129,12 @@ const ReleaseRoomModify = () => {
   const handleChangeFile = (e: any) => {
     if (e.target.files.length) {
       Array.from(e.target.files).map((data: any) => {
+        console.log(data)
         let reader = new FileReader()
         reader.readAsDataURL(data)
         reader.onloadend = () => {
           const resultImage: string = reader.result as string
+          console.log(resultImage)
           setInputImages((prev) => {
             if (!inputImages.includes(resultImage)) {
               return [...prev, resultImage]

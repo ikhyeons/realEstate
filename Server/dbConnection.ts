@@ -1,5 +1,6 @@
-const mysql = require('mysql2/promise')
-const { mysqlKey } = require('../secretKeys')
+import mysql from 'mysql2/promise'
+import { mysqlKey } from '../secretKeys'
+
 let pool = mysql.createPool(mysqlKey)
-export const getConnection = () => pool.getConnection((conn: any) => {})
+export const getConnection = () => pool.getConnection()
 export default getConnection
