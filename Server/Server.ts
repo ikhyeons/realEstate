@@ -2,6 +2,12 @@ import { Request, Response } from 'express'
 const cors = require('cors')
 const express = require('express')
 const app = express()
+
+import mysqlSession from 'express-session'
+import { sessionConfig } from '../secretKeys'
+
+app.use(mysqlSession(sessionConfig))
+
 app.use(express.json())
 app.use(
   cors({
