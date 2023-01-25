@@ -2,6 +2,7 @@ const path = require('path') // 파일 주소 작업을 위한 라이브러리
 const HtmlWebpackPlugin = require('html-webpack-plugin') // Html 번들링 아웃풋을 위한 모듈을 가져옴
 const { CleanWebpackPlugin } = require('clean-webpack-plugin') // clean-webpack-plugin을 가져옴 이전 번들링 파일 제거를 위함
 const webpack = require('webpack') // 웹팩을 가져옴
+const nodeExternals = require('webpack-node-externals')
 
 module.exports = (env, argv) => {
   const prod = argv.mode === 'production' //production모드
@@ -10,6 +11,7 @@ module.exports = (env, argv) => {
     mode: prod ? 'production' : 'development', //prod가 true면 프로덕션 모드, 아니면 개발모드
     devtool: prod ? 'hidden-source-map' : 'eval',
     entry: './src/index.tsx', // 번들링하기위해 맨 처음 확인하는 파일
+
     output: {
       // 출력물 관련 설정
       path: path.join(__dirname, '/dist'), // 출력되는 파일 위치
@@ -22,6 +24,13 @@ module.exports = (env, argv) => {
     },
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'], // 배열 안 확장자에 따라서 번들링을 처리함
+      fallback: {
+        path: require.resolve('path-browserify'),
+        stream: require.resolve('stream-browserify'),
+        crypto: require.resolve('crypto-browserify'),
+        timers: require.resolve('timers-browserify'),
+        fs: require.resolve('browserify-fs'),
+      },
     },
     module: {
       //loader 설정
@@ -42,6 +51,8 @@ module.exports = (env, argv) => {
       new webpack.ProvidePlugin({
         // 자주 사용되는 모듈을 미리 등록하여 매번 작성하지 않게 하는 플러그인
         React: 'react',
+        process: 'process/browser.js',
+        Buffer: ['buffer', 'Buffer'],
       }),
       new HtmlWebpackPlugin({
         template: './public/index.html',
