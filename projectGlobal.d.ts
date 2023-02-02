@@ -1,3 +1,5 @@
+import { RowDataPacket } from 'mysql2'
+
 declare global {
   interface CardPropsStateProp {
     data: CardPropsState

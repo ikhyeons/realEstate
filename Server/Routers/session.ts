@@ -3,18 +3,16 @@ import { Request, Response } from 'express'
 const router = express.Router()
 import { getConnection } from '../dbConnection'
 
-router.post('/login', async (req: Request, res: Response) => {
+router.get('/login', async (req: Request, res: Response) => {
   const connection = await getConnection()
   let id = req.body.id
-  let password = req.body.password
+  let password = '1' //req.body.password
   try {
     const [data]: any = await connection.query(
-      'select userID, userPW from user where userid = ?',
+      'select * from user where userID = ?',
       [1], // id
     )
-
-    console.log(data)
-
+    console.log(data[0].userPW)
     if (data[0]) {
       if (data[0].userPW === password) {
         req.session.isLogin = true

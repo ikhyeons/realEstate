@@ -3,30 +3,56 @@ import { Request, Response } from 'express'
 const router = express.Router()
 import { getConnection } from '../dbConnection'
 
+import multer from 'multer'
+const path = require('path')
+
+const fs = require('fs')
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(
+      null,
+      'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate(성익현, 카카오맵 API사용)/uploadImgs',
+    )
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname)
+    cb(null, path.basename(file.originalname, ext) + new Date().valueOf() + ext)
+  },
+})
+
+const upload = multer({
+  limits: { fieldSize: 25 * 1024 * 1024 },
+  storage: storage,
+})
+
 //방 내놓기 on off 설정을 하기위한 라우팅
-router.get('/setRelease', async (req: Request, res: Response) => {
+router.post('/setRelease', async (req: Request, res: Response) => {
   //const userNum = session.id // 유저번호는 세션에서 가져옴
   //const isRelease = req.body.isRelease // 변경된 Release 상태
-
-  //db연결을 위해 pool에서 커넥션을 대여함
-  const connection = await getConnection()
-  try {
-    //데이터를 입력하는 쿼리
-    await connection.query('UPDATE user SET isRelease = ? WHERE userNum = ?', [
-      1,
-      1,
-    ])
-    //데이터 쿼리 종료 후 대여한 커넥션을 반납함
-    connection.release()
-    //결과가 성공이면 result 0
-    res.send({ result: 0 })
-  } catch (err) {
-    //db에서 에러나 났을 경우 커넥션을 반납하고
-    connection.release()
-    //에러로그를 출력함
-    console.log(err)
-    //프론트로 에러코드 result 3을 보냄
-    res.send({ result: 3 })
+  if (req.session.isLogin) {
+    //db연결을 위해 pool에서 커넥션을 대여함
+    const connection = await getConnection()
+    try {
+      //데이터를 입력하는 쿼리
+      await connection.query(
+        'UPDATE user SET isRelease = ? WHERE userNum = ?',
+        [1, 1],
+      )
+      //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+      connection.release()
+      //결과가 성공이면 result 0
+      res.send({ result: 0 })
+    } catch (err) {
+      //db에서 에러나 났을 경우 커넥션을 반납하고
+      connection.release()
+      //에러로그를 출력함
+      console.log(err)
+      //프론트로 에러코드 result 3을 보냄
+      res.send({ result: 3 })
+    }
+  } else {
+    res.send({ result: 1 })
   }
 })
 
@@ -43,40 +69,67 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
   const options = ['세탁기', '싱크대', '침대']
 
   //db연결을 위해 pool에서 커넥션을 대여함
-  const connection = await getConnection()
-  try {
-    //옵션 데이터를 입력하는 쿼리
-    options.map(async (data) => {
-      await connection.query('insert into roomOption values(default, ?, ?)', [
-        1,
-        data,
-      ])
-    })
-    //옵션을 제외한 나머지 데이터를 입력하는 쿼리
-    await connection.query(
-      'UPDATE user SET roomPay = ?, roomAddress = ?, roomPeriod = ?, roomDoc = ?  WHERE userNum = ?',
-      [1, 1, 1, 1, 1],
-    )
+  if (req.session.isLogin) {
+    const connection = await getConnection()
+    try {
+      //옵션 데이터를 입력하는 쿼리
+      options.map(async (data) => {
+        await connection.query('insert into roomOption values(default, ?, ?)', [
+          1,
+          data,
+        ])
+      })
+      //옵션을 제외한 나머지 데이터를 입력하는 쿼리
+      await connection.query(
+        'UPDATE user SET roomPay = ?, roomAddress = ?, roomPeriod = ?, roomDoc = ?  WHERE userNum = ?',
+        [1, 1, 1, 1, 1],
+      )
 
-    /* 
-    사진을 저장하는 쿼리
-    pictures.map((data) => {
-      connection.query('insert into roomPicture values(default, ?, ?)', [1, 1]) // 두번째 인자 multer적용 후 pictures로 변경해야 함.
-    })
-    */
-
-    //데이터 쿼리 종료 후 대여한 커넥션을 반납함
-    connection.release()
-    //결과가 성공이면 result 0
-    res.send({ result: 0 })
-  } catch (err) {
-    //db에서 에러나 났을 경우 커넥션을 반납하고
-    connection.release()
-    //에러로그를 출력함
-    console.log(err)
-    //프론트로 에러코드 result 3을 보냄
-    res.send({ result: 3 })
+      //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+      connection.release()
+      //결과가 성공이면 result 0
+      res.send({ result: 0 })
+    } catch (err) {
+      //db에서 에러나 났을 경우 커넥션을 반납하고
+      connection.release()
+      //에러로그를 출력함
+      console.log(err)
+      //프론트로 에러코드 result 3을 보냄
+      res.send({ result: 3 })
+    }
+  } else {
+    res.send({ result: 1 })
   }
 })
+
+//이미지 multer
+router.post(
+  '/saveImg',
+  upload.array('inputImgs', 10),
+  async (req: Request, res: Response) => {
+    //db연결을 위해 pool에서 커넥션을 대여함
+    console.log(req.files)
+    if (req.session.isLogin) {
+      const connection = await getConnection()
+      try {
+        //로그인 시 시도함
+
+        //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+        connection.release()
+        //결과가 성공이면 result 0
+        res.send({ result: 0 })
+      } catch (err) {
+        //db에서 에러나 났을 경우 커넥션을 반납하고
+        connection.release()
+        //에러로그를 출력함
+        console.log(err)
+        //프론트로 에러코드 result 3을 보냄
+        res.send({ result: 3 })
+      }
+    } else {
+      res.send({ result: 1 })
+    }
+  },
+)
 
 module.exports = router

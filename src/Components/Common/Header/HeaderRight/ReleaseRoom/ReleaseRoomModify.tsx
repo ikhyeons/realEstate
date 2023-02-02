@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import axios from 'axios'
+
+const Sform = styled.form``
 
 const SInfoMain = styled.div`
   margin-top: 5px;
@@ -122,13 +125,17 @@ const ReleaseRoomModify = () => {
   const [endMonth, setEndMonth] = useState('')
   const [options, setOptions] = useState('')
   const [selectedOption, setSelectedOption] = useState<string[]>([])
+  const [formOutData, setFormOutData] = useState<FormData>()
   const [nowImage, setNowImage] = useState<string>('')
-
   const [inputImages, setInputImages] = useState<string[]>([])
 
   const handleChangeFile = (e: any) => {
     if (e.target.files.length) {
+      const form = new FormData()
+
       Array.from(e.target.files).map((data: any) => {
+        form.append('inputImgs', data)
+
         console.log(data)
         let reader = new FileReader()
         reader.readAsDataURL(data)
@@ -143,15 +150,30 @@ const ReleaseRoomModify = () => {
             }
           })
         }
+        setFormOutData(form)
       })
     }
   }
+
+  const onClickF = async (e: any) => {
+    e.preventDefault()
+
+    await axios
+      .post('http://localhost:3001/releaseRoom/saveImg', formOutData, {
+        headers: { 'content-type': 'multipart/form-data' },
+        withCredentials: true,
+      })
+      .then((data) => {
+        console.log(data)
+      })
+  }
+
   useEffect(() => {
     setNowImage(inputImages[0])
   }, [inputImages])
 
   return (
-    <>
+    <Sform>
       <hr />
       <SInfoMain>
         <SInfoLeft>
@@ -273,7 +295,14 @@ const ReleaseRoomModify = () => {
       </SPictures>
       <hr />
       <SContent placeholder="추가 내용" />
-    </>
+      <button
+        onClick={(e) => {
+          onClickF(e)
+        }}
+      >
+        저장
+      </button>
+    </Sform>
   )
 }
 
