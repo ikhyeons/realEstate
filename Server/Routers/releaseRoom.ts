@@ -4,16 +4,14 @@ const router = express.Router()
 import { getConnection } from '../dbConnection'
 
 import multer from 'multer'
+import { file } from '@babel/types'
 const path = require('path')
 
 const fs = require('fs')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(
-      null,
-      'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate(성익현, 카카오맵 API사용)/uploadImgs',
-    )
+    cb(null, 'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/uploadImgs')
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname)
@@ -77,6 +75,7 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
         await connection.query('insert into roomOption values(default, ?, ?)', [
           1,
           data,
+          66,
         ])
       })
       //옵션을 제외한 나머지 데이터를 입력하는 쿼리
@@ -113,7 +112,13 @@ router.post(
       const connection = await getConnection()
       try {
         //로그인 시 시도함
-
+        const files: any = req.files
+        files?.map(async (data: Express.Multer.File) => {
+          await connection.query(
+            'insert into roompicture values(default, ?, ?)',
+            [req.session.Uid, data.path],
+          )
+        })
         //데이터 쿼리 종료 후 대여한 커넥션을 반납함
         connection.release()
         //결과가 성공이면 result 0
