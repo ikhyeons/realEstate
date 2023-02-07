@@ -19,9 +19,15 @@ interface userInfo extends RowDataPacket {
 
 //회원가입 라우팅
 router.post('/join', async (req: Request, res: Response) => {
-  //const userNum = session.id // 유저번호는 세션에서 가져옴
-  //const docNum = req.body.docNum // 어느 글에 작성했는지
-
+  console.log(req.body)
+  const {
+    userName,
+    userID,
+    password,
+    address,
+    zonecode,
+    detail,
+  } = req.body.joinValue
   //db연결을 위해 pool에서 커넥션을 대여함
   const connection = await getConnection()
   try {
@@ -29,7 +35,7 @@ router.post('/join', async (req: Request, res: Response) => {
     const [isThere]: [
       userInfo[],
       FieldPacket[],
-    ] = await connection.query('SELECT * FROM USER WHERE userID = ?', [1])
+    ] = await connection.query('SELECT * FROM USER WHERE userID = ?', [userID])
 
     if (isThere.length) {
       //만약 데이터가 없으면 result 1
@@ -37,8 +43,8 @@ router.post('/join', async (req: Request, res: Response) => {
     } else {
       //만약 데이터가 있으면 result 1
       await connection.query(
-        'insert into user values (default, ?, ?, ?, ?, default, null, null, null, null)',
-        ['1', '3', '1', '1'],
+        'insert into user values (default, ?, ?, ?, ?, ?, default, null, null, null, null)',
+        [userName, userID, password, address, detail],
       )
       res.send({ result: 0 })
     }

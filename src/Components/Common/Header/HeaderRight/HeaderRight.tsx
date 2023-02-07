@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useCookies } from 'react-cookie'
 
 import Button from '@mui/material/Button'
 
@@ -8,8 +9,7 @@ import HeaderRightLoginFalse from './HeaderRightLoginFalse'
 
 const HeaderRight: React.FC = () => {
   const navigate = useNavigate() /*react route dom url바꿔주는 함수*/
-  const [isLogin, setIsLogin] = useState<boolean>(true)
-
+  const [cookies] = useCookies(['isLogin'])
   return (
     <>
       <Button
@@ -29,7 +29,11 @@ const HeaderRight: React.FC = () => {
       >
         커뮤니티
       </Button>
-      {isLogin == true ? <HeaderRightOnLogin /> : <HeaderRightLoginFalse />}
+      {cookies.isLogin === 'true' ? (
+        <HeaderRightOnLogin />
+      ) : (
+        <HeaderRightLoginFalse />
+      )}
     </>
   )
 }

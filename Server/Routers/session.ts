@@ -3,20 +3,20 @@ import { Request, Response } from 'express'
 const router = express.Router()
 import { getConnection } from '../dbConnection'
 
-router.get('/login', async (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response) => {
   const connection = await getConnection()
-  let id = req.body.id
-  let password = '1' //req.body.password
+  const { userID, password } = req.body
   try {
-    const [data]: any = await connection.query(
-      'select * from user where userID = ?',
-      [1], // id
-    )
-    console.log(data[0].userPW)
+    const [
+      data,
+    ]: any = await connection.query('select * from user where userID = ?', [
+      userID,
+    ])
     if (data[0]) {
       if (data[0].userPW === password) {
         req.session.isLogin = true
         req.session.Uid = data[0].userNum
+        res.cookie('isLogin', true, { httpOnly: false })
         req.session.save(() => {
           console.log(req.session)
         })
@@ -38,16 +38,18 @@ router.get('/login', async (req: Request, res: Response) => {
   }
 })
 
-router.get('/logout', (req: Request, res: Response) => {
+router.post('/logout', (req: Request, res: Response) => {
   if (req.session.isLogin == true) {
     req.session.destroy((err) => {
       console.log('정상 로그아웃!')
       res.clearCookie('connect.sid')
+      res.clearCookie('isLogin')
       res.send({ result: 0 })
     })
   } else {
     console.log('정상 로그아웃 실패!')
     res.clearCookie('connect.sid')
+    res.clearCookie('isLogin')
     res.send({ result: 1 })
   }
 })

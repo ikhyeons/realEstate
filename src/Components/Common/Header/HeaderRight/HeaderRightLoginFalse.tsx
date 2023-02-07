@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-
+import { useQuery } from 'react-query'
+import { useCookies } from 'react-cookie'
 import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send'
 import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
+import axios from 'axios'
 
 import { useNavigate } from 'react-router-dom'
 
@@ -23,6 +25,31 @@ const HeaderRightLoginFalse: React.FC = () => {
 
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
+
+  const [userID, setUserID] = useState('')
+  const [password, setPassword] = useState('')
+  const [cookies, setCookies] = useCookies(['isLogin'])
+  const { status, data, error, refetch } = useQuery(
+    'login',
+    () =>
+      axios.post(
+        `http://localhost:3001/session/login`,
+        {
+          userID: userID,
+          password: password,
+        },
+        { withCredentials: true },
+      ),
+    {
+      enabled: false,
+      onSuccess: (data) => {
+        if (data.data.result === 0) setCookies('isLogin', 'true')
+        else if (data.data.result === 1) alert('아이디 없음')
+        else if (data.data.result === 2) alert('비밀번호 없음')
+        else alert('DB오류')
+      },
+    },
+  )
 
   return (
     <>
@@ -73,6 +100,10 @@ const HeaderRightLoginFalse: React.FC = () => {
             label="E-mail"
             type={'email'}
             variant="outlined"
+            value={userID}
+            onChange={(e) => {
+              setUserID(e.target.value)
+            }}
           />
           <TextField
             onKeyDown={(e) => {
@@ -86,9 +117,16 @@ const HeaderRightLoginFalse: React.FC = () => {
             label="Password"
             variant="outlined"
             type={'password'}
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+            }}
           />
           <Button
-            onClick={() => setIsPopOpen(false)} /*로그인 시 박스 닫기*/
+            onClick={() => {
+              refetch()
+              setIsPopOpen(false)
+            }} /*로그인 시 박스 닫기*/
             sx={{
               background: '#FFf4c0',
               '&:hover': { background: '#F0f4d0' },

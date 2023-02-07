@@ -16,7 +16,8 @@ export const AjoinPageNum = atom<0 | 1>({
 export const AjoinValues = atom({
   key: 'join/joinValue',
   default: {
-    email: '',
+    userName: '',
+    userID: '',
     password: '',
     address: '',
     zonecode: '',

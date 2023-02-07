@@ -6,6 +6,8 @@ import { AjoinPageNum, AjoinValues } from '../../AtomStorage'
 import { useNavigate } from 'react-router-dom'
 import { TextField } from '@mui/material'
 import Button from '@mui/material/Button'
+import { useQuery } from 'react-query'
+import axios from 'axios'
 
 const SForm = styled.form`
   position: relative;
@@ -24,27 +26,56 @@ const InfoInputPage: React.FC = () => {
   const resetJoinValue = useResetRecoilState(AjoinValues)
 
   const onCompleteF = (e: Address) => {
+    console.log(e)
     setJoinValue((prev) => {
       return { ...prev, address: e.address, zonecode: e.zonecode }
     })
   }
+
+  const { status, data, error, refetch } = useQuery(
+    'join',
+    () =>
+      axios.post(`http://localhost:3001/user/join`, {
+        joinValue,
+      }),
+    { enabled: false },
+  )
+
   return (
     <SForm>
-      <label htmlFor="email">이메일</label>
+      <label htmlFor="name">닉네임</label>
       <br />
       <TextField
         onChange={(e) => {
           setJoinValue((prev) => {
-            let object = { ...prev, email: e.target.value }
+            let object = { ...prev, userName: e.target.value }
             return object
           })
         }}
-        value={joinValue.email}
+        value={joinValue.userName}
         required
         sx={{ margin: '5px' }}
-        id="email"
-        type={'email'}
-        label="E-mail"
+        id="id"
+        type={'id'}
+        label="name"
+        variant="outlined"
+      />
+      <br />
+      <label htmlFor="id">아이디</label>
+      <br />
+      <TextField
+        onChange={(e) => {
+          setJoinValue((prev) => {
+            let object = { ...prev, userID: e.target.value }
+            return object
+          })
+        }}
+        value={joinValue.userID}
+        required
+        sx={{ margin: '5px' }}
+        id="id"
+        type={'id'}
+        label="userID"
         variant="outlined"
       />
       <br />
@@ -126,12 +157,13 @@ const InfoInputPage: React.FC = () => {
         variant="contained"
         onClick={(e) => {
           if (
-            joinValue.email !== '' &&
+            joinValue.userID !== '' &&
             joinValue.password !== '' &&
             joinValue.address !== '' &&
             joinValue.detail !== '' &&
             joinValue.zonecode !== ''
           ) {
+            refetch()
             navigate('/')
             setCurrentPage(0)
             resetJoinValue()

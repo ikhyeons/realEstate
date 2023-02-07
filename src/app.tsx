@@ -2,6 +2,8 @@ import { createGlobalStyle } from 'styled-components'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 import Check from './Components/Check'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { CookiesProvider } from 'react-cookie'
 
 import ViewMap from './page/ViewMapPage'
 import CommunityPage from './page/CommunityPage'
@@ -14,22 +16,29 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box; 
   }
 `
-
+const queryClient = new QueryClient()
 const App: React.FC = () => {
   return (
     <>
-      <RecoilRoot>
-        <GlobalStyle />
-        <Check />
+      <QueryClientProvider client={queryClient}>
+        <RecoilRoot>
+          <CookiesProvider>
+            <GlobalStyle />
+            <Check />
 
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<ViewMap />} />
-            <Route path="/join" element={<JoinPage />} />
-            <Route path="/community/:docpageType" element={<CommunityPage />} />
-          </Routes>
-        </BrowserRouter>
-      </RecoilRoot>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<ViewMap />} />
+                <Route path="/join" element={<JoinPage />} />
+                <Route
+                  path="/community/:docpageType"
+                  element={<CommunityPage />}
+                />
+              </Routes>
+            </BrowserRouter>
+          </CookiesProvider>
+        </RecoilRoot>
+      </QueryClientProvider>
     </>
   )
 }

@@ -22,7 +22,8 @@ declare global {
   }
 
   interface JoinValue {
-    email: string
+    userName: string
+    userID: string
     password: string
     address: string
     zonecode: string

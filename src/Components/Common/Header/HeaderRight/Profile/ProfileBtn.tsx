@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import styled from 'styled-components'
+import { useQuery } from 'react-query'
+import axios from 'axios'
+import { useCookies } from 'react-cookie'
 
 import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
@@ -41,10 +44,28 @@ const SLogout = styled.div`
 const ProfileBtn = () => {
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
-
+  const [cookies, setCookies] = useCookies(['isLogin'])
+  const { status, data, error, refetch } = useQuery(
+    'logout',
+    () =>
+      axios.post(
+        `http://localhost:3001/session/logout`,
+        {},
+        { withCredentials: true },
+      ),
+    {
+      enabled: false,
+      onSuccess: (data) => {
+        if (data.data.result === 0) {
+          setCookies('isLogin', 'false')
+        } else if (data.data.result === 1)
+          alert('DB오류발생! 하지만 로그아웃은 함 ')
+        else alert('또다른 무언가')
+      },
+    },
+  )
   return (
     <>
       <SProfile
@@ -77,7 +98,13 @@ const ProfileBtn = () => {
         >
           <Box sx={{ padding: '6px', width: '150px' }}>
             <SChangeMyInfo>정보수정</SChangeMyInfo>
-            <SLogout>로그아웃</SLogout>
+            <SLogout
+              onClick={() => {
+                refetch()
+              }}
+            >
+              로그아웃
+            </SLogout>
           </Box>
         </Popover>
       ) : null}
