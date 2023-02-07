@@ -1,5 +1,8 @@
 import styled from 'styled-components'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useQuery, useQueries } from 'react-query'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 const SOl = styled.ol`
   width: 100%;
@@ -20,6 +23,7 @@ const STag = styled.div`
 
 const SNum = styled.span`
   width: 0px;
+  min-width: 50px;
   flex-grow: 0.6;
   text-align: center;
   border-right: 1px solid black;
@@ -63,9 +67,57 @@ const SView = styled.span`
   flex-grow: 0.8;
   text-align: center;
 `
+const SpageNumBar = styled.div`
+  display: flex;
+  margin: 0 auto;
+  width: 230px;
+  justify-content: center;
+`
+
+const SpageNum = styled.span`
+  list-style: none;
+  text-align: center;
+  width: 23px;
+  padding: 5px;
+  cursor: pointer;
+  :hover {
+    text-decoration: underline;
+  }
+`
 
 const DocList: React.FC = () => {
   const navigate = useNavigate()
+  const { pageNum } = useParams()
+  const [pageNums, setPageNums] = useState<string[]>([])
+
+  const res = useQueries([
+    {
+      queryKey: ['readDocList', pageNum],
+      queryFn: () =>
+        axios.get(`http://localhost:3001/document/readDocList/${pageNum}`),
+      onSuccess: (data: any) => {
+        console.log(data.data)
+      },
+    },
+    {
+      queryKey: ['readDocCount', pageNum],
+      queryFn: () => axios.get(`http://localhost:3001/document/readDocCount/`),
+      onSuccess: (data: any) => {
+        console.log(Math.ceil(Number(data.data.data) / 13))
+        setPageNums(() => {
+          const pageCountLengthArray = new Array(0)
+          for (let i = 1; i <= Math.ceil(Number(data.data.data) / 0.1); i++)
+            pageCountLengthArray.push(i)
+          return pageCountLengthArray
+        })
+      },
+    },
+  ])
+  useEffect(() => {
+    console.log(pageNum)
+  }, [pageNums])
+  console.log(res[0], res[1].data)
+
   return (
     <>
       <STag>
@@ -112,6 +164,30 @@ const DocList: React.FC = () => {
           <SView>9999</SView>
         </SLi>
       </SOl>
+      <SpageNumBar>
+        {pageNums.map((data, i) =>
+          Number(data) === Number(pageNum) ? (
+            <SpageNum
+              style={{ fontWeight: 'bold' }}
+              key={i}
+              onClick={() => {
+                navigate(`/community/List/${data}`)
+              }}
+            >
+              {data}
+            </SpageNum>
+          ) : (
+            <SpageNum
+              key={i}
+              onClick={() => {
+                navigate(`/community/List/${data}`)
+              }}
+            >
+              {data}
+            </SpageNum>
+          ),
+        )}
+      </SpageNumBar>
       <SWriteBtn
         onClick={() => {
           navigate(`/community/Write`)

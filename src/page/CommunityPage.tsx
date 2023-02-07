@@ -18,6 +18,7 @@ const Smain = styled.div`
   margin: 0 auto;
   padding: 5px;
   width: 50%;
+  min-width: 750px;
   height: 100%;
   background: rgb(248, 248, 246);
   border-left: 1px solid black;

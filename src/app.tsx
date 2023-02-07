@@ -29,7 +29,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<ViewMap />} />
                 <Route path="/join" element={<JoinPage />} />
                 <Route
-                  path="/community/:docpageType"
+                  path="/community/:docpageType/:pageNum"
                   element={<CommunityPage />}
                 />
               </Routes>
