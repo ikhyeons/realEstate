@@ -4,8 +4,7 @@ import styled from 'styled-components'
 import DocList from '../Components/CommunityPage/DocList'
 import DocView from '../Components/CommunityPage/DocView'
 import DocWrite from '../Components/CommunityPage/DocWrite'
-
-import { useParams } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 const SCommunity = styled.div`
   display: flex;
@@ -41,15 +40,16 @@ const SWrap = styled.div`
 `
 
 const CommunityPage: React.FC = () => {
-  const { docpageType } = useParams()
   return (
     <SWrap>
       <Header />
       <SCommunity>
         <Smain>
-          {docpageType === 'List' && <DocList />}
-          {docpageType === 'View' && <DocView />}
-          {docpageType === 'Write' && <DocWrite />}
+          <Routes>
+            <Route path="/List/:pageNum" element={<DocList />} />
+            <Route path="/View/:docNum" element={<DocView />} />
+            <Route path="/Write" element={<DocWrite />} />
+          </Routes>
         </Smain>
       </SCommunity>
     </SWrap>

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Routes, useNavigate, useParams, Route } from 'react-router-dom'
 import { useQuery, useQueries } from 'react-query'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
@@ -113,9 +113,7 @@ const DocList: React.FC = () => {
       },
     },
   ])
-  useEffect(() => {
-    console.log(pageNum)
-  }, [pageNums])
+
   console.log(res[0], res[1].data)
 
   return (
@@ -133,7 +131,7 @@ const DocList: React.FC = () => {
           <SNum>1</SNum>
           <STitle
             onClick={() => {
-              navigate('/community/View')
+              navigate('/community/View/1')
             }}
           >
             적당한 글 제목1

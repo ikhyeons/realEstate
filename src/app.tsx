@@ -28,10 +28,7 @@ const App: React.FC = () => {
               <Routes>
                 <Route path="/" element={<ViewMap />} />
                 <Route path="/join" element={<JoinPage />} />
-                <Route
-                  path="/community/:docpageType/:pageNum"
-                  element={<CommunityPage />}
-                />
+                <Route path="/community/*" element={<CommunityPage />} />
               </Routes>
             </BrowserRouter>
           </CookiesProvider>
