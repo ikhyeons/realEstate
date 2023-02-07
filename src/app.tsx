@@ -24,8 +24,6 @@ const App: React.FC = () => {
         <RecoilRoot>
           <CookiesProvider>
             <GlobalStyle />
-            <Check />
-
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<ViewMap />} />
