@@ -52,7 +52,7 @@ const DocWrite = () => {
       <SDocHeader>
         <SDocListBtn
           onClick={() => {
-            navigate('/community/List')
+            navigate('/community/List/1')
           }}
         >
           ←글목록

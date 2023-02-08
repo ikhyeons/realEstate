@@ -44,3 +44,5 @@ export const AselectedPoint = atom({
   key: 'map/selectedPoint',
   default: { lat: 35.1807266, lng: 128.0940397 },
 })
+
+export default ASelectedAddredss

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { kakaoKey } from '../../../../../secretKeys'
+import { kakaoKey } from '../../../../../secretKeysF'
 import axios from 'axios'
 import { useEffect, useState, useRef } from 'react'
 import { useRecoilState } from 'recoil'

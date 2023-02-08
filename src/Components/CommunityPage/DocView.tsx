@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import RippleMain from './Ripple/RippleMain'
+import { useCookies } from 'react-cookie'
 
 const SDocHeader = styled.div`
   height: 30px;
@@ -38,13 +39,15 @@ const SContent = styled.div`
 const SWriter = styled.span``
 
 const DocView = () => {
+  const [cookies, setCookies] = useCookies(['lastPageNum'])
+  console.log(cookies)
   const navigate = useNavigate()
   return (
     <SViewMain>
       <SDocHeader>
         <SDocListBtn
           onClick={() => {
-            navigate('/community/List')
+            navigate(`/community/List/${Number(cookies.lastPageNum)}`)
           }}
         >
           ←글목록

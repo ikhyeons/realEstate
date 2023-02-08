@@ -4,7 +4,7 @@ const express = require('express')
 const app = express()
 
 import mysqlSession from 'express-session'
-import { sessionConfig } from '../secretKeys'
+import { sessionConfig } from '../secretKeysB'
 
 app.use(mysqlSession(sessionConfig))
 

@@ -10,11 +10,14 @@ import HeaderRightLoginFalse from './HeaderRightLoginFalse'
 const HeaderRight: React.FC = () => {
   const navigate = useNavigate() /*react route dom url바꿔주는 함수*/
   const [cookies] = useCookies(['isLogin'])
+  const [, setCookies] = useCookies(['lastPageNum'])
+
   return (
     <>
       <Button
         onClick={() => {
           navigate('/community/List/1')
+          setCookies('lastPageNum', 1)
         }}
         disabled={false}
         sx={{

@@ -1,11 +1,11 @@
-const path = require('path') // 파일 주소 작업을 위한 라이브러리
-const HtmlWebpackPlugin = require('html-webpack-plugin') // Html 번들링 아웃풋을 위한 모듈을 가져옴
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin') // clean-webpack-plugin을 가져옴 이전 번들링 파일 제거를 위함
 const webpack = require('webpack') // 웹팩을 가져옴
 const nodeExternals = require('webpack-node-externals')
 
 module.exports = (env, argv) => {
-  const prod = argv.mode === 'production' //production모드
+  const prod = argv.mode === 'production'
 
   return {
     mode: prod ? 'production' : 'development', //prod가 true면 프로덕션 모드, 아니면 개발모드
@@ -23,6 +23,7 @@ module.exports = (env, argv) => {
       historyApiFallback: true, // 라우팅된 페이지에서 중간 새로고침 시 화면 유지
     },
     resolve: {
+      modules: ['node_modules'],
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'], // 배열 안 확장자에 따라서 번들링을 처리함
       fallback: {
         path: require.resolve('path-browserify'),
@@ -39,9 +40,10 @@ module.exports = (env, argv) => {
           test: /\.tsx?$/, //tsx 확장자의 모든 모듈을 포함함
           use: ['babel-loader', 'ts-loader'], //어떤 로더를 사용할지를 설정함 왼쪽부터 오른쪽 순서로 먼저 적용함.
           //즉 tsx라는 확장자를 가지고 있을 경우 ts-loader를 이용하여 트랜스 파일링 한 후 babel-loader로 es5 트랜스 파일링 함
+          exclude: [/BackServer/, /node_modules/],
         },
         {
-          test: /\.css?$/,
+          test: /\.css?$/, //css 확장자의 모든 모듈을 포함함
           use: ['style-loader', 'css-loader'],
         },
       ],

@@ -8,8 +8,8 @@ import { getConnection } from '../dbConnection'
 router.get('/readDocList/:pageNum', async (req: Request, res: Response) => {
   //페이지 넘버
   const pageNum: number = Number(req.params.pageNum)
-  const startNum = 1 + 13 * (pageNum - 1) - 1
-  const endNum = 13
+  const startNum = 1 + 28 * (pageNum - 1) - 1
+  const count = 28
 
   //db연결을 위해 pool에서 커넥션을 대여함
   const connection = await getConnection()
@@ -17,12 +17,11 @@ router.get('/readDocList/:pageNum', async (req: Request, res: Response) => {
     //데이터를 입력하는 쿼리
     const data = await connection.query(
       'SELECT docNum, docTitle, docWriter, view, makeDate FROM document ORDER BY docNum DESC LIMIT ?, ?',
-      [startNum, endNum],
+      [startNum, count],
     )
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release()
     //결과가 성공이면 result 0과 데이터를 날림
-    console.log(data[0])
     res.setHeader('content-type', 'application/json')
     res.send({ result: 0, data })
   } catch (err) {

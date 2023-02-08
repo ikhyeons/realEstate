@@ -3,6 +3,8 @@ import { Routes, useNavigate, useParams, Route } from 'react-router-dom'
 import { useQuery, useQueries } from 'react-query'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import PageNavigationBar from './PageNavigationBar'
+import { useCookies } from 'react-cookie'
 
 const SOl = styled.ol`
   width: 100%;
@@ -67,54 +69,22 @@ const SView = styled.span`
   flex-grow: 0.8;
   text-align: center;
 `
-const SpageNumBar = styled.div`
-  display: flex;
-  margin: 0 auto;
-  width: 230px;
-  justify-content: center;
-`
-
-const SpageNum = styled.span`
-  list-style: none;
-  text-align: center;
-  width: 23px;
-  padding: 5px;
-  cursor: pointer;
-  :hover {
-    text-decoration: underline;
-  }
-`
 
 const DocList: React.FC = () => {
   const navigate = useNavigate()
   const { pageNum } = useParams()
-  const [pageNums, setPageNums] = useState<string[]>([])
+  const [c, s, r] = useCookies(['lastPageNum'])
 
-  const res = useQueries([
+  const { status, data, error, refetch } = useQuery(
+    ['readDocList', pageNum],
+    () => axios.get(`http://localhost:3001/document/readDocList/${pageNum}`),
     {
-      queryKey: ['readDocList', pageNum],
-      queryFn: () =>
-        axios.get(`http://localhost:3001/document/readDocList/${pageNum}`),
-      onSuccess: (data: any) => {
-        console.log(data.data)
-      },
+      onSuccess: (data: any) => {},
     },
-    {
-      queryKey: ['readDocCount', pageNum],
-      queryFn: () => axios.get(`http://localhost:3001/document/readDocCount/`),
-      onSuccess: (data: any) => {
-        console.log(Math.ceil(Number(data.data.data) / 13))
-        setPageNums(() => {
-          const pageCountLengthArray = new Array(0)
-          for (let i = 1; i <= Math.ceil(Number(data.data.data) / 0.1); i++)
-            pageCountLengthArray.push(i)
-          return pageCountLengthArray
-        })
-      },
-    },
-  ])
-
-  console.log(res[0], res[1].data)
+  )
+  useEffect(() => {
+    s('lastPageNum', pageNum)
+  }, [pageNum])
 
   return (
     <>
@@ -162,30 +132,7 @@ const DocList: React.FC = () => {
           <SView>9999</SView>
         </SLi>
       </SOl>
-      <SpageNumBar>
-        {pageNums.map((data, i) =>
-          Number(data) === Number(pageNum) ? (
-            <SpageNum
-              style={{ fontWeight: 'bold' }}
-              key={i}
-              onClick={() => {
-                navigate(`/community/List/${data}`)
-              }}
-            >
-              {data}
-            </SpageNum>
-          ) : (
-            <SpageNum
-              key={i}
-              onClick={() => {
-                navigate(`/community/List/${data}`)
-              }}
-            >
-              {data}
-            </SpageNum>
-          ),
-        )}
-      </SpageNumBar>
+      <PageNavigationBar />
       <SWriteBtn
         onClick={() => {
           navigate(`/community/Write`)
