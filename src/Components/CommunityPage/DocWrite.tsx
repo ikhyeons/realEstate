@@ -12,6 +12,7 @@ import '@toast-ui/editor/dist/toastui-editor.css'
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell'
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax'
 import chart from '@toast-ui/editor-plugin-chart'
+import { useRef, useState } from 'react'
 
 const SDocHeader = styled.div`
   height: 30px;
@@ -46,6 +47,8 @@ const SCompleteBtn = styled.button`
 `
 
 const DocWrite = () => {
+  const editorRef = useRef<Editor>(null)
+  const [editorInitialValue, setEditorInitialValue] = useState('')
   const navigate = useNavigate()
   return (
     <SViewMain>
@@ -61,15 +64,19 @@ const DocWrite = () => {
       <STitle placeholder="제목" />
       <hr />
       <Editor
+        ref={editorRef}
+        placeholder={'내용을 입력하세요'}
         height="700px"
         initialEditType="wysiwyg"
+        initialValue={editorInitialValue}
         useCommandShortcut={true}
         plugins={[tableMergedCell, colorSyntax, chart]}
         viewer={true}
       />
       <SCompleteBtn
         onClick={() => {
-          navigate('/community/View')
+          console.log(editorRef.current?.getInstance().getMarkdown())
+          navigate(`/community/View/${0}`)
         }}
       >
         작성완료!
