@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import RippleMain from './Ripple/RippleMain'
 import { useCookies } from 'react-cookie'
 
+import { Viewer } from '@toast-ui/react-editor'
+
 const SDocHeader = styled.div`
   height: 30px;
 `
@@ -57,7 +59,9 @@ const DocView = () => {
       <SDate>2023.01.01</SDate>
       <SWriter>성익현</SWriter>
       <hr />
-      <SContent>게시글 내용입니다.</SContent>
+      <SContent>
+        <Viewer initialValue={'게시글 내용입니다.'} />
+      </SContent>
       <hr />
       <RippleMain /> {/* 댓글 컴포넌트 */}
     </SViewMain>

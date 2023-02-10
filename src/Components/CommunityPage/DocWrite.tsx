@@ -75,7 +75,7 @@ const DocWrite = () => {
       />
       <SCompleteBtn
         onClick={() => {
-          console.log(editorRef.current?.getInstance().getMarkdown())
+          console.log(editorRef.current?.getInstance().getHTML())
           navigate(`/community/View/${0}`)
         }}
       >
