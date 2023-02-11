@@ -47,7 +47,7 @@ const STitle = styled.span`
 `
 const SDate = styled.span`
   width: 0px;
-  flex-grow: 0.8;
+  flex-grow: 1.3;
   text-align: center;
   border-left: 1px solid black;
   position: relative;
@@ -75,13 +75,40 @@ const DocList: React.FC = () => {
   const { pageNum } = useParams()
   const [c, s, r] = useCookies(['lastPageNum'])
 
+  const [docList, setDocList] = useState([
+    { docNum: '', docTitle: '', makeDate: '', docWriter: '', view: '' },
+  ])
   const { status, data, error, refetch } = useQuery(
     ['readDocList', pageNum],
-    () => axios.get(`http://localhost:3001/document/readDocList/${pageNum}`),
+    async () => {
+      if (!pageNum || Number(pageNum) === 0)
+        return await axios.get(`http://localhost:3001/document/readDocList/1`)
+      return await axios.get(
+        `http://localhost:3001/document/readDocList/${pageNum}`,
+      )
+    },
     {
-      onSuccess: (data: any) => {},
+      onSuccess: (data: any) => {
+        const modifyedData = data.data.data[0].map((data: any, i: number) => {
+          return {
+            ...data,
+            makeDate:
+              data.makeDate.slice(2, 4) +
+              '.' +
+              data.makeDate.slice(5, 7) +
+              '.' +
+              data.makeDate.slice(8, 10) +
+              ' ' +
+              data.makeDate.slice(11, 13) +
+              ':' +
+              data.makeDate.slice(14, 16),
+          }
+        })
+        setDocList(modifyedData)
+      },
     },
   )
+
   useEffect(() => {
     s('lastPageNum', pageNum)
   }, [pageNum])
@@ -97,40 +124,21 @@ const DocList: React.FC = () => {
       </STag>
       <hr style={{ margin: '5px 0' }} />
       <SOl>
-        <SLi>
-          <SNum>1</SNum>
-          <STitle
-            onClick={() => {
-              navigate('/community/View/1')
-            }}
-          >
-            적당한 글 제목1
-          </STitle>
-          <SDate>22.12.29</SDate>
-          <SWriter>성익현</SWriter>
-          <SView>9999</SView>
-        </SLi>
-        <SLi>
-          <SNum>2</SNum>
-          <STitle>적당한 글 제목2</STitle>
-          <SDate>22.12.29</SDate>
-          <SWriter>성익현</SWriter>
-          <SView>9999</SView>
-        </SLi>
-        <SLi>
-          <SNum>3</SNum>
-          <STitle>적당한 글 제목3</STitle>
-          <SDate>22.12.29</SDate>
-          <SWriter>성익현</SWriter>
-          <SView>9999</SView>
-        </SLi>
-        <SLi>
-          <SNum>4</SNum>
-          <STitle>적당한 글 제목4</STitle>
-          <SDate>22.12.29</SDate>
-          <SWriter>성익현</SWriter>
-          <SView>9999</SView>
-        </SLi>
+        {docList.map((data, i) => (
+          <SLi>
+            <SNum>{data.docNum}</SNum>
+            <STitle
+              onClick={() => {
+                navigate('/community/View/1')
+              }}
+            >
+              {data.docTitle}
+            </STitle>
+            <SDate>{data.makeDate}</SDate>
+            <SWriter>{data.docWriter}</SWriter>
+            <SView>{data.view}</SView>
+          </SLi>
+        ))}
       </SOl>
       <PageNavigationBar />
       <SWriteBtn

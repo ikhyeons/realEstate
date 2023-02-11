@@ -61,14 +61,13 @@ router.post('/writeDoc', async (req: Request, res: Response) => {
   if (req.session.isLogin) {
     //db연결을 위해 pool에서 커넥션을 대여함
     const connection = await getConnection()
-    //const writer = session.id //작성자
-    //const title = req.body.title // 제목
-    //const content = req.body.content // 내용
+    const title = req.body.docData.title // 제목
+    const content = req.body.docData.content // 내용
     try {
       //데이터를 입력하는 쿼리
       await connection.query(
         'insert into document values(default, ?, ?, ?, default, default)',
-        ['1', '1', 1],
+        [title, content, req.session.Uid],
       )
       //데이터 쿼리 종료 후 대여한 커넥션을 반납함
       connection.release()

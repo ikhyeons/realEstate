@@ -47,6 +47,7 @@ const CommunityPage: React.FC = () => {
         <Smain>
           <Routes>
             <Route path="/List/:pageNum" element={<DocList />} />
+            <Route path="/List/" element={<DocList />} />
             <Route path="/View/:docNum" element={<DocView />} />
             <Route path="/Write" element={<DocWrite />} />
           </Routes>

@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-
+import axios from 'axios'
+import { useQuery } from 'react-query'
 import { Editor } from '@toast-ui/react-editor'
 
 import '@toast-ui/chart/dist/toastui-chart.css'
@@ -9,10 +10,11 @@ import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-sy
 import '@toast-ui/editor-plugin-table-merged-cell/dist/toastui-editor-plugin-table-merged-cell.css'
 import '@toast-ui/editor/dist/toastui-editor.css'
 
-import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell'
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax'
 import chart from '@toast-ui/editor-plugin-chart'
-import { useRef, useState } from 'react'
+import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell'
+
+import { useEffect, useRef, useState } from 'react'
 
 const SDocHeader = styled.div`
   height: 30px;
@@ -46,10 +48,37 @@ const SCompleteBtn = styled.button`
   right: 0px;
 `
 
+interface IdocData {
+  title: string
+  content: string
+}
+
 const DocWrite = () => {
   const editorRef = useRef<Editor>(null)
-  const [editorInitialValue, setEditorInitialValue] = useState('')
   const navigate = useNavigate()
+  const [docData, setDocData] = useState<IdocData>({ title: '', content: '' })
+
+  const { status, data, error, refetch } = useQuery(
+    'login',
+    () =>
+      axios.post(
+        `http://localhost:3001/document/writeDoc`,
+        {
+          docData,
+        },
+        { withCredentials: true },
+      ),
+    {
+      enabled: false,
+      onSuccess: (data) => {
+        if (data.data.result === 0) alert('입력 완료!')
+        else if (data.data.result === 1) alert('로그인부터 해주세요...')
+        else if (data.data.result === 2) alert('비밀번호 없음')
+        else alert('DB오류')
+      },
+    },
+  )
+
   return (
     <SViewMain>
       <SDocHeader>
@@ -61,21 +90,33 @@ const DocWrite = () => {
           ←글목록
         </SDocListBtn>
       </SDocHeader>
-      <STitle placeholder="제목" />
+      <STitle
+        value={docData.title}
+        placeholder="제목"
+        onChange={(e) => {
+          setDocData((prev) => ({ ...prev, title: e.target.value }))
+        }}
+      />
       <hr />
       <Editor
         ref={editorRef}
         placeholder={'내용을 입력하세요'}
         height="700px"
         initialEditType="wysiwyg"
-        initialValue={editorInitialValue}
+        initialValue={' '}
         useCommandShortcut={true}
         plugins={[tableMergedCell, colorSyntax, chart]}
         viewer={true}
+        onChange={() => {
+          setDocData((prev) => ({
+            title: prev.title,
+            content: editorRef.current?.getInstance().getHTML() as string,
+          }))
+        }}
       />
       <SCompleteBtn
         onClick={() => {
-          console.log(editorRef.current?.getInstance().getHTML())
+          refetch()
           navigate(`/community/View/${0}`)
         }}
       >

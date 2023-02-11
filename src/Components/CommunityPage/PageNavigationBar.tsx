@@ -93,7 +93,7 @@ const PageNavigationBar = () => {
 
   const { status, data, error, refetch } = useQuery(
     ['readDocCount', pageNum],
-    () => axios.get(`http://localhost:3001/document/readDocCount/`),
+    async () => axios.get(`http://localhost:3001/document/readDocCount/`),
     {
       onSuccess: (data: any) => {
         const pageNumber = Math.ceil(Number(data.data.data) / 28) // 총 페이지 수
