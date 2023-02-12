@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useQuery } from 'react-query'
 import { Editor } from '@toast-ui/react-editor'
+import { useCookies } from 'react-cookie'
 
 import '@toast-ui/chart/dist/toastui-chart.css'
 import 'tui-color-picker/dist/tui-color-picker.css'
@@ -14,14 +15,16 @@ import colorSyntax from '@toast-ui/editor-plugin-color-syntax'
 import chart from '@toast-ui/editor-plugin-chart'
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useRecoilState } from 'recoil'
+import { AdocValue, AisModify } from '../../AtomStorage'
 
 const SDocHeader = styled.div`
   height: 30px;
 `
 
 const SDocListBtn = styled.button`
-  width: 70px;
+  width: 80px;
   height: 30px;
   background: none;
   margin-bottom: 5px;
@@ -48,23 +51,36 @@ const SCompleteBtn = styled.button`
   right: 0px;
 `
 
-interface IdocData {
-  title: string
-  content: string
-}
-
-const DocWrite = () => {
+const DocModify: React.FC = () => {
   const editorRef = useRef<Editor>(null)
   const navigate = useNavigate()
-  const [docData, setDocData] = useState<IdocData>({ title: '', content: '' })
+  const [docValue, setDocValue] = useRecoilState(AdocValue)
+  const [isModify, setIsModify] = useRecoilState(AisModify)
+  const [cookies, setCookies] = useCookies(['lastPageNum'])
+  const [initialValue, setInitialValue] = useState<DocValue>()
+  const [modifiedValue, setModifiedValue] = useState<DocValue>({
+    docNum: null,
+    docTitle: '',
+    docContent: '',
+    userName: '',
+    makeDate: '',
+    view: null,
+  })
+
+  useEffect(() => {
+    setModifiedValue(docValue)
+    setInitialValue(docValue)
+  }, [])
 
   const { status, data, error, refetch } = useQuery(
-    'writeDoc',
+    'modifyDoc',
     () =>
       axios.post(
-        `http://localhost:3001/document/writeDoc`,
+        `http://localhost:3001/document/updateDoc`,
         {
-          docData,
+          docNum: docValue.docNum,
+          docTitle: modifiedValue.docTitle,
+          docContent: modifiedValue.docContent,
         },
         { withCredentials: true },
       ),
@@ -72,11 +88,13 @@ const DocWrite = () => {
       enabled: false,
       onSuccess: (data) => {
         if (data.data.result === 0) {
-          console.log(data.data)
-          navigate(`/community/View/${data.data.last}`)
+          setIsModify(false)
         } else if (data.data.result === 1) alert('로그인부터 해주세요...')
-        else if (data.data.result === 2) alert('비밀번호 없음')
-        else alert('DB오류')
+        else if (data.data.result === 2) {
+          alert('작성자가 아니잖아요..')
+          setDocValue(initialValue as DocValue)
+          setIsModify(false)
+        } else alert('DB오류')
       },
     },
   )
@@ -86,17 +104,17 @@ const DocWrite = () => {
       <SDocHeader>
         <SDocListBtn
           onClick={() => {
-            navigate('/community/List/1')
+            setIsModify(false)
           }}
         >
-          ←글목록
+          ←수정취소
         </SDocListBtn>
       </SDocHeader>
       <STitle
-        value={docData.title}
+        value={modifiedValue.docTitle}
         placeholder="제목"
         onChange={(e) => {
-          setDocData((prev) => ({ ...prev, title: e.target.value }))
+          setModifiedValue((prev) => ({ ...prev, docTitle: e.target.value }))
         }}
       />
       <hr />
@@ -105,14 +123,14 @@ const DocWrite = () => {
         placeholder={'내용을 입력하세요'}
         height="700px"
         initialEditType="wysiwyg"
-        initialValue={' '}
+        initialValue={docValue.docContent}
         useCommandShortcut={true}
         plugins={[tableMergedCell, colorSyntax, chart]}
         viewer={true}
-        onChange={() => {
-          setDocData((prev) => ({
-            title: prev.title,
-            content: editorRef.current?.getInstance().getHTML() as string,
+        onChange={(e) => {
+          setModifiedValue((prev) => ({
+            ...prev,
+            docContent: editorRef.current?.getInstance().getHTML() as string,
           }))
         }}
         customHTMLRenderer={{
@@ -134,13 +152,18 @@ const DocWrite = () => {
       />
       <SCompleteBtn
         onClick={() => {
+          setDocValue((prev) => ({
+            ...prev,
+            docTitle: modifiedValue.docTitle,
+            docContent: modifiedValue.docContent,
+          }))
           refetch()
         }}
       >
-        작성완료!
+        수정완료!
       </SCompleteBtn>
     </SViewMain>
   )
 }
 
-export default DocWrite
+export default DocModify

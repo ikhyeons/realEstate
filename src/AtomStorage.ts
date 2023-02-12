@@ -45,4 +45,21 @@ export const AselectedPoint = atom({
   default: { lat: 35.1807266, lng: 128.0940397 },
 })
 
+export const AisModify = atom<boolean>({
+  key: 'doc/docModify',
+  default: false,
+})
+
+export const AdocValue = atom<DocValue>({
+  key: 'doc/docValue',
+  default: {
+    docNum: null,
+    docTitle: '',
+    docContent: '',
+    userName: '',
+    makeDate: '',
+    view: null,
+  },
+})
+
 export default ASelectedAddredss

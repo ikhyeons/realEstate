@@ -29,6 +29,15 @@ declare global {
     zonecode: string
     detail: string
   }
+
+  interface DocValue {
+    docNum: number | null
+    docTitle: string | ''
+    docContent: string | ''
+    userName: string | ''
+    makeDate: string | ''
+    view: number | null
+  }
 }
 
 export = {}

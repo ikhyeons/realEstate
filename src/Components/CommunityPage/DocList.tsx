@@ -76,7 +76,7 @@ const DocList: React.FC = () => {
   const [c, s, r] = useCookies(['lastPageNum'])
 
   const [docList, setDocList] = useState([
-    { docNum: '', docTitle: '', makeDate: '', docWriter: '', view: '' },
+    { docNum: '', docTitle: '', makeDate: '', userName: '', view: '' },
   ])
   const { status, data, error, refetch } = useQuery(
     ['readDocList', pageNum],
@@ -125,17 +125,17 @@ const DocList: React.FC = () => {
       <hr style={{ margin: '5px 0' }} />
       <SOl>
         {docList.map((data, i) => (
-          <SLi>
+          <SLi key={i}>
             <SNum>{data.docNum}</SNum>
             <STitle
               onClick={() => {
-                navigate('/community/View/1')
+                navigate(`/community/View/${data.docNum}`)
               }}
             >
               {data.docTitle}
             </STitle>
             <SDate>{data.makeDate}</SDate>
-            <SWriter>{data.docWriter}</SWriter>
+            <SWriter>{data.userName}</SWriter>
             <SView>{data.view}</SView>
           </SLi>
         ))}

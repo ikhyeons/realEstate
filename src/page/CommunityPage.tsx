@@ -5,6 +5,7 @@ import DocList from '../Components/CommunityPage/DocList'
 import DocView from '../Components/CommunityPage/DocView'
 import DocWrite from '../Components/CommunityPage/DocWrite'
 import { Route, Routes } from 'react-router-dom'
+import DocModify from '../Components/CommunityPage/DocModify'
 
 const SCommunity = styled.div`
   display: flex;
@@ -50,6 +51,7 @@ const CommunityPage: React.FC = () => {
             <Route path="/List/" element={<DocList />} />
             <Route path="/View/:docNum" element={<DocView />} />
             <Route path="/Write" element={<DocWrite />} />
+            <Route path="/Modify" element={<DocModify />} />
           </Routes>
         </Smain>
       </SCommunity>
