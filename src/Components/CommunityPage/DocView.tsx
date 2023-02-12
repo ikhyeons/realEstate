@@ -47,8 +47,10 @@ const SViewMain = styled.div`
 
 const STitle = styled.div`
   font-weight: bold;
-  font-size: 34px;
+  font-size: 28px;
   align-items: end;
+  padding: 4px;
+  transform: translateY(3px);
 `
 
 const SDate = styled.span`
@@ -59,7 +61,6 @@ const SDate = styled.span`
 
 const SContent = styled.div`
   padding: 5px;
-  font-size: 17px;
   min-height: 500px;
 `
 

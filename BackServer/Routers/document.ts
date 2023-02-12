@@ -134,6 +134,7 @@ router.post('/updateDoc', async (req: Request, res: Response) => {
     const docNum = req.body.docNum //글 번호
     const title = req.body.docTitle // 제목
     const content = req.body.docContent // 내용
+    console.log(content)
     const [
       data,
     ]: any = await connection.query(
@@ -183,10 +184,8 @@ router.post('/deleteDoc', async (req: Request, res: Response) => {
       [docNum],
     )
 
-    console.log(data[0].docWriter)
     if (data[0].docWriter === req.session.Uid) {
       try {
-        console.log('this')
         //데이터를 입력하는 쿼리
         await connection.query('UPDATE document SET del = 1 WHERE docNum = ?', [
           docNum,

@@ -34,9 +34,9 @@ const SViewMain = styled.div`
 
 const STitle = styled.input`
   font-weight: bold;
-  font-size: 20px;
+  font-size: 28px;
   width: 100%;
-  margin: 5px 0;
+  margin: 5px 0 10px 0;
   height: 40px;
   padding: 5px;
 `
@@ -134,7 +134,15 @@ const DocWrite = () => {
       />
       <SCompleteBtn
         onClick={() => {
-          refetch()
+          if (
+            docData.title === '' ||
+            docData.content === '' ||
+            docData.content === '<p><br></p>'
+          ) {
+            alert('제목이나 내용은 공백이 될 수 없습니다.')
+          } else {
+            refetch()
+          }
         }}
       >
         작성완료!

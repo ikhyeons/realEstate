@@ -37,11 +37,12 @@ const SViewMain = styled.div`
 
 const STitle = styled.input`
   font-weight: bold;
-  font-size: 20px;
+  font-size: 28px;
   width: 100%;
-  margin: 5px 0;
+  margin: 5px 0 10px 0;
   height: 40px;
-  padding: 5px;
+  padding: 2px;
+  font-family: none;
 `
 
 const SCompleteBtn = styled.button`
@@ -157,7 +158,15 @@ const DocModify: React.FC = () => {
             docTitle: modifiedValue.docTitle,
             docContent: modifiedValue.docContent,
           }))
-          refetch()
+          if (
+            modifiedValue.docTitle === '' ||
+            modifiedValue.docContent === '' ||
+            modifiedValue.docContent === '<p><br></p>'
+          ) {
+            alert('제목이나 내용은 공백이 될 수 없습니다.')
+          } else {
+            refetch()
+          }
         }}
       >
         수정완료!
