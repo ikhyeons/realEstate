@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { useNavigate, useParams } from 'react-router-dom'
-import RippleMain from './Ripple/RippleMain'
+import RippleMain from './Ripple/ReplyMain'
 import { useCookies } from 'react-cookie'
 import axios from 'axios'
 import { useQuery, useQueries } from 'react-query'
@@ -61,7 +61,7 @@ const SDate = styled.span`
 
 const SContent = styled.div`
   padding: 5px;
-  min-height: 500px;
+  min-height: 650px;
 `
 
 const SWriter = styled.span`

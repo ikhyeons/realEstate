@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Routes, useNavigate, useParams, Route } from 'react-router-dom'
-import { useQuery, useQueries } from 'react-query'
+import { useQuery, useMutation } from 'react-query'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import PageNavigationBar from './PageNavigationBar'
@@ -109,6 +109,12 @@ const DocList: React.FC = () => {
     },
   )
 
+  const countView = useMutation((docNum: string) =>
+    axios.post(`http://localhost:3001/document/countView`, {
+      docNum: docNum,
+    }),
+  )
+
   useEffect(() => {
     s('lastPageNum', pageNum)
   }, [pageNum])
@@ -129,6 +135,7 @@ const DocList: React.FC = () => {
             <SNum>{data.docNum}</SNum>
             <STitle
               onClick={() => {
+                countView.mutate(data.docNum)
                 navigate(`/community/View/${data.docNum}`)
               }}
             >
