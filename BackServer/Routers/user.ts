@@ -43,7 +43,7 @@ router.post('/join', async (req: Request, res: Response) => {
     } else {
       //만약 데이터가 있으면 result 1
       await connection.query(
-        'insert into user values (default, ?, ?, ?, ?, ?, default, null, null, null, null)',
+        'insert into user values (default, ?, ?, ?, ?, ?, default, null, null, null, null, null)',
         [userName, userID, password, address, detail],
       )
       res.send({ result: 0 })
@@ -64,15 +64,17 @@ router.post('/join', async (req: Request, res: Response) => {
 
 //유저 정보 라우팅
 router.get('/readUserInfo', async (req: Request, res: Response) => {
-  //const userNum = session.id // 유저번호는 세션에서 가져옴
+  const userNum = req.session.Uid // 유저번호는 세션에서 가져옴
   //db연결을 위해 pool에서 커넥션을 대여함
   if (req.session.isLogin) {
     const connection = await getConnection()
     try {
       //데이터를 입력하는 쿼리
-      const [data] = await connection.query(
-        'select * from user where userNum = ?',
-        [],
+      const [
+        data,
+      ] = await connection.query(
+        'select userName, userAddress, roomDate, roomDeposit, roomMonthly, roomDoc, roomAddress, isRelease from user where userNum = ?',
+        [userNum],
       )
       //데이터 쿼리 종료 후 대여한 커넥션을 반납함
       connection.release()

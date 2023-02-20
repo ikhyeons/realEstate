@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import styled from 'styled-components'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
 import { useCookies } from 'react-cookie'
 
@@ -47,17 +47,20 @@ const ProfileBtn = () => {
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
   const [cookies, setCookies] = useCookies(['isLogin'])
-  const { status, data, error, refetch } = useQuery(
-    'logout',
+  const [first, setFirst] = useState<string>('')
+
+  const logOut = useMutation(
     () =>
       axios.post(
         `http://localhost:3001/session/logout`,
         {},
-        { withCredentials: true },
+        {
+          withCredentials: true,
+        },
       ),
     {
-      enabled: false,
       onSuccess: (data) => {
+        console.log(data)
         if (data.data.result === 0) {
           setCookies('isLogin', 'false')
         } else if (data.data.result === 1)
@@ -66,6 +69,20 @@ const ProfileBtn = () => {
       },
     },
   )
+
+  const { status, error, data, refetch } = useQuery(
+    ['readUserInfo'],
+    () =>
+      axios.get(`http://localhost:3001/user/readUserInfo`, {
+        withCredentials: true,
+      }),
+    {
+      onSuccess: (data: any) => {
+        setFirst(data.data.data[0].userName[0])
+      },
+    },
+  )
+
   return (
     <>
       <SProfile
@@ -79,7 +96,7 @@ const ProfileBtn = () => {
           ) /*isPopOpen은 팝업창을 열림, 닫음을 결정함, 이전값이 열림이면 닫힘으로, 닫힘이면 열림으로*/
         }}
       >
-        성
+        {first}
       </SProfile>
       {isPopOpen === true ? (
         <Popover /*로그인 버튼 클릭 시 나오는 팝업 mui*/
@@ -100,7 +117,7 @@ const ProfileBtn = () => {
             <SChangeMyInfo>정보수정</SChangeMyInfo>
             <SLogout
               onClick={() => {
-                refetch()
+                logOut.mutate()
               }}
             >
               로그아웃

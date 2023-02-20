@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
+import { useQueries, useMutation, useQueryClient } from 'react-query'
+import { useRecoilState } from 'recoil'
+import { ARIsModify } from '../../../../../AtomStorage'
 
 const Sform = styled.form``
 
@@ -89,14 +92,15 @@ const SContent = styled.textarea`
   resize: none;
   font-family: none;
   font-size: 16px;
+  width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.1);
   :hover {
     background: rgba(0, 0, 0, 0.1);
   }
 `
 
-let now = new Date() // 현재 날짜 및 시간
-let year = now.getFullYear() // 연도
+const now = new Date() // 현재 날짜 및 시간
+const year = now.getFullYear() // 연도
 
 const ReleaseRoomModify = () => {
   const Month: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -119,15 +123,19 @@ const ReleaseRoomModify = () => {
     '침대',
     '싱크대',
   ]
-  const [startYear, setStartYear] = useState('')
-  const [startMonth, setStartMonth] = useState('')
-  const [endYear, setEndYear] = useState('')
-  const [endMonth, setEndMonth] = useState('')
+  const [startYear, setStartYear] = useState(String(year)) //시작년
+  const [startMonth, setStartMonth] = useState('1') //시작월
   const [options, setOptions] = useState('')
-  const [selectedOption, setSelectedOption] = useState<string[]>([])
+  const [selectedOption, setSelectedOption] = useState<string[]>([]) // 선택된 옵션들
   const [formOutData, setFormOutData] = useState<FormData>()
   const [nowImage, setNowImage] = useState<string>('')
   const [inputImages, setInputImages] = useState<string[]>([])
+  const [address, setAddress] = useState<string>('')
+  const [deposit, setDeposit] = useState<string>('')
+  const [monthly, setMonthly] = useState<string>('')
+  const [doc, setDoc] = useState<string>('')
+  const [isModify, setIsModify] = useRecoilState(ARIsModify)
+  const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
 
   const handleChangeFile = (e: any) => {
     if (e.target.files.length) {
@@ -155,18 +163,32 @@ const ReleaseRoomModify = () => {
     }
   }
 
-  const onClickF = async (e: any) => {
-    e.preventDefault()
-
-    await axios
-      .post('http://localhost:3001/releaseRoom/saveImg', formOutData, {
-        headers: { 'content-type': 'multipart/form-data' },
-        withCredentials: true,
-      })
-      .then((data) => {
-        console.log(data)
-      })
-  }
+  const modifyRoomRelease = useMutation(
+    () =>
+      axios.post(
+        'http://localhost:3001/releaseRoom/setRoomContent',
+        {
+          ...formOutData,
+          roomYear: startYear,
+          roomMonth: startMonth,
+          address: address,
+          deposit: deposit,
+          monthly: monthly,
+          options: selectedOption,
+          doc: doc,
+        },
+        {
+          headers: { 'content-type': 'multipart/form-data' },
+          withCredentials: true,
+        },
+      ),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['readUserInfo']) // queryKey 유효성 제거
+        setIsModify(false)
+      },
+    },
+  )
 
   useEffect(() => {
     setNowImage(inputImages[0])
@@ -177,12 +199,26 @@ const ReleaseRoomModify = () => {
       <hr />
       <SInfoMain>
         <SInfoLeft>
-          <SMainImg src={`${inputImages[0]}`} />
+          <SMainImg src={`${inputImages[0]}`} alt={'미입력'} />
         </SInfoLeft>
         <SInfoRight>
           <div>
-            가격 : <SPayInput placeholder="보증금" /> /{' '}
-            <SPayInput placeholder="월세" />
+            가격 :{' '}
+            <SPayInput
+              placeholder="보증금"
+              value={deposit}
+              onChange={(e) => {
+                setDeposit(e.target.value)
+              }}
+            />{' '}
+            /{' '}
+            <SPayInput
+              placeholder="월세"
+              value={monthly}
+              onChange={(e) => {
+                setMonthly(e.target.value)
+              }}
+            />
           </div>
           <div>
             기간 :{' '}
@@ -210,34 +246,15 @@ const ReleaseRoomModify = () => {
                 <option key={i}>{data}</option>
               ))}
             </select>{' '}
-            ~{' '}
-            <select
-              value={endYear}
-              onChange={(e) => {
-                setEndYear(e.target.value)
-              }}
-              name="endYear"
-              id=""
-            >
-              {Year.map((data, i) => (
-                <option key={i}>{data}</option>
-              ))}
-            </select>
-            <select
-              value={endMonth}
-              onChange={(e) => {
-                setEndMonth(e.target.value)
-              }}
-              name="endMonth"
-              id=""
-            >
-              {Month.map((data, i) => (
-                <option key={i}>{data}</option>
-              ))}
-            </select>
           </div>
           <div>
-            주소 : <SAddressInput />
+            주소 :{' '}
+            <SAddressInput
+              value={address}
+              onChange={(e) => {
+                setAddress(e.target.value)
+              }}
+            />
           </div>
           <div>
             옵션 :{' '}
@@ -278,7 +295,9 @@ const ReleaseRoomModify = () => {
               id="imageInput"
               type="file"
               multiple
-              onChange={handleChangeFile}
+              onChange={(e) => {
+                handleChangeFile(e)
+              }}
             />
           </SPictureList>
           {inputImages.map((data, i) => (
@@ -288,16 +307,27 @@ const ReleaseRoomModify = () => {
                 setNowImage(data)
               }}
             >
-              <SInnerPicture key={i} src={`${data}`} />
+              <SInnerPicture key={i} src={`${data}`} alt={'미입력'} />
             </SPictureList>
           ))}
         </SPictureLists>
       </SPictures>
       <hr />
-      <SContent placeholder="추가 내용" />
+      <SContent
+        placeholder="추가 내용"
+        value={doc}
+        onChange={(e) => {
+          setDoc(e.target.value)
+        }}
+      />
       <button
         onClick={(e) => {
-          onClickF(e)
+          e.preventDefault()
+          if (!(deposit && monthly && year && monthly && address))
+            alert('공란이 있습니다.')
+          else {
+            modifyRoomRelease.mutate()
+          }
         }}
       >
         저장

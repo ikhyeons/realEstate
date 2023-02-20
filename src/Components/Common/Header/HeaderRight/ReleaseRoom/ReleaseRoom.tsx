@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import styled from 'styled-components'
+import { useQueries, useMutation, useQueryClient } from 'react-query'
+import axios from 'axios'
 
 import Button from '@mui/material/Button'
 import Popover from '@mui/material/Popover'
@@ -8,14 +10,16 @@ import Switch from '@mui/material/Switch'
 
 import ReleaseRoomTrue from './ReleaseRoomTrue'
 import ReleaseRoomModify from './ReleaseRoomModify'
+import { useRecoilState } from 'recoil'
+import { ARIsModify } from '../../../../../AtomStorage'
 
 const ReleaseRoom = () => {
+  const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
   const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
-  const [isRelease, setIsRelease] = useState(true)
-  const [isMOdify, setIsModify] = useState(false)
+  const [isModify, setIsModify] = useRecoilState(ARIsModify)
 
   const dropdownSX = {
     padding: '6px',
@@ -28,6 +32,53 @@ const ReleaseRoom = () => {
     display: flex;
     justify-content: space-between;
   `
+
+  const res = useQueries([
+    {
+      queryKey: ['readOptionAndImgs'],
+      queryFn: () =>
+        axios.get(`http://localhost:3001/releaseRoom/readRoomOptionAndImgs`, {
+          withCredentials: true,
+        }),
+      onSuccess: (data: any) => {
+        console.log(data)
+      },
+    },
+    {
+      queryKey: ['readUserInfo'],
+      queryFn: () =>
+        axios.get(`http://localhost:3001/user/readUserInfo`, {
+          withCredentials: true,
+        }),
+    },
+  ])
+
+  const setRelease = useMutation(
+    (value: boolean) => {
+      if (value === false) {
+        return axios.post(
+          `http://localhost:3001/releaseRoom/setRelease`,
+          {},
+          {
+            withCredentials: true,
+          },
+        )
+      } else {
+        return axios.post(
+          `http://localhost:3001/releaseRoom/setUnRelease`,
+          {},
+          {
+            withCredentials: true,
+          },
+        )
+      }
+    },
+    {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(['readUserInfo']) // queryKey 유효성 제거
+      },
+    },
+  )
 
   return (
     <>
@@ -73,34 +124,30 @@ const ReleaseRoom = () => {
             <div>
               방을 내놓으시겠습니까?
               <Switch
-                checked={isRelease}
+                checked={!!res[1].data?.data.data[0].isRelease}
                 onChange={() => {
-                  setIsRelease((prev) => !prev)
+                  setRelease.mutate(!!res[1].data?.data.data[0].isRelease)
+                  setIsModify(() => {
+                    if (!!res[1].data?.data.data[0].isRelease === false)
+                      return false
+                    else return true
+                  })
                 }}
               />
             </div>
-            {isRelease === true ? (
-              isMOdify === true ? (
-                <button
-                  onClick={() => {
-                    setIsModify(false)
-                  }}
-                >
-                  저장
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setIsModify(true)
-                  }}
-                >
-                  수정
-                </button>
-              )
+            {isModify === false &&
+            !!res[1].data?.data.data[0].isRelease === true ? (
+              <button
+                onClick={() => {
+                  setIsModify(true)
+                }}
+              >
+                수정
+              </button>
             ) : null}
           </STop>
-          {isRelease === true ? (
-            isMOdify === true ? (
+          {!!res[1].data?.data.data[0].isRelease === true ? (
+            isModify === true ? (
               <ReleaseRoomModify />
             ) : (
               <ReleaseRoomTrue />

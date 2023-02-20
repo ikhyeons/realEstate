@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import { useQuery } from 'react-query'
+import axios from 'axios'
 
 const SInfoMain = styled.div`
   margin-top: 5px;
@@ -38,18 +40,36 @@ const SInnerPicture = styled.img`
 const SContent = styled.div``
 
 const ReleaseRoomTrue = () => {
+  const { status, error, data, refetch } = useQuery(
+    ['readUserInfo'],
+    () =>
+      axios.get(`http://localhost:3001/user/readUserInfo`, {
+        withCredentials: true,
+      }),
+    {
+      enabled: false,
+    },
+  )
+
   return (
     <>
       <hr />
       <SInfoMain>
         <SInfoLeft>
-          <SMainImg src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
+          <SMainImg
+            src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg"
+            alt="대체 텍스트"
+          />
         </SInfoLeft>
         <SInfoRight>
-          <p>기간 ~ 기간</p>
-          <p>가격 / 가격</p>
-          <p>주소</p>
-          <p>옵션</p>
+          <p>{`기간 : ${data?.data.data[0].roomDate + ' 부터' || '미입력'}`}</p>
+          <p>{`가격 : ${
+            data?.data.data[0].roomDeposit +
+              '/' +
+              data?.data.data[0].roomMonthly || '미입력'
+          }`}</p>
+          <p>{`주소 : ${data?.data.data[0].roomAddress || '미입력'}`}</p>
+          <p>{`옵션 : ${data?.data.data[0].roomOption || '미입력'}`}</p>
         </SInfoRight>
       </SInfoMain>
       <hr />
@@ -65,7 +85,7 @@ const ReleaseRoomTrue = () => {
         </SPictureList>
       </SPictures>
       <hr />
-      <SContent>적당한 내용 적는 곳</SContent>
+      <SContent>${data?.data.data[0].roomDoc || ''}`</SContent>
     </>
   )
 }

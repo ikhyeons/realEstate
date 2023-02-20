@@ -62,4 +62,9 @@ export const AdocValue = atom<DocValue>({
   },
 })
 
+export const ARIsModify = atom<boolean>({
+  key: 'roomRelease/roomModify',
+  default: false,
+})
+
 export default ASelectedAddredss

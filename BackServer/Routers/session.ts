@@ -39,7 +39,8 @@ router.post('/login', async (req: Request, res: Response) => {
 })
 
 router.post('/logout', (req: Request, res: Response) => {
-  if (req.session.isLogin == true) {
+  console.log(req.session.isLogin)
+  if (req.session.isLogin === true) {
     req.session.destroy((err) => {
       console.log('정상 로그아웃!')
       res.clearCookie('connect.sid')
