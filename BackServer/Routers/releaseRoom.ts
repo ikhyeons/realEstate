@@ -27,9 +27,12 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
   const roomDeposit = req.body.deposit // 입력된 보증금
   const roomMonthly = req.body.monthly // 입력된 보증금
   const address = req.body.address // 입력된 주소
+  const detailAddress = req.body.detail // 입력된 주소 상세
   const year = req.body.roomYear // 입력된 기간
   const month = req.body.roomMonth // 입력된 기간
   const doc = req.body.doc // 입력된 글
+  const lng = req.body.lng // 위경도
+  const lat = req.body.lat // 위경도
   const options = req.body.options // 입력된 방 옵션들(배열)
 
   //db연결을 위해 pool에서 커넥션을 대여함
@@ -46,8 +49,18 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
       // })
       //옵션을 제외한 나머지 데이터를 입력하는 쿼리
       await connection.query(
-        'UPDATE user SET isRelease = 1, roomDeposit = ?, roomMonthly = ?, roomAddress = ?, roomDate = ?, roomDoc = ?  WHERE userNum = ?',
-        [roomDeposit, roomMonthly, address, `${year}.${month}`, doc, userNum],
+        'UPDATE user SET isRelease = 1, roomDeposit = ?, roomMonthly = ?, roomDetailAddress = ?, roomDate = ?, roomDoc = ?, roomAddress = ?, roomLng = ?, roomLat = ? WHERE userNum = ?',
+        [
+          roomDeposit,
+          roomMonthly,
+          detailAddress,
+          `${year}.${month}`,
+          doc,
+          address,
+          lng,
+          lat,
+          userNum,
+        ],
       )
 
       //데이터 쿼리 종료 후 대여한 커넥션을 반납함

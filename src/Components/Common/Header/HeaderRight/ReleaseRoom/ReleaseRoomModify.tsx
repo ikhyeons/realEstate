@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import axios from 'axios'
 import { useQueries, useMutation, useQueryClient } from 'react-query'
 import { useRecoilState } from 'recoil'
-import { ARIsModify } from '../../../../../AtomStorage'
+import { ARIsModify, AroomModifyAddressAndL } from '../../../../../AtomStorage'
+import AddressSelect from './AddressSelect'
 
 const Sform = styled.form``
 
@@ -99,6 +100,10 @@ const SContent = styled.textarea`
   }
 `
 
+const SAddDiv = styled.div`
+  position: relative;
+`
+
 const now = new Date() // 현재 날짜 및 시간
 const year = now.getFullYear() // 연도
 
@@ -130,7 +135,8 @@ const ReleaseRoomModify = () => {
   const [formOutData, setFormOutData] = useState<FormData>()
   const [nowImage, setNowImage] = useState<string>('')
   const [inputImages, setInputImages] = useState<string[]>([])
-  const [address, setAddress] = useState<string>('')
+  const [addressL, setAddress] = useRecoilState<any>(AroomModifyAddressAndL)
+  const [detailAddress, setDetailAddress] = useState<string>('')
   const [deposit, setDeposit] = useState<string>('')
   const [monthly, setMonthly] = useState<string>('')
   const [doc, setDoc] = useState<string>('')
@@ -172,11 +178,14 @@ const ReleaseRoomModify = () => {
         {
           roomYear: startYear,
           roomMonth: startMonth,
-          address: address,
           deposit: deposit,
           monthly: monthly,
           options: selectedOption,
           doc: doc,
+          lat: addressL.lat,
+          lng: addressL.lng,
+          address: addressL.address,
+          detail: detailAddress,
         },
         {
           withCredentials: true,
@@ -263,12 +272,18 @@ const ReleaseRoomModify = () => {
               ))}
             </select>{' '}
           </div>
+          <SAddDiv>
+            주소검색 : <AddressSelect />
+          </SAddDiv>
           <div>
-            주소 :{' '}
+            주소 : <SAddressInput value={addressL.address} />
+          </div>
+          <div>
+            상세주소 :{' '}
             <SAddressInput
-              value={address}
+              value={detailAddress}
               onChange={(e) => {
-                setAddress(e.target.value)
+                setDetailAddress(e.target.value)
               }}
             />
           </div>
@@ -339,7 +354,7 @@ const ReleaseRoomModify = () => {
       <button
         onClick={(e) => {
           e.preventDefault()
-          if (!(deposit && monthly && year && monthly && address))
+          if (!(deposit && monthly && year && monthly && detailAddress))
             alert('공란이 있습니다.')
           else {
             modifyRoomRelease.mutate()

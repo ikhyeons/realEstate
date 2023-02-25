@@ -79,24 +79,32 @@ const ReleaseRoomTrue = () => {
               '/' +
               data?.data.data[0].roomMonthly || '미입력'
           }`}</p>
-          <p>{`주소 : ${data?.data.data[0].roomAddress || '미입력'}`}</p>
+          <p>{`주소 : ${
+            data?.data.data[0].roomAddress +
+              ' ' +
+              data?.data.data[0].roomDetailAddress || '미입력'
+          }`}</p>
           <p>{`옵션 : ${data?.data.data[0].roomOption || '미입력'}`}</p>
         </SInfoRight>
       </SInfoMain>
       <hr />
       <SPictures>
-        <SPictureView
-          src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
-        />
+        {currentImg ? (
+          <SPictureView
+            src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
+          />
+        ) : null}
         <SPictureList>
           {data?.data.imgs.map((data: any, i: number) => (
             <SPictureLists key={i}>
-              <SInnerPicture
-                onClick={() => {
-                  setCurrentImg(data.pictureAddress)
-                }}
-                src={`http://localhost:3001/releaseRoom/readImg/${data.pictureAddress}`}
-              />
+              {data ? (
+                <SInnerPicture
+                  onClick={() => {
+                    setCurrentImg(data.pictureAddress)
+                  }}
+                  src={`http://localhost:3001/releaseRoom/readImg/${data.pictureAddress}`}
+                />
+              ) : null}
             </SPictureLists>
           ))}
         </SPictureList>

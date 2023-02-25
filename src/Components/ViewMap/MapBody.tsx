@@ -7,17 +7,38 @@ import {
 } from 'react-kakao-maps-sdk'
 import { AIsInfoOn } from '../../AtomStorage'
 import { useRecoilState } from 'recoil'
-import { AselectedPoint } from '../../AtomStorage'
+import { AselectedPoint, AcurrentRoomId } from '../../AtomStorage'
+import { useQuery } from 'react-query'
+import axios from 'axios'
 
 const MapBody: React.FC = () => {
-  const [markerData, setMakerData] = useState([
-    { id: 1, position: { lat: 35.1807266, lng: 128.0940397 } },
-    { id: 2, position: { lat: 35.1817377, lng: 128.0940397 } },
-    { id: 3, position: { lat: 35.1827488, lng: 128.0940397 } },
-  ])
+  const readRooms = useQuery(
+    'modifyDoc',
+    () => axios.get(`http://localhost:3001/user/readRooms`),
+    {
+      onSuccess: (data) => {
+        setMakerData(
+          data.data.data.map((data: any, i: number) => ({
+            id: data.userNum,
+            position: { lat: data.roomLat, lng: data.roomLng },
+          })),
+        )
+      },
+    },
+  )
+
+  const [markerData, setMakerData] = useState<
+    {
+      id: string
+      position: { lat: number; lng: number }
+    }[]
+  >([])
 
   const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
   const [selectedPoint, setSelectedPoint] = useRecoilState(AselectedPoint)
+  const [currentRoomId, setCurrentRoomId] = useRecoilState<string>(
+    AcurrentRoomId,
+  )
 
   useEffect(() => {
     console.log(selectedPoint)
@@ -43,7 +64,7 @@ const MapBody: React.FC = () => {
             key={data.id}
             clickable={true}
             onClick={(e) => {
-              console.log(data.id)
+              setCurrentRoomId(String(data.id))
               setIsInfoOn(true)
             }}
             position={data.position}

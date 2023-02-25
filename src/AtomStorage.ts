@@ -72,4 +72,18 @@ export const AcurrentImg = atom<string>({
   default: '',
 })
 
+export const AroomModifyAddressAndL = atom({
+  key: 'roomRelease/modifyAddressAL',
+  default: {
+    address: '',
+    lng: '',
+    lat: '',
+  },
+})
+
+export const AcurrentRoomId = atom({
+  key: 'viewMap/currentRoomId',
+  default: '',
+})
+
 export default ASelectedAddredss
