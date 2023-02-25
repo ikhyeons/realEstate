@@ -1,6 +1,9 @@
 import styled from 'styled-components'
 import { useQuery } from 'react-query'
 import axios from 'axios'
+import { useState } from 'react'
+import { useRecoilState } from 'recoil'
+import { AcurrentImg } from '../../../../../AtomStorage'
 
 const SInfoMain = styled.div`
   margin-top: 5px;
@@ -32,14 +35,18 @@ const SPictureList = styled.ol`
 const SPictureLists = styled.li`
   height: 100%;
   margin-right: 5px;
+  list-style: none;
 `
 const SInnerPicture = styled.img`
   height: 100%;
+  width: 200px;
 `
 
 const SContent = styled.div``
 
 const ReleaseRoomTrue = () => {
+  const [currentImg, setCurrentImg] = useRecoilState(AcurrentImg)
+
   const { status, error, data, refetch } = useQuery(
     ['readUserInfo'],
     () =>
@@ -57,7 +64,11 @@ const ReleaseRoomTrue = () => {
       <SInfoMain>
         <SInfoLeft>
           <SMainImg
-            src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg"
+            src={
+              data
+                ? `http://localhost:3001/releaseRoom/readImg/${data?.data.imgs[0].pictureAddress}`
+                : undefined
+            }
             alt="대체 텍스트"
           />
         </SInfoLeft>
@@ -74,18 +85,24 @@ const ReleaseRoomTrue = () => {
       </SInfoMain>
       <hr />
       <SPictures>
-        <SPictureView src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
+        <SPictureView
+          src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
+        />
         <SPictureList>
-          <SPictureLists>
-            <SInnerPicture src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
-          </SPictureLists>
-          <SPictureLists>
-            <SInnerPicture src="https://cdn4.buysellads.net/uu/1/127574/1668535591-SStk2-1.jpg" />
-          </SPictureLists>
+          {data?.data.imgs.map((data: any, i: number) => (
+            <SPictureLists key={i}>
+              <SInnerPicture
+                onClick={() => {
+                  setCurrentImg(data.pictureAddress)
+                }}
+                src={`http://localhost:3001/releaseRoom/readImg/${data.pictureAddress}`}
+              />
+            </SPictureLists>
+          ))}
         </SPictureList>
       </SPictures>
       <hr />
-      <SContent>${data?.data.data[0].roomDoc || ''}`</SContent>
+      <SContent>{data?.data.data[0].roomDoc || ''}</SContent>
     </>
   )
 }

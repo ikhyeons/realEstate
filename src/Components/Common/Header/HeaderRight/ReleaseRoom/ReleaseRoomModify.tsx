@@ -136,6 +136,8 @@ const ReleaseRoomModify = () => {
   const [doc, setDoc] = useState<string>('')
   const [isModify, setIsModify] = useRecoilState(ARIsModify)
   const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
+  const [imgSuccess, setImgSuccess] = useState(false)
+  const [dataSuccess, setDataSuccess] = useState(false)
 
   const handleChangeFile = (e: any) => {
     if (e.target.files.length) {
@@ -168,7 +170,6 @@ const ReleaseRoomModify = () => {
       axios.post(
         'http://localhost:3001/releaseRoom/setRoomContent',
         {
-          ...formOutData,
           roomYear: startYear,
           roomMonth: startMonth,
           address: address,
@@ -178,14 +179,29 @@ const ReleaseRoomModify = () => {
           doc: doc,
         },
         {
-          headers: { 'content-type': 'multipart/form-data' },
           withCredentials: true,
         },
       ),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['readUserInfo']) // queryKey 유효성 제거
-        setIsModify(false)
+        setDataSuccess(true)
+        if (imgSuccess) setIsModify(false)
+      },
+    },
+  )
+
+  const modifyRoomReleaseImg = useMutation(
+    () =>
+      axios.post('http://localhost:3001/releaseRoom/uploadImgs', formOutData, {
+        headers: { 'content-type': 'multipart/form-data' },
+        withCredentials: true,
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['readUserInfo']) // queryKey 유효성 제거
+        setImgSuccess(true)
+        if (dataSuccess) setIsModify(false)
       },
     },
   )
@@ -327,6 +343,7 @@ const ReleaseRoomModify = () => {
             alert('공란이 있습니다.')
           else {
             modifyRoomRelease.mutate()
+            modifyRoomReleaseImg.mutate()
           }
         }}
       >

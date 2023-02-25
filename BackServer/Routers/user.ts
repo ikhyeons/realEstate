@@ -76,10 +76,17 @@ router.get('/readUserInfo', async (req: Request, res: Response) => {
         'select userName, userAddress, roomDate, roomDeposit, roomMonthly, roomDoc, roomAddress, isRelease from user where userNum = ?',
         [userNum],
       )
+
+      const [
+        imgs,
+      ]: any = await connection.query(
+        'SELECT * FROM roomPicture WHERE userNum = ?',
+        [req.session.Uid],
+      )
       //데이터 쿼리 종료 후 대여한 커넥션을 반납함
       connection.release()
       //결과가 성공이면 result 0
-      res.send({ result: 0, data: data })
+      res.send({ result: 0, data: data, imgs: imgs })
     } catch (err) {
       //db에서 에러나 났을 경우 커넥션을 반납하고
       connection.release()

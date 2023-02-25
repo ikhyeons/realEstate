@@ -11,9 +11,10 @@ import Switch from '@mui/material/Switch'
 import ReleaseRoomTrue from './ReleaseRoomTrue'
 import ReleaseRoomModify from './ReleaseRoomModify'
 import { useRecoilState } from 'recoil'
-import { ARIsModify } from '../../../../../AtomStorage'
+import { AcurrentImg, ARIsModify } from '../../../../../AtomStorage'
 
 const ReleaseRoom = () => {
+  const [currentImg, setCurrentImg] = useRecoilState(AcurrentImg)
   const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -35,9 +36,9 @@ const ReleaseRoom = () => {
 
   const res = useQueries([
     {
-      queryKey: ['readOptionAndImgs'],
+      queryKey: ['readOption'],
       queryFn: () =>
-        axios.get(`http://localhost:3001/releaseRoom/readRoomOptionAndImgs`, {
+        axios.get(`http://localhost:3001/releaseRoom/readRoomOption`, {
           withCredentials: true,
         }),
       onSuccess: (data: any) => {
@@ -50,6 +51,9 @@ const ReleaseRoom = () => {
         axios.get(`http://localhost:3001/user/readUserInfo`, {
           withCredentials: true,
         }),
+      onSuccess: (data: any) => {
+        setCurrentImg(data.data.imgs[0].pictureAddress)
+      },
     },
   ])
 

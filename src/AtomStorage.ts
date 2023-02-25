@@ -67,4 +67,9 @@ export const ARIsModify = atom<boolean>({
   default: false,
 })
 
+export const AcurrentImg = atom<string>({
+  key: 'roomRelease/currentImg',
+  default: '',
+})
+
 export default ASelectedAddredss
