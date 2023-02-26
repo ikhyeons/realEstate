@@ -15,7 +15,8 @@ const SInfoModalBack = styled.div`
 `
 
 const SInfoMain = styled.div`
-  width: min(800px, 45%);
+  position: relative;
+  width: min(900px, 45%);
   height: 100%;
   align-items: center;
   background: white;
@@ -35,15 +36,15 @@ const SInfoMain = styled.div`
   }
 `
 
-const SReq = styled.div`m
-  width: calc(100%);
+const SReq = styled.div`
+  width: 98.5%;
   background: yellow;
+  position: absolute;
   bottom: 0px;
   height: 35px;
   text-align: center;
   font-weight: bold;
   font-size: 25px;
-  margin: 10px 0;
 `
 
 const InfoModalMain = () => {

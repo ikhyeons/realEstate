@@ -8,7 +8,7 @@ const SSideList = styled.ul`
   position: absolute;
   z-index: 2;
   width: 23%;
-  min-width: 450px;
+  min-width: 440px;
   height: calc(100vh - 60px);
   background: rgba(255, 255, 255, 0.83);
 

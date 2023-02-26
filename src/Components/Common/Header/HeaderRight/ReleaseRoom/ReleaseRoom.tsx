@@ -34,6 +34,21 @@ const ReleaseRoom = () => {
     justify-content: space-between;
   `
 
+  const SOFdiv = styled.div<{ release: string }>`
+    color: ${(prop) =>
+      Number(prop.release) == 1 ? 'lightgreen' : 'lightgray'};
+    text-shadow: ${(prop) =>
+      Number(prop.release) == 1
+        ? '-1px 0 rgb(0, 150, 0), 0 1px rgb(0, 150, 0), 1px 0 rgb(0, 150, 0), 0 -1px rgb(0, 150, 0)'
+        : '-1px 0 rgb(130, 130, 130), 0 1px rgb(130, 130, 130), 1px 0 rgb(130, 130, 130), 0 -1px rgb(130, 130, 130)'};
+
+    border-radius: 50%;
+    width: 40px;
+    height: 33px;
+    font-size: 17px;
+    margin-left: 1px;
+  `
+
   const res = useQueries([
     {
       queryKey: ['readOption'],
@@ -46,7 +61,7 @@ const ReleaseRoom = () => {
       },
     },
     {
-      queryKey: ['readUserInfo'],
+      queryKey: ['readUserInfo', isPopOpen],
       queryFn: () =>
         axios.get(`http://localhost:3001/user/readUserInfo`, {
           withCredentials: true,
@@ -91,7 +106,7 @@ const ReleaseRoom = () => {
         sx={{
           fontSize: '18px',
           fontWeight: 'bold',
-          width: '120px',
+          width: '188px',
           background: '#FFD400',
           '&:hover': { background: '#DDDDDD' },
         }}
@@ -108,6 +123,11 @@ const ReleaseRoom = () => {
         }}
       >
         방내놓기
+        {Number(res[1].data?.data.data[0].isRelease) === 1 ? (
+          <SOFdiv release={res[1].data?.data.data[0].isRelease}>on</SOFdiv>
+        ) : (
+          <SOFdiv release={res[1].data?.data.data[0].isRelease}>off</SOFdiv>
+        )}
       </Button>
       <Popover /*로그인 버튼 클릭 시 나오는 팝업 mui*/
         sx={{ marginTop: '12px' }}

@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 const LoginBtnSX = {
   fontSize: '18px',
   fontWeight: 'bold',
-  width: '260px',
+  width: '270px',
   background: '#FFD400',
   '&:hover': { background: '#DDDDDD' },
 }

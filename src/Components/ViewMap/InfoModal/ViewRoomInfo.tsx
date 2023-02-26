@@ -10,16 +10,7 @@ const SInfoMain = styled.div`
   margin-bottom: 2px;
   display: flex;
 `
-const SInfoLeft = styled.div`
-  width: 30%;
-  margin-right: 5px;
-`
-const SMainImg = styled.img`
-  width: 100%;
-`
-const SInfoRight = styled.div`
-  width: 60%;
-`
+const SInfo = styled.div``
 const SPictures = styled.div`
   margin-top: 5px;
   margin-bottom: 5px;
@@ -69,7 +60,7 @@ const ViewRoomInfo = () => {
     <>
       <hr />
       <SInfoMain>
-        <SInfoRight>
+        <SInfo>
           <p>기간 : {data?.data.data[0].roomDate} 부터</p>
           <p>
             보증금/월세 : {data?.data.data[0].roomDeposit} /{' '}
@@ -82,7 +73,7 @@ const ViewRoomInfo = () => {
               data?.data.data[0].roomDetailAddress}
           </p>
           <p>옵션 : </p>
-        </SInfoRight>
+        </SInfo>
       </SInfoMain>
       <hr />
       <SPictures>

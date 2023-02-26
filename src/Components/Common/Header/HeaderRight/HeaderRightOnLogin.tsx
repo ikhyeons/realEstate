@@ -5,7 +5,7 @@ import ReleaseRoom from './ReleaseRoom/ReleaseRoom'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 const SLoginedDiv = styled.div`
-  width: 260px;
+  width: 270px;
   display: flex;
 `
 
