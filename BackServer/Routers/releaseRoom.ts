@@ -213,30 +213,25 @@ router.get('/readRoomOption', async (req: Request, res: Response) => {
 
 //방 옵션과 이미지 읽어오기
 router.get('/readImg/:fileName', async (req: Request, res: Response) => {
-  const userNum = req.session.Uid // 유저번호는 세션에서 가져옴
   const fileName = req.params.fileName
 
   //db연결을 위해 pool에서 커넥션을 대여함
-  if (req.session.isLogin) {
-    const connection = await getConnection()
-    try {
-      fileName
-      //데이터 쿼리 종료 후 대여한 커넥션을 반납함
-      connection.release()
-      //결과가 성공이면 result 0
-      res.sendFile(
-        `C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/uploadImgs/${fileName}`,
-      )
-    } catch (err) {
-      //db에서 에러나 났을 경우 커넥션을 반납하고
-      connection.release()
-      //에러로그를 출력함
-      console.log(err)
-      //프론트로 에러코드 result 3을 보냄
-      res.send({ result: 3 })
-    }
-  } else {
-    res.send({ result: 1 })
+  const connection = await getConnection()
+  try {
+    fileName
+    //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+    connection.release()
+    //결과가 성공이면 result 0
+    res.sendFile(
+      `C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/uploadImgs/${fileName}`,
+    )
+  } catch (err) {
+    //db에서 에러나 났을 경우 커넥션을 반납하고
+    connection.release()
+    //에러로그를 출력함
+    console.log(err)
+    //프론트로 에러코드 result 3을 보냄
+    res.send({ result: 3 })
   }
 })
 

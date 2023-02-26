@@ -55,7 +55,7 @@ const HeaderLeft: React.FC = () => {
     year + 7,
     year + 8,
   ]
-  const Options: string[] = ['세탁기', '침대', '책상']
+  const Options: string[] = ['원룸', '투룸', '세탁기', '침대', '책상']
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [startMonth, setStartMonth] = useState<number>()
@@ -163,35 +163,6 @@ const HeaderLeft: React.FC = () => {
                 label="Start Month"
                 onChange={(e) => {
                   setStartMonth(e.target.value as number)
-                }}
-              >
-                {Month.map((data) => (
-                  <MenuItem key={data} value={data}>
-                    {data}
-                  </MenuItem>
-                ))}
-              </Select>
-              &nbsp;~&nbsp;
-              <Select
-                sx={{ width: '100px', height: '40px' }}
-                value={endYear}
-                label="Start Month"
-                onChange={(e) => {
-                  setEndYear(e.target.value as number)
-                }}
-              >
-                {Year.map((data) => (
-                  <MenuItem key={data} value={data}>
-                    {data}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                sx={{ width: '80px', height: '40px' }}
-                value={endMonth}
-                label="End Month"
-                onChange={(e) => {
-                  setEndMonth(e.target.value as number)
                 }}
               >
                 {Month.map((data) => (

@@ -104,37 +104,33 @@ router.get('/readUserInfo', async (req: Request, res: Response) => {
 router.get('/readRoomInfo/:id', async (req: Request, res: Response) => {
   const userNum = req.params.id // 유저번호는 세션에서 가져옴
   //db연결을 위해 pool에서 커넥션을 대여함
-  if (req.session.isLogin) {
-    const connection = await getConnection()
-    try {
-      //데이터를 입력하는 쿼리
-      const [
-        data,
-      ] = await connection.query(
-        'select roomDate, roomDeposit, roomMonthly, roomDoc, roomAddress, roomDetailAddress from user where userNum = ?',
-        [userNum],
-      )
+  const connection = await getConnection()
+  try {
+    //데이터를 입력하는 쿼리
+    const [
+      data,
+    ] = await connection.query(
+      'select roomDate, roomDeposit, roomMonthly, roomDoc, roomAddress, roomDetailAddress from user where userNum = ?',
+      [userNum],
+    )
 
-      const [
-        imgs,
-      ]: any = await connection.query(
-        'SELECT * FROM roomPicture WHERE userNum = ?',
-        [req.session.Uid],
-      )
-      //데이터 쿼리 종료 후 대여한 커넥션을 반납함
-      connection.release()
-      //결과가 성공이면 result 0
-      res.send({ result: 0, data: data, imgs: imgs })
-    } catch (err) {
-      //db에서 에러나 났을 경우 커넥션을 반납하고
-      connection.release()
-      //에러로그를 출력함
-      console.log(err)
-      //프론트로 에러코드 result 3을 보냄
-      res.send({ result: 3 })
-    }
-  } else {
-    res.send({ result: 1 })
+    const [
+      imgs,
+    ]: any = await connection.query(
+      'SELECT * FROM roomPicture WHERE userNum = ?',
+      [userNum],
+    )
+    //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+    connection.release()
+    //결과가 성공이면 result 0
+    res.send({ result: 0, data: data, imgs: imgs })
+  } catch (err) {
+    //db에서 에러나 났을 경우 커넥션을 반납하고
+    connection.release()
+    //에러로그를 출력함
+    console.log(err)
+    //프론트로 에러코드 result 3을 보냄
+    res.send({ result: 3 })
   }
 })
 
@@ -207,7 +203,7 @@ router.get('/readRooms', async (req: Request, res: Response) => {
   try {
     //데이터를 입력하는 쿼리
     const [data] = await connection.query(
-      'select userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc from user where isRelease = 1',
+      'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, pictureAddress, pictureNum FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum WHERE isRelease = 1 ORDER BY pictureNum LIMIT 1',
     )
 
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함

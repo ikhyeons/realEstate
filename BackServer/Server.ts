@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 const cors = require('cors')
 const express = require('express')
 const app = express()
@@ -31,7 +31,15 @@ app.use('/reply', reply)
 app.use('/chat', chat)
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('hi')
+  res.sendFile(
+    'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/dist/index.html',
+  )
+})
+
+app.get('/main.js', (req: Request, res: Response) => {
+  res.sendFile(
+    'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/dist/main.js',
+  )
 })
 
 //get → url요청

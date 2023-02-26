@@ -10,10 +10,8 @@ declare global {
     value: string
     location: string
     content: string
-    period: {
-      start: string
-      end: string
-    }
+    date: string
+    pictureAddress: string
   }
 
   interface addressCompleteData {

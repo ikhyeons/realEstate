@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import SideListCard from './SideListCard'
+import { useQuery } from 'react-query'
+import axios from 'axios'
 
 const SSideList = styled.ul`
   position: absolute;
   z-index: 2;
-  width: 21%;
-  min-width: 375px;
+  width: 23%;
+  min-width: 450px;
   height: calc(100vh - 60px);
   background: rgba(255, 255, 255, 0.83);
 
@@ -30,32 +32,31 @@ const SideList: React.FC = () => {
       value: '10000/250',
       location: '진주시 칠암동',
       content: '우리집 너무 이쁘죠1',
-      period: {
-        start: '22.12',
-        end: '23.02',
-      },
-    },
-    {
-      id: 2,
-      value: '10000/200',
-      location: '진주시 칠암동',
-      content: '우리집 너무 이쁘죠2',
-      period: {
-        start: '22.12',
-        end: '23.02',
-      },
-    },
-    {
-      id: 3,
-      value: '10000/150',
-      location: '진주시 칠암동',
-      content: '우리집 너무 이쁘죠3',
-      period: {
-        start: '22.12',
-        end: '23.02',
-      },
+      date: '',
+      pictureAddress: '',
     },
   ])
+
+  const readRooms = useQuery(
+    'modifyDoc',
+    () => axios.get(`http://localhost:3001/user/readRooms`),
+    {
+      onSuccess: (data: any) => {
+        console.log(data.data.data)
+        setList((prev: any) =>
+          data.data.data.map((data: any, i: number) => ({
+            id: data.userNum,
+            value: `${data.roomDeposit + '/' + data.roomMonthly}`,
+            location: `${data.roomAddress + ' ' + data.roomDetailAddress}`,
+            content: data.roomDoc,
+            date: data.roomDate,
+            pictureAddress: data.pictureAddress,
+          })),
+        )
+      },
+    },
+  )
+
   return (
     <SSideList>
       {list.map((value, i) => (

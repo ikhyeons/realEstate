@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { useRecoilState } from 'recoil'
-import { AIsInfoOn } from '../../AtomStorage'
+import { AcurrentRoomId, AIsInfoOn } from '../../AtomStorage'
 
 const SCard = styled.li`
   width: 100%;
@@ -19,7 +19,8 @@ const SCardTop = styled.div`
 `
 const SCardBottomContent = styled.div`
   height: 40%;
-  font-size: 24px;
+  font-size: 20px;
+  padding: 5px;
 `
 
 const SCardMainImg = styled.img`
@@ -39,26 +40,33 @@ const SCardPeriod = styled.div`
 const SCardValue = styled.div`
   font-size: 20px;
   user-select: none;
+  position: relative;
+  top: -10px;
 `
 const SCardLocation = styled.div`
-  font-size: 20px;
+  font-size: 17px;
   user-select: none;
+  position: relative;
+  top: -12px;
 `
 
 const SideListCard: React.FC<CardPropsStateProp> = (props) => {
   const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
+  const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
   return (
     <SCard
       onClick={() => {
+        setCurrentRoomId(String(props.data.id))
         setIsInfoOn(true)
       }}
     >
       <SCardTop>
-        <SCardMainImg src="" alt="" />
+        <SCardMainImg
+          src={`http://localhost:3001/releaseRoom/readImg/${props.data.pictureAddress}`}
+          alt="메인이미지"
+        />
         <SCardTopRight>
-          <SCardPeriod>
-            {props.data.period.start} ~ {props.data.period.start}
-          </SCardPeriod>
+          <SCardPeriod>{props.data.date}월 부터</SCardPeriod>
           <SCardValue>{props.data.value}</SCardValue>
           <SCardLocation>{props.data.location}</SCardLocation>
         </SCardTopRight>

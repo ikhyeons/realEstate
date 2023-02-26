@@ -10,13 +10,6 @@ const SInfoMain = styled.div`
   margin-bottom: 2px;
   display: flex;
 `
-const SInfoLeft = styled.div`
-  width: 40%;
-  margin-right: 5px;
-`
-const SMainImg = styled.img`
-  width: 100%;
-`
 const SInfoRight = styled.div`
   width: 40%;
 `
@@ -24,9 +17,17 @@ const SPictures = styled.div`
   margin-top: 5px;
   margin-bottom: 5px;
 `
-const SPictureView = styled.img`
+const SPictureViewWrap = styled.div`
   height: 400px;
   width: 100%;
+  background: black;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+`
+
+const SPictureView = styled.img`
+  height: 400px;
 `
 const SPictureList = styled.ol`
   display: flex;
@@ -39,7 +40,7 @@ const SPictureLists = styled.li`
 `
 const SInnerPicture = styled.img`
   height: 100%;
-  width: 200px;
+  width: 100px;
 `
 
 const SContent = styled.div``
@@ -62,16 +63,6 @@ const ReleaseRoomTrue = () => {
     <>
       <hr />
       <SInfoMain>
-        <SInfoLeft>
-          <SMainImg
-            src={
-              data
-                ? `http://localhost:3001/releaseRoom/readImg/${data?.data.imgs[0].pictureAddress}`
-                : undefined
-            }
-            alt="대체 텍스트"
-          />
-        </SInfoLeft>
         <SInfoRight>
           <p>{`기간 : ${data?.data.data[0].roomDate + ' 부터' || '미입력'}`}</p>
           <p>{`가격 : ${
@@ -89,11 +80,13 @@ const ReleaseRoomTrue = () => {
       </SInfoMain>
       <hr />
       <SPictures>
-        {currentImg ? (
-          <SPictureView
-            src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
-          />
-        ) : null}
+        <SPictureViewWrap>
+          {currentImg ? (
+            <SPictureView
+              src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
+            />
+          ) : null}
+        </SPictureViewWrap>
         <SPictureList>
           {data?.data.imgs.map((data: any, i: number) => (
             <SPictureLists key={i}>

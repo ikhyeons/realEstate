@@ -23,9 +23,19 @@ const SInfoMain = styled.div`
   padding: 5px;
   overflow-y: auto;
   z-index: 5;
+  &::-webkit-scrollbar {
+    background: none;
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ffdf65;
+  }
+  &::-webkit-scrollbar-track {
+    background: #bbaa99;
+  }
 `
 
-const SReq = styled.div`
+const SReq = styled.div`m
   width: calc(100%);
   background: yellow;
   bottom: 0px;

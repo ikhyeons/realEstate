@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import axios from 'axios'
 import { useRecoilState } from 'recoil'
 import { AcurrentRoomId } from '../../../AtomStorage'
-import { useState } from 'react'
+import { Children, useState } from 'react'
 
 const SInfoMain = styled.div`
   margin-top: 5px;
@@ -18,15 +18,23 @@ const SMainImg = styled.img`
   width: 100%;
 `
 const SInfoRight = styled.div`
-  width: 40%;
+  width: 60%;
 `
 const SPictures = styled.div`
   margin-top: 5px;
   margin-bottom: 5px;
 `
+
+const SPictureViewWrap = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+  background: black;
+`
+
 const SPictureView = styled.img`
   height: 450px;
-  width: 100%;
 `
 const SPictureList = styled.ol`
   display: flex;
@@ -47,14 +55,12 @@ const ViewRoomInfo = () => {
   const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
   const [currentImg, setCurrentImg] = useState<string>('')
   const { status, error, data, refetch } = useQuery(
-    ['readRoomInfo'],
+    ['readRoomInfo', currentRoomId],
     (data) =>
-      axios.get(`http://localhost:3001/user/readRoomInfo/${currentRoomId}`, {
-        withCredentials: true,
-      }),
+      axios.get(`http://localhost:3001/user/readRoomInfo/${currentRoomId}`),
     {
       onSuccess: (data: any) => {
-        console.log(data.data.data[0], data.data.imgs)
+        console.log(data.data.imgs)
         setCurrentImg(data.data.imgs[0].pictureAddress)
       },
     },
@@ -63,13 +69,6 @@ const ViewRoomInfo = () => {
     <>
       <hr />
       <SInfoMain>
-        <SInfoLeft>
-          {data ? (
-            <SMainImg
-              src={`http://localhost:3001/releaseRoom/readImg/${data?.data.imgs[0].pictureAddress}`}
-            />
-          ) : null}
-        </SInfoLeft>
         <SInfoRight>
           <p>기간 : {data?.data.data[0].roomDate} 부터</p>
           <p>
@@ -87,11 +86,13 @@ const ViewRoomInfo = () => {
       </SInfoMain>
       <hr />
       <SPictures>
-        {currentImg ? (
-          <SPictureView
-            src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
-          />
-        ) : null}
+        <SPictureViewWrap>
+          {currentImg ? (
+            <SPictureView
+              src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
+            />
+          ) : null}
+        </SPictureViewWrap>
         <SPictureList>
           {data?.data.imgs.map((data: any, i: number) => (
             <SPictureLists
