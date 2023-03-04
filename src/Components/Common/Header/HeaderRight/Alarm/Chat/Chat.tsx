@@ -1,6 +1,10 @@
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil'
 import { AisChatAtom } from '../../../../../../AtomStorage'
+import io from 'socket.io-client'
+import { useEffect } from 'react'
+
+const socket = io('ws://localhost:3001', { transports: ['websocket'] })
 
 const SChatHeader = styled.div`
   margin-bottom: 5px;
@@ -47,6 +51,19 @@ const SChatInput = styled.textarea`
 
 const Chat = () => {
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
+
+  useEffect(() => {
+    socket.on('backToFront', (msg) => {
+      console.log(msg)
+    })
+
+    return () => {
+      socket.off('message', (msg) => {
+        console.log(msg)
+      })
+    }
+  }, [])
+
   return (
     <>
       <SChatHeader>
@@ -63,7 +80,12 @@ const Chat = () => {
         <SOtherChat>니꺼</SOtherChat>
         <SMyChat>내꺼</SMyChat>
       </SChatView>
-      <SChatInput />
+      <SChatInput
+        onKeyDown={() => {
+          console.log('gd')
+          socket.emit('frontToBack', 'gd')
+        }}
+      />
     </>
   )
 }

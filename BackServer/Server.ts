@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 const cors = require('cors')
 const express = require('express')
 const app = express()
+const http = require('http')
 
 import mysqlSession from 'express-session'
 import { sessionConfig } from '../secretKeysB'
@@ -42,8 +43,24 @@ app.get('/main.js', (req: Request, res: Response) => {
   )
 })
 
-//get → url요청
+const server = http.createServer(app).listen(3001, function () {
+  console.log('Express server listening')
+})
 
-app.listen(3001, () => {
-  console.log(`server is listening at localhost:3001`)
+//소켓 통신
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  },
+})
+
+io.on('connection', (socket: any) => {
+  console.log('connected')
+  socket.on('frontToBack', (rcv: any) => {
+    console.log(socket)
+    console.log(rcv)
+    io.emit('backToFront', 'qd')
+  })
 })
