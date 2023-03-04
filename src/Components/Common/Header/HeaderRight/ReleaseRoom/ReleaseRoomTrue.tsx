@@ -45,7 +45,7 @@ const SInnerPicture = styled.img`
 
 const SContent = styled.div``
 
-const ReleaseRoomTrue = () => {
+const ReleaseRoomTrue: React.FC = () => {
   const [currentImg, setCurrentImg] = useRecoilState(AcurrentImg)
 
   const { status, error, data, refetch } = useQuery(

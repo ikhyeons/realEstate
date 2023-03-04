@@ -3,7 +3,7 @@ import { useQuery } from 'react-query'
 import axios from 'axios'
 import { useRecoilState } from 'recoil'
 import { AcurrentRoomId } from '../../../AtomStorage'
-import { Children, useState } from 'react'
+import { useState } from 'react'
 
 const SInfoMain = styled.div`
   margin-top: 5px;
@@ -51,7 +51,7 @@ const ViewRoomInfo = () => {
       axios.get(`http://localhost:3001/user/readRoomInfo/${currentRoomId}`),
     {
       onSuccess: (data: any) => {
-        console.log(data.data.imgs)
+        console.log(data.data)
         setCurrentImg(data.data.imgs[0].pictureAddress)
       },
     },
@@ -72,7 +72,12 @@ const ViewRoomInfo = () => {
               ' ' +
               data?.data.data[0].roomDetailAddress}
           </p>
-          <p>옵션 : </p>
+          <p>
+            옵션 :{' '}
+            {data?.data.options.map((data: any, i: number) => (
+              <span>{data.roomOption + ' '}</span>
+            ))}
+          </p>
         </SInfo>
       </SInfoMain>
       <hr />

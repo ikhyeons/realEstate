@@ -38,15 +38,29 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
   //db연결을 위해 pool에서 커넥션을 대여함
   if (req.session.isLogin) {
     const connection = await getConnection()
-    console.log(roomDeposit, roomMonthly, address, year, month, doc, userNum)
+    console.log(
+      roomDeposit,
+      roomMonthly,
+      address,
+      year,
+      month,
+      doc,
+      userNum,
+      options,
+    )
     try {
       //옵션 데이터를 입력하는 쿼리
-      // options.map(async (data: any) => {
-      //   await connection.query(
-      //     'insert into roomOption values(default, ?, ?)',
-      //     [userNum, data],
-      //   )
-      // })
+
+      await connection.query('DELETE FROM roomOption WHERE userNum = ?', [
+        userNum,
+      ])
+
+      options.map(async (data: any) => {
+        await connection.query('INSERT INTO roomOption VALUES(default, ?, ?)', [
+          userNum,
+          data,
+        ])
+      })
       //옵션을 제외한 나머지 데이터를 입력하는 쿼리
       await connection.query(
         'UPDATE user SET isRelease = 1, roomDeposit = ?, roomMonthly = ?, roomDetailAddress = ?, roomDate = ?, roomDoc = ?, roomAddress = ?, roomLng = ?, roomLat = ? WHERE userNum = ?',

@@ -12,6 +12,7 @@ declare global {
     content: string
     date: string
     pictureAddress: string
+    options: string[]
   }
 
   interface addressCompleteData {

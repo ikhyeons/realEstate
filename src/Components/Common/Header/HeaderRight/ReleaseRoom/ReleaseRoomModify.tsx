@@ -104,6 +104,8 @@ const SAddDiv = styled.div`
   position: relative;
 `
 
+const SdelBtn = styled.span``
+
 const now = new Date() // 현재 날짜 및 시간
 const year = now.getFullYear() // 연도
 
@@ -122,6 +124,8 @@ const ReleaseRoomModify = () => {
   ]
   const OptionList: string[] = [
     '',
+    '원룸',
+    '투룸',
     '세탁기',
     '가스레인지',
     '전자레인지',
@@ -294,7 +298,11 @@ const ReleaseRoomModify = () => {
               onChange={(e) => {
                 setOptions(e.target.value)
                 if (e.target.value !== '')
-                  setSelectedOption((prev) => [...prev, e.target.value])
+                  setSelectedOption((prev) => {
+                    if (!prev.includes(e.target.value))
+                      return [...prev, e.target.value]
+                    else return [...prev]
+                  })
               }}
               name="endMonth"
               id=""
@@ -308,7 +316,15 @@ const ReleaseRoomModify = () => {
             {selectedOption.map((data, i) => (
               <span key={i}>
                 {data}
-                <span>x</span>{' '}
+                <SdelBtn
+                  onClick={() => {
+                    setSelectedOption((prev) =>
+                      prev.filter((data2, i) => data2 !== data),
+                    )
+                  }}
+                >
+                  x
+                </SdelBtn>{' '}
               </span>
             ))}
           </div>

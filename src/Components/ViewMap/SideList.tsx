@@ -34,6 +34,7 @@ const SideList: React.FC = () => {
       content: '우리집 너무 이쁘죠1',
       date: '',
       pictureAddress: '',
+      options: [],
     },
   ])
 
@@ -50,7 +51,8 @@ const SideList: React.FC = () => {
             location: `${data.roomAddress + ' ' + data.roomDetailAddress}`,
             content: data.roomDoc,
             date: data.roomDate,
-            pictureAddress: data.pictureAddress,
+            pictureAddress: data.roomPicture,
+            option: data.roomOption,
           })),
         )
       },
