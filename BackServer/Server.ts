@@ -6,6 +6,7 @@ const http = require('http')
 
 import mysqlSession from 'express-session'
 import { sessionConfig } from '../secretKeysB'
+const createChatF = require('./Routers/chat')
 
 app.use(mysqlSession(sessionConfig))
 
@@ -56,11 +57,17 @@ const io = require('socket.io')(server, {
   },
 })
 
+const wrap = (middleware: any) => (socket: any, next: any) =>
+  middleware(socket.request, {}, next)
+
+io.use(wrap(mysqlSession(sessionConfig)))
+
 io.on('connection', (socket: any) => {
   console.log('connected')
-  socket.on('frontToBack', (rcv: any) => {
-    console.log(socket)
-    console.log(rcv)
+  console.log(socket.request.session)
+
+  socket.on('frontToBack', async (rcv: any) => {
+    await createChatF(rcv.roomNum, socket.request.session.Uid, rcv.data)
     io.emit('backToFront', 'qd')
   })
 })
