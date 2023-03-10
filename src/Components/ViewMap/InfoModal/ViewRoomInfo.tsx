@@ -75,7 +75,7 @@ const ViewRoomInfo = () => {
           <p>
             옵션 :{' '}
             {data?.data.options.map((data: any, i: number) => (
-              <span>{data.roomOption + ' '}</span>
+              <span key={i}>{data.roomOption + ' '}</span>
             ))}
           </p>
         </SInfo>

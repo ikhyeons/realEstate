@@ -23,7 +23,7 @@ const user = require('./Routers/user')
 const releaseRoom = require('./Routers/releaseRoom')
 const document = require('./Routers/document')
 const reply = require('./Routers/reply')
-const chat = require('./Routers/chat')
+const chat = require('./Routers/chatRouter')
 
 app.use('/session', session)
 app.use('/user', user)

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil'
-import { AisChatAtom } from '../../../../../../AtomStorage'
+import { AcurrentChatRoomId, AisChatAtom } from '../../../../../../AtomStorage'
 import io from 'socket.io-client'
 import { useEffect, useState } from 'react'
 
@@ -52,6 +52,9 @@ const SChatInput = styled.textarea`
 const Chat = () => {
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   const [chatValue, setChatValue] = useState<string>('')
+  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
+    AcurrentChatRoomId,
+  )
   useEffect(() => {
     socket.on('backToFront', (msg) => {
       console.log(msg)
@@ -87,7 +90,10 @@ const Chat = () => {
         }}
         onKeyPress={(e) => {
           if (e.code === 'Enter' && e.shiftKey === false) {
-            socket.emit('frontToBack', { roomNum: 1, data: chatValue })
+            socket.emit('frontToBack', {
+              roomNum: currentChatRoomId,
+              data: chatValue,
+            })
             setChatValue('')
           }
         }}

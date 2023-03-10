@@ -86,4 +86,9 @@ export const AcurrentRoomId = atom({
   default: '',
 })
 
+export const AcurrentChatRoomId = atom({
+  key: 'chat/currentChatRoomId',
+  default: 0,
+})
+
 export default ASelectedAddredss

@@ -1,7 +1,15 @@
 import styled from 'styled-components'
 import ViewRoomInfo from './ViewRoomInfo'
 import { useRecoilState } from 'recoil'
-import { AIsInfoOn, AisAlarmPopOpen, AisChatAtom } from '../../../AtomStorage'
+import {
+  AIsInfoOn,
+  AisAlarmPopOpen,
+  AisChatAtom,
+  AcurrentRoomId,
+  AcurrentChatRoomId,
+} from '../../../AtomStorage'
+import { useMutation, useQuery } from 'react-query'
+import axios from 'axios'
 
 const SInfoModalBack = styled.div`
   height: 100%;
@@ -51,6 +59,35 @@ const InfoModalMain = () => {
   const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
   const [isPopOpen, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
+  const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
+  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
+    AcurrentChatRoomId,
+  )
+
+  const { status, error, data, refetch } = useQuery(
+    ['readRoomInfo', currentRoomId],
+    (data) =>
+      axios.get(`http://localhost:3001/user/readRoomInfo/${currentRoomId}`),
+  )
+  const createChatRoom = useMutation(
+    () =>
+      axios.post(
+        `http://localhost:3001/chat/createChatRoom`,
+        {
+          otherNum: currentRoomId,
+          roomAddress:
+            data?.data.data[0].roomAddress +
+            ' ' +
+            data?.data.data[0].roomDetailAddress,
+        },
+        { withCredentials: true },
+      ),
+    {
+      onSuccess: (data) => {
+        if (data.data.result === 1) alert('로그인부터 하세요;')
+      },
+    },
+  )
 
   return (
     <SInfoModalBack
@@ -68,6 +105,7 @@ const InfoModalMain = () => {
           onClick={() => {
             setIsPopOpen(true)
             setIsChat(true)
+            createChatRoom.mutate()
           }}
         >
           문의하기

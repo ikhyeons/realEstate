@@ -92,7 +92,6 @@ const AlarmBtn = () => {
           {isChat === false ? (
             <>
               <SFilterBtns>
-                <SFilterBtn>전체</SFilterBtn>
                 <SFilterBtn>채팅</SFilterBtn>
                 <SFilterBtn>커뮤니티</SFilterBtn>
               </SFilterBtns>

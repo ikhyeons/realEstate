@@ -1,11 +1,13 @@
 import styled from 'styled-components'
 import { useRecoilState } from 'recoil'
-import { AisChatAtom } from '../../../../../../AtomStorage'
+import { AcurrentChatRoomId, AisChatAtom } from '../../../../../../AtomStorage'
+import { useQueries } from 'react-query'
+import axios from 'axios'
 
 const SAlarmCard = styled.li`
   padding: 5px;
   border-radius: 4px;
-  background: #eee;
+  background: #ffa;
   position: relative;
   border-bottom: 1px solid black;
   margin-bottom: 5px;
@@ -13,25 +15,19 @@ const SAlarmCard = styled.li`
 const SAlarmCardHeader = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `
-const SAlarmCardName = styled.div`
-  border-radius: 50%;
-  background: yellow;
-  padding: 2px;
-  font-size: 20px;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  margin-right: 10px;
+
+const SAlarmCardAddress = styled.div`
+  width: 72%;
 `
-const SAlarmCardAddress = styled.div``
 
 const SAlarmCardDate = styled.div`
-  margin-left: 20px;
   font-size: 13px;
+  width: 28%;
 `
 const SAlarmCardContent = styled.div`
-  margin-left: 10px;
+  padding: 5px;
 `
 const SAlarmCardNum = styled.div`
   text-align: center;
@@ -47,19 +43,24 @@ const SAlarmCardNum = styled.div`
   transform: translateY(-50%);
 `
 
-const AlarmChatCard = () => {
+const AlarmChatCard = (prop: any) => {
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
+  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
+    AcurrentChatRoomId,
+  )
+
   return (
     <SAlarmCard
       onClick={() => {
+        setCurrentChatRoomId(prop.data.chatRoom)
         setIsChat(true)
       }}
     >
       <SAlarmCardHeader>
-        <SAlarmCardName>성</SAlarmCardName>
         <SAlarmCardAddress>양덕동 서안양덕타운</SAlarmCardAddress>
+        <SAlarmCardDate>23. 1. 4 오후 6시 9분</SAlarmCardDate>
       </SAlarmCardHeader>
-      <SAlarmCardDate>23. 1. 4 오후 6시 9분</SAlarmCardDate>
+
       <SAlarmCardContent>내용</SAlarmCardContent>
       <SAlarmCardNum>99</SAlarmCardNum>
     </SAlarmCard>
