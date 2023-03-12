@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
-import Check from './Components/Check'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { CookiesProvider } from 'react-cookie'
 

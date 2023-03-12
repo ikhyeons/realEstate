@@ -209,10 +209,24 @@ router.get('/readRooms', async (req: Request, res: Response) => {
   const connection = await getConnection()
   try {
     //데이터를 입력하는 쿼리
-    const [data]: any = await connection.query(
-      'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, pictureNum, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 GROUP BY userNum',
-    )
+    let data: any = []
+    console.log(req.session.isLogin, req.session.Uid)
+    if (req.session.isLogin) {
+      console.log('here1')
+      ;[
+        data,
+      ] = await connection.query(
+        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, pictureNum, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 AND NOT user.userNum in(?) GROUP BY userNum',
+        [req.session.Uid],
+      )
+    } else {
+      console.log('here2')
+      ;[data] = await connection.query(
+        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, pictureNum, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 GROUP BY userNum',
+      )
+    }
 
+    console.log(data)
     const outdata = data.map((data: any) => {
       return {
         ...data,

@@ -8,6 +8,7 @@ import { TextField } from '@mui/material'
 import Button from '@mui/material/Button'
 import { useQuery } from 'react-query'
 import axios from 'axios'
+import Port from '../../../port'
 
 const SForm = styled.form`
   position: relative;
@@ -35,7 +36,7 @@ const InfoInputPage: React.FC = () => {
   const { status, data, error, refetch } = useQuery(
     'join',
     () =>
-      axios.post(`http://localhost:3001/user/join`, {
+      axios.post(`http://${Port}/user/join`, {
         joinValue,
       }),
     { enabled: false },

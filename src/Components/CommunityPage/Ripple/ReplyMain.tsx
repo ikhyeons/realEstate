@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
+import Port from '../../../../port'
 import { useParams } from 'react-router-dom'
 import ReplyCard from './ReplyCard'
 
@@ -23,7 +24,7 @@ const RippleMain = () => {
   const readReply = useQuery(
     ['readReply', docNum],
     () => {
-      return axios.get(`http://localhost:3001/reply/readReply/${docNum}`)
+      return axios.get(`http://${Port}/reply/readReply/${docNum}`)
     },
     {
       onSuccess: (data: any) => {},
@@ -35,7 +36,7 @@ const RippleMain = () => {
   const writeReply = useMutation(
     () =>
       axios.post(
-        `http://localhost:3001/reply/createReply`,
+        `http://${Port}/reply/createReply`,
         {
           docNum: docNum,
           content: replyValue,

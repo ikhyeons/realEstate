@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
+import Port from '../../../../../../port'
 import { useQueries, useMutation, useQueryClient } from 'react-query'
 import { useRecoilState } from 'recoil'
 import { ARIsModify, AroomModifyAddressAndL } from '../../../../../AtomStorage'
@@ -178,7 +179,7 @@ const ReleaseRoomModify = () => {
   const modifyRoomRelease = useMutation(
     () =>
       axios.post(
-        'http://localhost:3001/releaseRoom/setRoomContent',
+        `http://${Port}/releaseRoom/setRoomContent`,
         {
           roomYear: startYear,
           roomMonth: startMonth,
@@ -206,7 +207,7 @@ const ReleaseRoomModify = () => {
 
   const modifyRoomReleaseImg = useMutation(
     () =>
-      axios.post('http://localhost:3001/releaseRoom/uploadImgs', formOutData, {
+      axios.post(`http://${Port}/releaseRoom/uploadImgs`, formOutData, {
         headers: { 'content-type': 'multipart/form-data' },
         withCredentials: true,
       }),

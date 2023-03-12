@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { useRecoilState } from 'recoil'
 import { AcurrentRoomId, AIsInfoOn } from '../../AtomStorage'
+import Port from '../../../port'
 
 const SCard = styled.li`
   width: 100%;
@@ -62,7 +63,7 @@ const SideListCard: React.FC<CardPropsStateProp> = (props) => {
     >
       <SCardTop>
         <SCardMainImg
-          src={`http://localhost:3001/releaseRoom/readImg/${props.data.pictureAddress}`}
+          src={`http://${Port}/releaseRoom/readImg/${props.data.pictureAddress}`}
           alt="메인이미지"
         />
         <SCardTopRight>

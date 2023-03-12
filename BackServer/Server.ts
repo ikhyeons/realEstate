@@ -6,6 +6,7 @@ const http = require('http')
 
 import mysqlSession from 'express-session'
 import { sessionConfig } from '../secretKeysB'
+import getConnection from './dbConnection'
 const createChatF = require('./Routers/chat')
 
 app.use(mysqlSession(sessionConfig))
@@ -13,7 +14,7 @@ app.use(mysqlSession(sessionConfig))
 app.use(express.json())
 app.use(
   cors({
-    origin: ['http://localhost:3000'], // 모든 출처 허용 옵션. true 를 써도 된다.
+    origin: ['http://localhost:3000', 'http://118.39.194.152:3000', '*'], // 모든 출처 허용 옵션. true 를 써도 된다.
     credentials: true,
   }),
 )
@@ -62,12 +63,24 @@ const wrap = (middleware: any) => (socket: any, next: any) =>
 
 io.use(wrap(mysqlSession(sessionConfig)))
 
-io.on('connection', (socket: any) => {
+io.on('connection', async (socket: any) => {
   console.log('connected')
   console.log(socket.request.session)
 
-  socket.on('frontToBack', async (rcv: any) => {
+  const connection = await getConnection()
+  const [
+    data,
+  ]: any = await connection.query(
+    'select * from chatRoom where chatParticipant = ?',
+    [socket.request.session.Uid],
+  )
+
+  socket.join(data.map((data: any, i: number) => data.chatRoom))
+
+  socket.on('sendChat', async (rcv: any) => {
     await createChatF(rcv.roomNum, socket.request.session.Uid, rcv.data)
-    io.emit('backToFront', 'qd')
+    socket.broadcast
+      .to(String(rcv.roomNum))
+      .emit('sendChat', { data: rcv.data, roomNum: rcv.roomNum })
   })
 })

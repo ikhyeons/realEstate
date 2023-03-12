@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import Port from '../../../port'
 import { useQuery } from 'react-query'
 import { Editor } from '@toast-ui/react-editor'
 
@@ -62,7 +63,7 @@ const DocWrite = () => {
     'writeDoc',
     () =>
       axios.post(
-        `http://localhost:3001/document/writeDoc`,
+        `http://${Port}/document/writeDoc`,
         {
           docData,
         },

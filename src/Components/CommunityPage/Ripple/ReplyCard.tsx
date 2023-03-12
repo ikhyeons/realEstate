@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
+import Port from '../../../../port'
 import { useParams } from 'react-router-dom'
 import { useState, useRef } from 'react'
 import useBindClickOutside from '../../../Hooks/bindOutSide'
@@ -55,7 +56,7 @@ const ReplyCard = (data: any) => {
   const modifyReply = useMutation(
     () =>
       axios.post(
-        `http://localhost:3001/reply/updateReply`,
+        `http://${Port}/reply/updateReply`,
         {
           repNum: data.data.repNum,
           content: modifyValue,
@@ -75,7 +76,7 @@ const ReplyCard = (data: any) => {
   const deleteReply = useMutation(
     (replyNum) =>
       axios.post(
-        `http://localhost:3001/reply/deleteReply`,
+        `http://${Port}/reply/deleteReply`,
         {
           repNum: replyNum,
         },

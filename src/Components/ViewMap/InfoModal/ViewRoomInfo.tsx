@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useRecoilState } from 'recoil'
 import { AcurrentRoomId } from '../../../AtomStorage'
 import { useState } from 'react'
+import Port from '../../../../port'
 
 const SInfoMain = styled.div`
   margin-top: 5px;
@@ -47,8 +48,7 @@ const ViewRoomInfo = () => {
   const [currentImg, setCurrentImg] = useState<string>('')
   const { status, error, data, refetch } = useQuery(
     ['readRoomInfo', currentRoomId],
-    (data) =>
-      axios.get(`http://localhost:3001/user/readRoomInfo/${currentRoomId}`),
+    (data) => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
     {
       onSuccess: (data: any) => {
         console.log(data.data)
@@ -85,7 +85,7 @@ const ViewRoomInfo = () => {
         <SPictureViewWrap>
           {currentImg ? (
             <SPictureView
-              src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
+              src={`http://${Port}/releaseRoom/readImg/${currentImg}`}
             />
           ) : null}
         </SPictureViewWrap>
@@ -99,7 +99,7 @@ const ViewRoomInfo = () => {
             >
               {data ? (
                 <SInnerPicture
-                  src={`http://localhost:3001/releaseRoom/readImg/${data.pictureAddress}`}
+                  src={`http://${Port}/releaseRoom/readImg/${data.pictureAddress}`}
                 />
               ) : null}
             </SPictureLists>

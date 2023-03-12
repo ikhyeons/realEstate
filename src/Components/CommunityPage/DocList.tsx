@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { Routes, useNavigate, useParams, Route } from 'react-router-dom'
 import { useQuery, useMutation } from 'react-query'
 import axios from 'axios'
+import Port from '../../../port'
 import { useEffect, useState } from 'react'
 import PageNavigationBar from './PageNavigationBar'
 import { useCookies } from 'react-cookie'
@@ -82,10 +83,8 @@ const DocList: React.FC = () => {
     ['readDocList', pageNum],
     async () => {
       if (!pageNum || Number(pageNum) === 0)
-        return await axios.get(`http://localhost:3001/document/readDocList/1`)
-      return await axios.get(
-        `http://localhost:3001/document/readDocList/${pageNum}`,
-      )
+        return await axios.get(`http://${Port}/document/readDocList/1`)
+      return await axios.get(`http://${Port}/document/readDocList/${pageNum}`)
     },
     {
       onSuccess: (data: any) => {
@@ -110,7 +109,7 @@ const DocList: React.FC = () => {
   )
 
   const countView = useMutation((docNum: string) =>
-    axios.post(`http://localhost:3001/document/countView`, {
+    axios.post(`http://${Port}/document/countView`, {
       docNum: docNum,
     }),
   )

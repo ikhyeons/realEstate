@@ -57,7 +57,7 @@ const AlarmChatCard = (prop: any) => {
       }}
     >
       <SAlarmCardHeader>
-        <SAlarmCardAddress>양덕동 서안양덕타운</SAlarmCardAddress>
+        <SAlarmCardAddress>{prop.data.roomAddress}</SAlarmCardAddress>
         <SAlarmCardDate>23. 1. 4 오후 6시 9분</SAlarmCardDate>
       </SAlarmCardHeader>
 

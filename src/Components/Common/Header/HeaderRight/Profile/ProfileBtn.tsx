@@ -6,6 +6,7 @@ import { useCookies } from 'react-cookie'
 
 import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
+import Port from '../../../../../../port'
 
 const SProfile = styled.div`
   border-radius: 50%;
@@ -52,7 +53,7 @@ const ProfileBtn = () => {
   const logOut = useMutation(
     () =>
       axios.post(
-        `http://localhost:3001/session/logout`,
+        `http://${Port}/session/logout`,
         {},
         {
           withCredentials: true,
@@ -73,7 +74,7 @@ const ProfileBtn = () => {
   const { status, error, data, refetch } = useQuery(
     ['readUserInfo'],
     () =>
-      axios.get(`http://localhost:3001/user/readUserInfo`, {
+      axios.get(`http://${Port}/user/readUserInfo`, {
         withCredentials: true,
       }),
     {

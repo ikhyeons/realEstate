@@ -10,6 +10,7 @@ import {
 } from '../../../AtomStorage'
 import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
+import Port from '../../../../port'
 
 const SInfoModalBack = styled.div`
   height: 100%;
@@ -66,13 +67,12 @@ const InfoModalMain = () => {
 
   const { status, error, data, refetch } = useQuery(
     ['readRoomInfo', currentRoomId],
-    (data) =>
-      axios.get(`http://localhost:3001/user/readRoomInfo/${currentRoomId}`),
+    (data) => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
   )
   const createChatRoom = useMutation(
     () =>
       axios.post(
-        `http://localhost:3001/chat/createChatRoom`,
+        `http://${Port}/chat/createChatRoom`,
         {
           otherNum: currentRoomId,
           roomAddress:
@@ -104,7 +104,6 @@ const InfoModalMain = () => {
         <SReq
           onClick={() => {
             setIsPopOpen(true)
-            setIsChat(true)
             createChatRoom.mutate()
           }}
         >

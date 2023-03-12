@@ -2,13 +2,15 @@ import styled from 'styled-components'
 import { useRecoilState } from 'recoil'
 import { AcurrentChatRoomId, AisChatAtom } from '../../../../../../AtomStorage'
 import io from 'socket.io-client'
-import { useEffect, useState } from 'react'
-
-const socket = io('ws://localhost:3001', { transports: ['websocket'] })
+import { useEffect, useState, useRef } from 'react'
+import { useQuery } from 'react-query'
+import axios from 'axios'
+import Port from '../../../../../../../port'
 
 const SChatHeader = styled.div`
   margin-bottom: 5px;
   background: #ffdf65;
+  height: 5%;
 `
 
 const SBackbutton = styled.button`
@@ -23,23 +25,30 @@ const SBackbutton = styled.button`
   }
 `
 
+const SChatWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 800px;
+`
+
 const SChatView = styled.div`
   background: lightyellow;
   height: 600px;
   margin-bottom: 5px;
-`
+  height: 88%;
+  overflow: auto;
 
-const SMyChat = styled.div`
-  text-align: right;
-  background: gray;
-  margin-bottom: 5px;
-  padding: 5px;
-`
-const SOtherChat = styled.div`
-  text-align: left;
-  background: lightgray;
-  margin-bottom: 5px;
-  padding: 5px;
+  &::-webkit-scrollbar {
+    background: none;
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ffdf65;
+  }
+  &::-webkit-scrollbar-track {
+    background: #bbaa99;
+  }
 `
 
 const SChatInput = styled.textarea`
@@ -47,7 +56,22 @@ const SChatInput = styled.textarea`
   resize: none;
   font-family: none;
   padding: 5px;
+  height: 7%;
 `
+const SMyChat = styled.div`
+  text-align: right;
+  background: #eeeeaa;
+  margin-bottom: 5px;
+  padding: 5px;
+`
+const SOtherChat = styled.div`
+  text-align: left;
+  background: #e1e1aa;
+  margin-bottom: 5px;
+  padding: 5px;
+`
+
+const socket = io(`ws://${Port}`, { transports: ['websocket'] })
 
 const Chat = () => {
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
@@ -55,20 +79,47 @@ const Chat = () => {
   const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
     AcurrentChatRoomId,
   )
-  useEffect(() => {
-    socket.on('backToFront', (msg) => {
-      console.log(msg)
-    })
+  const chatViewRef = useRef<HTMLDivElement>(null)
+  const [chatData, setChatData] = useState<any[]>([])
 
-    return () => {
-      socket.off('message', (msg) => {
-        console.log(msg)
-      })
-    }
+  const { status, error, data, refetch } = useQuery(
+    ['readChats'],
+    (data) =>
+      axios.get(`http://${Port}/chat/readChat/${currentChatRoomId}`, {
+        withCredentials: true,
+      }),
+    {
+      enabled: false,
+      onSuccess: (data: any) => {
+        console.log(data)
+        setChatData(
+          data?.data.data.map((data: any, i: number) => ({
+            my: data.my,
+            chatContent: data.chatContent,
+          })),
+        )
+      },
+    },
+  )
+
+  useEffect(() => {
+    refetch()
   }, [])
 
+  useEffect(() => {
+    socket.on('sendChat', (msg) => {
+      console.log(msg)
+      if (msg.roomNum === currentChatRoomId)
+        setChatData((prev) => [...prev, { my: 0, chatContent: msg.data }])
+    })
+  }, [])
+
+  useEffect(() => {
+    chatViewRef.current?.scrollTo(0, chatViewRef.current.scrollHeight)
+  }, [chatData])
+
   return (
-    <>
+    <SChatWrap>
       <SChatHeader>
         <SBackbutton
           onClick={() => {
@@ -79,9 +130,14 @@ const Chat = () => {
         </SBackbutton>
         양덕동 서안양덕타운 성익현
       </SChatHeader>
-      <SChatView>
-        <SOtherChat>니꺼</SOtherChat>
-        <SMyChat>내꺼</SMyChat>
+      <SChatView ref={chatViewRef}>
+        {chatData.map((data: any, i: number) =>
+          data.my ? (
+            <SMyChat key={i}>{data.chatContent}</SMyChat>
+          ) : (
+            <SOtherChat key={i}>{data.chatContent}</SOtherChat>
+          ),
+        )}
       </SChatView>
       <SChatInput
         value={chatValue}
@@ -90,15 +146,16 @@ const Chat = () => {
         }}
         onKeyPress={(e) => {
           if (e.code === 'Enter' && e.shiftKey === false) {
-            socket.emit('frontToBack', {
+            socket.emit('sendChat', {
               roomNum: currentChatRoomId,
               data: chatValue,
             })
+            setChatData((prev) => [...prev, { chatContent: chatValue, my: 1 }])
             setChatValue('')
           }
         }}
       />
-    </>
+    </SChatWrap>
   )
 }
 

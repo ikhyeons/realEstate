@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { useQuery } from 'react-query'
 import axios from 'axios'
+import Port from '../../../../../../port'
 import { useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { AcurrentImg } from '../../../../../AtomStorage'
@@ -51,7 +52,7 @@ const ReleaseRoomTrue: React.FC = () => {
   const { status, error, data, refetch } = useQuery(
     ['readUserInfo'],
     () =>
-      axios.get(`http://localhost:3001/user/readUserInfo`, {
+      axios.get(`http://${Port}/user/readUserInfo`, {
         withCredentials: true,
       }),
     {
@@ -83,7 +84,7 @@ const ReleaseRoomTrue: React.FC = () => {
         <SPictureViewWrap>
           {currentImg ? (
             <SPictureView
-              src={`http://localhost:3001/releaseRoom/readImg/${currentImg}`}
+              src={`http://${Port}/releaseRoom/readImg/${currentImg}`}
             />
           ) : null}
         </SPictureViewWrap>
@@ -95,7 +96,7 @@ const ReleaseRoomTrue: React.FC = () => {
                   onClick={() => {
                     setCurrentImg(data.pictureAddress)
                   }}
-                  src={`http://localhost:3001/releaseRoom/readImg/${data.pictureAddress}`}
+                  src={`http://${Port}/releaseRoom/readImg/${data.pictureAddress}`}
                 />
               ) : null}
             </SPictureLists>

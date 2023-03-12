@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import axios from 'axios'
+import Port from '../../../port'
 import { useCookies } from 'react-cookie'
 
 const SpageNumBar = styled.div`
@@ -93,7 +94,7 @@ const PageNavigationBar = () => {
 
   const { status, data, error, refetch } = useQuery(
     ['readDocCount', pageNum],
-    async () => axios.get(`http://localhost:3001/document/readDocCount/`),
+    async () => axios.get(`http://${Port}/document/readDocCount/`),
     {
       onSuccess: (data: any) => {
         const pageNumber = Math.ceil(Number(data.data.data) / 28) // 총 페이지 수

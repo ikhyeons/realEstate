@@ -10,11 +10,14 @@ import { useRecoilState } from 'recoil'
 import { AselectedPoint, AcurrentRoomId } from '../../AtomStorage'
 import { useQuery } from 'react-query'
 import axios from 'axios'
+import Port from '../../../port'
+import { useCookies } from 'react-cookie'
 
 const MapBody: React.FC = () => {
+  const [cookies, setCookies] = useCookies(['isLogin'])
   const readRooms = useQuery(
-    'modifyDoc',
-    () => axios.get(`http://localhost:3001/user/readRooms`),
+    ['readRooms', cookies],
+    () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
       onSuccess: (data) => {
         setMakerData(

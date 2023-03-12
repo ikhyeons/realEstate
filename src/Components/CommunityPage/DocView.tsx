@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import RippleMain from './Ripple/ReplyMain'
 import { useCookies } from 'react-cookie'
 import axios from 'axios'
+import Port from '../../../port'
 import { useQuery, useQueries } from 'react-query'
 
 import { Viewer } from '@toast-ui/react-editor'
@@ -79,7 +80,7 @@ const DocView = () => {
     {
       queryKey: ['readDoc', docNum],
       queryFn: () => {
-        return axios.get(`http://localhost:3001/document/readDoc/${docNum}`)
+        return axios.get(`http://${Port}/document/readDoc/${docNum}`)
       },
       onSuccess: (data: any) => {
         setDocValue(data.data.data)
@@ -89,7 +90,7 @@ const DocView = () => {
       queryKey: ['deleteDoc'],
       queryFn: () => {
         return axios.post(
-          `http://localhost:3001/document/deleteDoc`,
+          `http://${Port}/document/deleteDoc`,
           {
             docNum: docNum,
           },

@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import SideListCard from './SideListCard'
 import { useQuery } from 'react-query'
 import axios from 'axios'
+import Port from '../../../port'
+import { useCookies } from 'react-cookie'
 
 const SSideList = styled.ul`
   position: absolute;
@@ -26,6 +28,8 @@ const SSideList = styled.ul`
 `
 
 const SideList: React.FC = () => {
+  const [cookies, setCookies] = useCookies(['isLogin'])
+
   const [list, setList] = useState<CardPropsState[]>([
     {
       id: 1,
@@ -39,8 +43,8 @@ const SideList: React.FC = () => {
   ])
 
   const readRooms = useQuery(
-    'modifyDoc',
-    () => axios.get(`http://localhost:3001/user/readRooms`),
+    ['readRooms', cookies],
+    () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
       onSuccess: (data: any) => {
         console.log(data.data.data)

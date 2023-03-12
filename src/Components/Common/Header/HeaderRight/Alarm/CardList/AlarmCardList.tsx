@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useQueries } from 'react-query'
 import axios from 'axios'
-
+import Port from '../../../../../../../port'
 import AlarmChatCard from './AlarmChatCard'
 import AlarmDocCard from './AlarmDocCard'
 const SCardList = styled.ul``
@@ -11,7 +11,7 @@ const AlarmCardList = () => {
     {
       queryKey: ['readMyChatRoom'],
       queryFn: () =>
-        axios.get(`http://localhost:3001/chat/readMyChatRoom`, {
+        axios.get(`http://${Port}/chat/readMyChatRoom`, {
           withCredentials: true,
         }),
       onSuccess: (data: any) => {

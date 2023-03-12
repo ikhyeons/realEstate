@@ -2,6 +2,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { useQueries, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
+import Port from '../../../../../../port'
 
 import Button from '@mui/material/Button'
 import Popover from '@mui/material/Popover'
@@ -53,7 +54,7 @@ const ReleaseRoom = () => {
     {
       queryKey: ['readOption'],
       queryFn: () =>
-        axios.get(`http://localhost:3001/releaseRoom/readRoomOption`, {
+        axios.get(`http://${Port}/releaseRoom/readRoomOption`, {
           withCredentials: true,
         }),
       onSuccess: (data: any) => {
@@ -63,7 +64,7 @@ const ReleaseRoom = () => {
     {
       queryKey: ['readUserInfo', isPopOpen],
       queryFn: () =>
-        axios.get(`http://localhost:3001/user/readUserInfo`, {
+        axios.get(`http://${Port}/user/readUserInfo`, {
           withCredentials: true,
         }),
       onSuccess: (data: any) => {
@@ -76,7 +77,7 @@ const ReleaseRoom = () => {
     (value: boolean) => {
       if (value === false) {
         return axios.post(
-          `http://localhost:3001/releaseRoom/setRelease`,
+          `http://${Port}/releaseRoom/setRelease`,
           {},
           {
             withCredentials: true,
@@ -84,7 +85,7 @@ const ReleaseRoom = () => {
         )
       } else {
         return axios.post(
-          `http://localhost:3001/releaseRoom/setUnRelease`,
+          `http://${Port}/releaseRoom/setUnRelease`,
           {},
           {
             withCredentials: true,
