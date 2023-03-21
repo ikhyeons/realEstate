@@ -124,7 +124,7 @@ const ReleaseRoom = () => {
         }}
       >
         방내놓기
-        {Number(res[1].data?.data.data[0].isRelease) === 1 ? (
+        {res[1].data && Number(res[1].data?.data.data[0].isRelease) === 1 ? (
           <SOFdiv release={res[1].data?.data.data[0].isRelease}>on</SOFdiv>
         ) : (
           <SOFdiv release={res[1].data?.data.data[0].isRelease}>off</SOFdiv>

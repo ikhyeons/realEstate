@@ -47,7 +47,6 @@ const SideList: React.FC = () => {
     () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
       onSuccess: (data: any) => {
-        console.log(data.data.data)
         setList((prev: any) =>
           data.data.data.map((data: any, i: number) => ({
             id: data.userNum,

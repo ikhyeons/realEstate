@@ -80,7 +80,9 @@ const DocView = () => {
     {
       queryKey: ['readDoc', docNum],
       queryFn: () => {
-        return axios.get(`http://${Port}/document/readDoc/${docNum}`)
+        return axios.get(`http://${Port}/document/readDoc/${docNum}`, {
+          withCredentials: true,
+        })
       },
       onSuccess: (data: any) => {
         setDocValue(data.data.data)
@@ -114,7 +116,9 @@ const DocView = () => {
       <SDocHeader>
         <SDocListBtn
           onClick={() => {
-            navigate(`/community/List/${Number(cookies.lastPageNum)}`)
+            if (Number(cookies.lastPageNum))
+              navigate(`/community/List/${Number(cookies.lastPageNum)}`)
+            else navigate(`/community/List`)
           }}
         >
           ←글목록

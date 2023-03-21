@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 const SAlarmCard = styled.li`
@@ -11,22 +12,17 @@ const SAlarmCard = styled.li`
 const SAlarmCardHeader = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `
-const SAlarmCardName = styled.div`
-  border-radius: 50%;
-  background: yellow;
-  padding: 2px;
-  font-size: 20px;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  margin-right: 10px;
+const SAlarmCardDocTitle = styled.div`
+  font-weight: bold;
+  width: 72%;
 `
-const SAlarmCardDocTitle = styled.div``
 
 const SAlarmCardDate = styled.div`
   margin-left: 20px;
   font-size: 13px;
+  width: 28%;
 `
 const SAlarmCardContent = styled.div`
   margin-left: 10px;
@@ -45,16 +41,34 @@ const SAlarmCardNum = styled.div`
   transform: translateY(-50%);
 `
 
-const AlarmDocCard = () => {
+const AlarmDocCard = (prop: any) => {
+  const navigate = useNavigate()
+
   return (
-    <SAlarmCard>
+    <SAlarmCard
+      onClick={() => {
+        prop.refetch()
+        navigate(`/community/View/${prop.data.docNum}`)
+      }}
+    >
       <SAlarmCardHeader>
-        <SAlarmCardName>성</SAlarmCardName>
-        <SAlarmCardDocTitle>글 제목</SAlarmCardDocTitle>
+        <SAlarmCardDocTitle>{prop.data.docTitle}</SAlarmCardDocTitle>
+        <SAlarmCardDate>
+          {prop.data.makeDate.slice(2, 4) +
+            '.' +
+            prop.data.makeDate.slice(5, 7) +
+            '.' +
+            prop.data.makeDate.slice(8, 10) +
+            ' ' +
+            prop.data.makeDate.slice(11, 13) +
+            '시 ' +
+            prop.data.makeDate.slice(14, 16) +
+            '분'}
+        </SAlarmCardDate>
       </SAlarmCardHeader>
-      <SAlarmCardDate>23. 1. 4 오후 6시 9분</SAlarmCardDate>
-      <SAlarmCardContent>달린 댓글 내용</SAlarmCardContent>
-      <SAlarmCardNum>99</SAlarmCardNum>
+
+      <SAlarmCardContent>{prop.data.replyContent}</SAlarmCardContent>
+      <SAlarmCardNum>{prop.data.cnt}</SAlarmCardNum>
     </SAlarmCard>
   )
 }

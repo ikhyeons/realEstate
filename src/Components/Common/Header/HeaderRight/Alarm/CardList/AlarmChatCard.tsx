@@ -19,6 +19,7 @@ const SAlarmCardHeader = styled.div`
 `
 
 const SAlarmCardAddress = styled.div`
+  font-weight: bold;
   width: 72%;
 `
 

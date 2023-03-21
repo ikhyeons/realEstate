@@ -16,7 +16,7 @@ router.post('/createReply', async (req: Request, res: Response) => {
     try {
       //데이터를 입력하는 쿼리
       await connection.query(
-        'insert into reply values (default, ?, ?, ?, default, default) ',
+        'insert into reply values (default, ?, ?, ?, default, default, default)',
         [docNum, userNum, replyContent],
       )
       //데이터 쿼리 종료 후 대여한 커넥션을 반납함

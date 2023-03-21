@@ -14,7 +14,12 @@ app.use(mysqlSession(sessionConfig))
 app.use(express.json())
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://118.39.194.152:3000', '*'], // 모든 출처 허용 옵션. true 를 써도 된다.
+    origin: [
+      'http://localhost:3000',
+      'http://118.39.194.152:3000',
+      'http://203.232.200.71:3000',
+      'http://222.235.130.176:3000',
+    ],
     credentials: true,
   }),
 )
@@ -66,6 +71,7 @@ io.use(wrap(mysqlSession(sessionConfig)))
 io.on('connection', async (socket: any) => {
   console.log('connected')
   console.log(socket.request.session)
+  console.log(socket.id)
 
   const connection = await getConnection()
   const [

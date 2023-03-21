@@ -18,6 +18,16 @@ const AlarmCardList = () => {
         console.log(data.data.data)
       },
     },
+    {
+      queryKey: ['readUnCheckReplyDocs'],
+      queryFn: () =>
+        axios.get(`http://${Port}/document/readUnCheckReplyDocs`, {
+          withCredentials: true,
+        }),
+      onSuccess: (data: any) => {
+        console.log(data.data.data)
+      },
+    },
   ])
 
   return (
@@ -25,7 +35,9 @@ const AlarmCardList = () => {
       {res[0].data?.data.data.map((data: any, i: number) => (
         <AlarmChatCard key={i} data={data} />
       ))}
-      <AlarmDocCard />
+      {res[1].data?.data.data.map((data: any, i: number) => (
+        <AlarmDocCard refetch={res[1].refetch} key={i} data={data} />
+      ))}
     </SCardList>
   )
 }

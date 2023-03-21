@@ -9,6 +9,7 @@ export const createChatF = async (
 ) => {
   const connection = await getConnection()
 
+  console.log(chatRoomNum, userNum, chatContent)
   //데이터를 입력하는 쿼리
   try {
     await connection.query(

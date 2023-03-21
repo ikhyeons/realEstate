@@ -103,10 +103,17 @@ router.get('/readDoc/:docNum', async (req: Request, res: Response) => {
     const [
       data,
     ]: any = await connection.query(
-      'SELECT docNum, docTitle, docContent, makeDate, userName FROM document LEFT JOIN user ON document.docWriter = user.userNum WHERE docNum = ? and del = 0',
+      'SELECT docNum, docTitle, docContent, makeDate, userName, docWriter FROM document LEFT JOIN user ON document.docWriter = user.userNum WHERE docNum = ? and del = 0',
       [docNum],
     )
 
+    if (Number(data[0].docWriter) === Number(req.session.Uid)) {
+      console.log(docNum)
+      await connection.query('UPDATE reply SET checked=1 WHERE docNum = ?;', [
+        docNum,
+      ])
+      console.log('doThis')
+    }
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release()
     //결과가 성공이면 result 0과 데이터를 날림
@@ -222,6 +229,32 @@ router.post('/countView', async (req: Request, res: Response) => {
     connection.release()
     //결과가 성공이면 result 0과 데이터를 날림
     res.send({ result: 0 })
+  } catch (err) {
+    //db에서 에러나 났을 경우 커넥션을 반납하고
+    connection.release()
+    //에러로그를 출력함
+    console.log(err)
+    //프론트로 에러코드 result 3을 보냄
+    res.send({ result: 3 })
+  }
+})
+
+//댓글 확인이 안된 글 알람 보기
+router.get('/readUnCheckReplyDocs', async (req: Request, res: Response) => {
+  //db연결을 위해 pool에서 커넥션을 대여함
+  const connection = await getConnection()
+  try {
+    //데이터를 입력하는 쿼리
+    const [
+      data,
+    ]: any = await connection.query(
+      'select *, count(reply.repNum) as cnt from document left join reply on document.docNum = reply.docNum where docWriter = ? and checked = 0 and NOT reply.replyWriter IN (?) group by document.docNum',
+      [req.session.Uid, req.session.Uid],
+    )
+    //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+    connection.release()
+    //결과가 성공이면 result 0과 데이터를 날림
+    res.send({ result: 0, data })
   } catch (err) {
     //db에서 에러나 났을 경우 커넥션을 반납하고
     connection.release()
