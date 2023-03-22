@@ -85,8 +85,10 @@ io.on('connection', async (socket: any) => {
 
   socket.on('sendChat', async (rcv: any) => {
     await createChatF(rcv.roomNum, socket.request.session.Uid, rcv.data)
-    socket.broadcast
-      .to(String(rcv.roomNum))
-      .emit('sendChat', { data: rcv.data, roomNum: rcv.roomNum })
+    socket.broadcast.to(rcv.roomNum).emit('sendChat', {
+      data: rcv.data,
+      roomNum: rcv.roomNum,
+      time: new Date(),
+    })
   })
 })

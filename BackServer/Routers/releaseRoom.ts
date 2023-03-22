@@ -38,16 +38,6 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
   //db연결을 위해 pool에서 커넥션을 대여함
   if (req.session.isLogin) {
     const connection = await getConnection()
-    console.log(
-      roomDeposit,
-      roomMonthly,
-      address,
-      year,
-      month,
-      doc,
-      userNum,
-      options,
-    )
     try {
       //옵션 데이터를 입력하는 쿼리
 
@@ -99,7 +89,6 @@ router.post(
   '/uploadImgs',
   upload.array('inputImgs', 10),
   async (req: Request, res: Response) => {
-    console.log(req.files)
     //db연결을 위해 pool에서 커넥션을 대여함
     if (req.session.isLogin) {
       const connection = await getConnection()

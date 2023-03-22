@@ -13,11 +13,17 @@ router.get('/readMyChatRoom', async (req: Request, res: Response) => {
     try {
       //데이터를 입력하는 쿼리
 
-      const [
-        data,
-      ] = await connection.query(
-        'select * from chatRoom where chatParticipant = ?',
-        [userNum],
+      const [data] = await connection.query(
+        `SELECT 
+        chatRoom.*, 
+        (SELECT chatcontent FROM chat WHERE chat.chatRoomNum = chatRoom.chatRoom ORDER BY chatNum DESC LIMIT 1) AS chatContent, 
+        (SELECT makeDate FROM chat WHERE chat.chatRoomNum = chatRoom.chatRoom ORDER BY chatNum DESC LIMIT 1) AS makeDate, 
+        (SELECT COUNT(*) FROM chat WHERE chat.chatRoomNum = chatRoom.chatRoom AND NOT chatWriter IN(?) AND checked=0 ORDER BY chatNum DESC LIMIT 1) AS cnt
+        FROM chatRoom LEFT JOIN chat ON chat.chatRoomNum = chatRoom.chatRoom 
+        WHERE chatParticipant = ?
+        GROUP BY chatRoom.chatRoomNum
+        ORDER BY makeDate DESC`,
+        [req.session.Uid, userNum],
       )
       //데이터 쿼리 종료 후 대여한 커넥션을 반납함
       connection.release()
@@ -50,10 +56,10 @@ router.post('/createChatRoom', async (req: Request, res: Response) => {
         [
           roomAddress,
           userNum,
-          String(userNum) + String(otherNum),
+          String(userNum) + ' ' + String(otherNum),
           roomAddress,
           otherNum,
-          String(userNum) + String(otherNum),
+          String(userNum) + ' ' + String(otherNum),
         ],
       )
 
@@ -81,7 +87,7 @@ router.get('/readChat/:chatRoomNum', async (req: Request, res: Response) => {
   if (req.session.isLogin) {
     const connection = await getConnection()
     try {
-      //데이터를 입력하는 쿼리
+      //데이터를 읽는
       const [
         data,
       ]: any = await connection.query(
@@ -89,6 +95,11 @@ router.get('/readChat/:chatRoomNum', async (req: Request, res: Response) => {
         [chatRoomNum],
       )
 
+      //읽었을 때 해당 방의 상대 check를 모두 1로 바꿈
+      await connection.query(
+        'UPDATE chat SET checked=1 WHERE chatRoomNum = ? AND NOT chatWriter IN(?)',
+        [chatRoomNum, req.session.Uid],
+      )
       const setMyData = data.map((data: any, i: number) =>
         data.chatWriter === req.session.Uid
           ? { ...data, my: 1 }

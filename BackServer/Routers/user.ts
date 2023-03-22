@@ -19,7 +19,6 @@ interface userInfo extends RowDataPacket {
 
 //회원가입 라우팅
 router.post('/join', async (req: Request, res: Response) => {
-  console.log(req.body)
   const {
     userName,
     userID,
@@ -212,7 +211,6 @@ router.get('/readRooms', async (req: Request, res: Response) => {
     let data: any = []
     console.log(req.session.isLogin, req.session.Uid)
     if (req.session.isLogin) {
-      console.log('here1')
       ;[
         data,
       ] = await connection.query(
@@ -220,7 +218,6 @@ router.get('/readRooms', async (req: Request, res: Response) => {
         [req.session.Uid],
       )
     } else {
-      console.log('here2')
       ;[data] = await connection.query(
         'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, pictureNum, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 GROUP BY userNum',
       )

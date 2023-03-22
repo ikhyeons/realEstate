@@ -108,11 +108,9 @@ router.get('/readDoc/:docNum', async (req: Request, res: Response) => {
     )
 
     if (Number(data[0].docWriter) === Number(req.session.Uid)) {
-      console.log(docNum)
       await connection.query('UPDATE reply SET checked=1 WHERE docNum = ?;', [
         docNum,
       ])
-      console.log('doThis')
     }
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release()

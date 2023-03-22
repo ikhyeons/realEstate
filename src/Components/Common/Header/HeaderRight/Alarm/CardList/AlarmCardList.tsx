@@ -4,6 +4,9 @@ import axios from 'axios'
 import Port from '../../../../../../../port'
 import AlarmChatCard from './AlarmChatCard'
 import AlarmDocCard from './AlarmDocCard'
+
+import { useEffect } from 'react'
+
 const SCardList = styled.ul``
 
 const AlarmCardList = () => {

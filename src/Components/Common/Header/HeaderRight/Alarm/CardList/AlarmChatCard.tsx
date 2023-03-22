@@ -3,6 +3,9 @@ import { useRecoilState } from 'recoil'
 import { AcurrentChatRoomId, AisChatAtom } from '../../../../../../AtomStorage'
 import { useQueries } from 'react-query'
 import axios from 'axios'
+import io from 'socket.io-client'
+import Port from '../../../../../../../port'
+import { useEffect, useState } from 'react'
 
 const SAlarmCard = styled.li`
   padding: 5px;
@@ -43,12 +46,57 @@ const SAlarmCardNum = styled.div`
   top: 50%;
   transform: translateY(-50%);
 `
+const socket = io(`ws://${Port}`, { transports: ['websocket'] })
 
 const AlarmChatCard = (prop: any) => {
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
     AcurrentChatRoomId,
   )
+
+  interface IChatData {
+    makeDate: string
+    cnt: number
+    chatContent: string
+  }
+
+  const [updateChatData, setUpdateChatData] = useState<IChatData>({
+    makeDate: '',
+    cnt: 0,
+    chatContent: '',
+  })
+  useEffect(() => {
+    //시작하자마자 프롭스 입력
+    setUpdateChatData((prev: any) => ({
+      ...prop.data,
+      makeDate:
+        prop.data.makeDate.slice(2, 4) +
+        '.' +
+        prop.data.makeDate.slice(5, 7) +
+        '.' +
+        prop.data.makeDate.slice(8, 10) +
+        ' ' +
+        prop.data.makeDate.slice(11, 13) +
+        '시 ' +
+        prop.data.makeDate.slice(14, 16) +
+        '분',
+    }))
+  }, [])
+
+  useEffect(() => {
+    socket.on('sendChat', (msg) => {
+      console.log(msg)
+      if (String(msg.roomNum) === String(prop.data.chatRoom)) {
+        setUpdateChatData((prev: any) => ({
+          ...prev,
+          makeDate: msg.time,
+          cnt: prev.cnt + 1,
+          chatContent: msg.data,
+        }))
+      }
+    })
+  }, [])
+  console.log(prop)
 
   return (
     <SAlarmCard
@@ -59,11 +107,13 @@ const AlarmChatCard = (prop: any) => {
     >
       <SAlarmCardHeader>
         <SAlarmCardAddress>{prop.data.roomAddress}</SAlarmCardAddress>
-        <SAlarmCardDate>23. 1. 4 오후 6시 9분</SAlarmCardDate>
+        <SAlarmCardDate>{updateChatData.makeDate}</SAlarmCardDate>
       </SAlarmCardHeader>
 
-      <SAlarmCardContent>내용</SAlarmCardContent>
-      <SAlarmCardNum>99</SAlarmCardNum>
+      <SAlarmCardContent>{updateChatData.chatContent}</SAlarmCardContent>
+      {updateChatData.cnt === 0 ? null : (
+        <SAlarmCardNum>{updateChatData.cnt}</SAlarmCardNum>
+      )}
     </SAlarmCard>
   )
 }
