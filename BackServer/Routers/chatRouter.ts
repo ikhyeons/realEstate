@@ -15,11 +15,12 @@ router.get('/readMyChatRoom', async (req: Request, res: Response) => {
 
       const [data] = await connection.query(
         `SELECT 
-        chatRoom.*, 
+        chatRoom.*, username,
         (SELECT chatcontent FROM chat WHERE chat.chatRoomNum = chatRoom.chatRoom ORDER BY chatNum DESC LIMIT 1) AS chatContent, 
         (SELECT makeDate FROM chat WHERE chat.chatRoomNum = chatRoom.chatRoom ORDER BY chatNum DESC LIMIT 1) AS makeDate, 
         (SELECT COUNT(*) FROM chat WHERE chat.chatRoomNum = chatRoom.chatRoom AND NOT chatWriter IN(?) AND checked=0 ORDER BY chatNum DESC LIMIT 1) AS cnt
         FROM chatRoom LEFT JOIN chat ON chat.chatRoomNum = chatRoom.chatRoom 
+        LEFT JOIN user ON user.userNum = chatRoom.chatOther 
         WHERE chatParticipant = ?
         GROUP BY chatRoom.chatRoomNum
         ORDER BY makeDate DESC`,
@@ -52,14 +53,16 @@ router.post('/createChatRoom', async (req: Request, res: Response) => {
     try {
       //데이터를 입력하는 쿼리
       await connection.query(
-        'insert into chatRoom values (default, ?, ?, ?), (default, ?, ?, ?)',
+        'insert into chatRoom values (default, ?, ?, ?, ?, default), (default, ?, ?, ?, ?, default)',
         [
           roomAddress,
           userNum,
-          String(userNum) + ' ' + String(otherNum),
+          otherNum,
+          String(userNum) + 'N' + String(otherNum),
           roomAddress,
           otherNum,
-          String(userNum) + ' ' + String(otherNum),
+          userNum,
+          String(userNum) + 'N' + String(otherNum),
         ],
       )
 

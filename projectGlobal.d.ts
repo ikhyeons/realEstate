@@ -36,6 +36,7 @@ declare global {
     userName: string | ''
     makeDate: string | ''
     view: number | null
+    docWriter: string
   }
 }
 

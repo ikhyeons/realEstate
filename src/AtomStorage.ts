@@ -58,6 +58,7 @@ export const AdocValue = atom<DocValue>({
     docContent: '',
     userName: '',
     makeDate: '',
+    docWriter: '',
     view: null,
   },
 })
@@ -88,6 +89,16 @@ export const AcurrentRoomId = atom({
 
 export const AcurrentChatRoomId = atom({
   key: 'chat/currentChatRoomId',
+  default: 0,
+})
+
+export const ARcvChatToggle = atom({
+  key: 'chat/RcvChat',
+  default: 0,
+})
+
+export const ARcvReplyToggle = atom({
+  key: 'reply/RcvReply',
   default: 0,
 })
 

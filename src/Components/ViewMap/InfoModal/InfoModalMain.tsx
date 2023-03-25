@@ -11,6 +11,7 @@ import {
 import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../port'
+import io from 'socket.io-client'
 
 const SInfoModalBack = styled.div`
   height: 100%;
@@ -56,6 +57,8 @@ const SReq = styled.div`
   font-size: 25px;
 `
 
+const socket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
+
 const InfoModalMain = () => {
   const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
   const [isPopOpen, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
@@ -85,6 +88,10 @@ const InfoModalMain = () => {
     {
       onSuccess: (data) => {
         if (data.data.result === 1) alert('로그인부터 하세요;')
+        else {
+          socket.emit('sendChat', currentRoomId)
+          setIsPopOpen(true)
+        }
       },
     },
   )
@@ -103,7 +110,6 @@ const InfoModalMain = () => {
         <ViewRoomInfo />
         <SReq
           onClick={() => {
-            setIsPopOpen(true)
             createChatRoom.mutate()
           }}
         >

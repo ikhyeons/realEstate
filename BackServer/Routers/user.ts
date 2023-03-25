@@ -209,7 +209,6 @@ router.get('/readRooms', async (req: Request, res: Response) => {
   try {
     //데이터를 입력하는 쿼리
     let data: any = []
-    console.log(req.session.isLogin, req.session.Uid)
     if (req.session.isLogin) {
       ;[
         data,
@@ -223,7 +222,6 @@ router.get('/readRooms', async (req: Request, res: Response) => {
       )
     }
 
-    console.log(data)
     const outdata = data.map((data: any) => {
       return {
         ...data,

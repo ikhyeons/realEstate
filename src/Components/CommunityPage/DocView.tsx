@@ -86,6 +86,7 @@ const DocView = () => {
       },
       onSuccess: (data: any) => {
         setDocValue(data.data.data)
+        console.log(data.data.data)
       },
     },
     {
@@ -187,7 +188,7 @@ const DocView = () => {
         )}
       </SContent>
       <hr />
-      <RippleMain /> {/* 댓글 컴포넌트 */}
+      <RippleMain data={docValue} /> {/* 댓글 컴포넌트 */}
     </SViewMain>
   ) : (
     <DocModify />

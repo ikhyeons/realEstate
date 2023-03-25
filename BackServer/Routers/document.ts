@@ -100,10 +100,12 @@ router.get('/readDoc/:docNum', async (req: Request, res: Response) => {
 
   try {
     //데이터를 입력하는 쿼리
-    const [
-      data,
-    ]: any = await connection.query(
-      'SELECT docNum, docTitle, docContent, makeDate, userName, docWriter FROM document LEFT JOIN user ON document.docWriter = user.userNum WHERE docNum = ? and del = 0',
+    const [data]: any = await connection.query(
+      `SELECT 
+        docNum, docTitle, docContent, makeDate, userName, docWriter 
+        FROM document 
+        LEFT JOIN user ON document.docWriter = user.userNum 
+        WHERE docNum = ? and del = 0`,
       [docNum],
     )
 
@@ -243,12 +245,20 @@ router.get('/readUnCheckReplyDocs', async (req: Request, res: Response) => {
   const connection = await getConnection()
   try {
     //데이터를 입력하는 쿼리
-    const [
-      data,
-    ]: any = await connection.query(
-      'select *, count(reply.repNum) as cnt from document left join reply on document.docNum = reply.docNum where docWriter = ? and checked = 0 and NOT reply.replyWriter IN (?) group by document.docNum',
+    const [data]: any = await connection.query(
+      `SELECT 
+      document.*, count(reply.repNum) as cnt, user.userName,
+      (SELECT replycontent FROM reply WHERE reply.docNum = document.docNum ORDER BY repNum DESC LIMIT 1) AS replyContent, 
+      (SELECT makeDate FROM reply WHERE reply.docNum = document.docNum ORDER BY repNum DESC LIMIT 1) AS RmakeDate
+    FROM document 
+    LEFT JOIN reply ON document.docNum = reply.docNum 
+    LEFT JOIN user ON reply.replyWriter = user.userNum
+    WHERE docWriter = ? AND checked = 0 AND NOT reply.replyWriter IN (?) 
+    GROUP BY document.docNum`,
       [req.session.Uid, req.session.Uid],
     )
+
+    console.log(data)
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release()
     //결과가 성공이면 result 0과 데이터를 날림

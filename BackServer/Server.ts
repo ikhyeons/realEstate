@@ -24,6 +24,22 @@ app.use(
   }),
 )
 
+const server = http.createServer(app).listen(3001, function () {
+  console.log('Express server listening')
+})
+
+const ios = require('express-socket.io-session') // 소켓 내에서 세션데이터 접근 가능하도록하는 모듈
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  },
+})
+
+const docSocket = io.of('/doc')
+const chatSocket = io.of('/chat')
+
 const session = require('./Routers/session')
 const user = require('./Routers/user')
 const releaseRoom = require('./Routers/releaseRoom')
@@ -50,45 +66,74 @@ app.get('/main.js', (req: Request, res: Response) => {
   )
 })
 
-const server = http.createServer(app).listen(3001, function () {
-  console.log('Express server listening')
-})
-
 //소켓 통신
 
-const io = require('socket.io')(server, {
-  cors: {
-    origin: ['http://localhost:3000'],
-    credentials: true,
-  },
-})
+chatSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈과 세션 연결
+docSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈과 세션 연결
 
-const wrap = (middleware: any) => (socket: any, next: any) =>
-  middleware(socket.request, {}, next)
-
-io.use(wrap(mysqlSession(sessionConfig)))
-
-io.on('connection', async (socket: any) => {
-  console.log('connected')
-  console.log(socket.request.session)
-  console.log(socket.id)
-
+chatSocket.on('connection', async (socket: any) => {
+  console.log('connect chat')
   const connection = await getConnection()
   const [
     data,
   ]: any = await connection.query(
     'select * from chatRoom where chatParticipant = ?',
-    [socket.request.session.Uid],
+    [socket.handshake.session.Uid],
   )
-
-  socket.join(data.map((data: any, i: number) => data.chatRoom))
+  socket.join([
+    ...data.map((data: any, i: number) => data.chatRoom),
+    String(socket.handshake.session.Uid),
+  ])
 
   socket.on('sendChat', async (rcv: any) => {
-    await createChatF(rcv.roomNum, socket.request.session.Uid, rcv.data)
+    console.log(socket.handshake.session.Uid, 'onChat')
+    await createChatF(rcv.roomNum, socket.handshake.session.Uid, rcv.data)
     socket.broadcast.to(rcv.roomNum).emit('sendChat', {
       data: rcv.data,
       roomNum: rcv.roomNum,
       time: new Date(),
     })
+  })
+
+  socket.on('createChat', async (rcv: any) => {
+    console.log(rcv, 'createChat')
+    socket.join(String(rcv))
+    socket.broadcast.to(rcv).emit('createChat')
+    socket.leave(String(rcv))
+  })
+})
+
+docSocket.on('connection', async (socket: any) => {
+  console.log('connect doc')
+  const connection = await getConnection()
+  const [
+    data,
+  ]: any = await connection.query(
+    'SELECT * FROM document WHERE docWriter = ? AND del = 0',
+    [socket.handshake.session.Uid],
+  )
+  socket.join([
+    ...data.map((data: any, i: number) => data.docNum),
+    String(socket.handshake.session.Uid),
+  ])
+
+  socket.on('writeReply', async (rcv: any) => {
+    console.log(rcv.docNum, 'onReply')
+    socket.join(Number(rcv.docNum))
+    console.log(socket.adapter.rooms)
+    socket.broadcast.to(Number(rcv.docNum)).emit('writeReply', {
+      data: rcv.data,
+      docNum: rcv.docNum,
+      time: new Date(),
+    })
+    socket.leave(Number(rcv.docNum))
+    console.log(socket.adapter.rooms)
+  })
+
+  socket.on('createReply', async (rcv: any) => {
+    console.log(rcv, 'createReply')
+    socket.join(String(rcv))
+    socket.broadcast.to(rcv).emit('createReply')
+    socket.leave(String(rcv))
   })
 })

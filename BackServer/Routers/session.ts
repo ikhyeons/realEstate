@@ -17,9 +17,7 @@ router.post('/login', async (req: Request, res: Response) => {
         req.session.isLogin = true
         req.session.Uid = data[0].userNum
         res.cookie('isLogin', true, { httpOnly: false })
-        req.session.save(() => {
-          console.log(req.session)
-        })
+        req.session.save(() => {})
         res.send({ result: 0 })
       } else {
         res.send({ result: 2 })
@@ -39,7 +37,6 @@ router.post('/login', async (req: Request, res: Response) => {
 })
 
 router.post('/logout', (req: Request, res: Response) => {
-  console.log(req.session.isLogin)
   if (req.session.isLogin === true) {
     req.session.destroy((err) => {
       console.log('정상 로그아웃!')

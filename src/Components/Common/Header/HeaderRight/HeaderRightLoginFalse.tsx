@@ -49,6 +49,9 @@ const HeaderRightLoginFalse: React.FC = () => {
         else if (data.data.result === 2) alert('비밀번호 없음')
         else alert('DB오류')
       },
+      onSettled: () => {
+        window.location.reload()
+      },
     },
   )
 

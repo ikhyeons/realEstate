@@ -1,11 +1,11 @@
 import styled from 'styled-components'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { AcurrentChatRoomId, AisChatAtom } from '../../../../../../AtomStorage'
-import io from 'socket.io-client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useContext } from 'react'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../../../../port'
+import io from 'socket.io-client'
 
 const SChatHeader = styled.div`
   margin-bottom: 5px;
@@ -70,9 +70,7 @@ const SOtherChat = styled.div`
   margin-bottom: 5px;
   padding: 5px;
 `
-
-const socket = io(`ws://${Port}`, { transports: ['websocket'] })
-
+const socket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
 const Chat = () => {
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   const [chatValue, setChatValue] = useState<string>('')
@@ -107,7 +105,7 @@ const Chat = () => {
   }, [])
 
   useEffect(() => {
-    socket.on('sendChat', (msg) => {
+    socket.on('sendChat', (msg: any) => {
       console.log(msg)
       if (msg.roomNum === currentChatRoomId)
         setChatData((prev) => [...prev, { my: 0, chatContent: msg.data }])
@@ -155,6 +153,18 @@ const Chat = () => {
           }
         }}
       />
+      <button
+        onClick={() => {
+          socket.emit('sendChat', {
+            roomNum: currentChatRoomId,
+            data: chatValue,
+          })
+          setChatData((prev) => [...prev, { chatContent: chatValue, my: 1 }])
+          setChatValue('')
+        }}
+      >
+        버튼
+      </button>
     </SChatWrap>
   )
 }

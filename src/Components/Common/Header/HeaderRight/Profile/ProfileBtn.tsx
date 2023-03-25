@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import styled from 'styled-components'
 import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
 import { useCookies } from 'react-cookie'
+import { useNavigate } from 'react-router-dom'
 
 import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
 import Port from '../../../../../../port'
+import io from 'socket.io-client'
 
 const SProfile = styled.div`
   border-radius: 50%;
@@ -41,8 +43,9 @@ const SLogout = styled.div`
     background: rgba(0, 0, 0, 0.1);
   }
 `
-
+const socket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
 const ProfileBtn = () => {
+  const navigate = useNavigate()
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
@@ -67,6 +70,10 @@ const ProfileBtn = () => {
         } else if (data.data.result === 1)
           alert('DB오류발생! 하지만 로그아웃은 함 ')
         else alert('또다른 무언가')
+      },
+      onSettled: () => {
+        navigate('/')
+        window.location.reload()
       },
     },
   )
@@ -119,6 +126,7 @@ const ProfileBtn = () => {
             <SLogout
               onClick={() => {
                 logOut.mutate()
+                socket.disconnect()
               }}
             >
               로그아웃

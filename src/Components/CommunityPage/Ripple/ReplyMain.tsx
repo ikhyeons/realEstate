@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../port'
 import { useParams } from 'react-router-dom'
 import ReplyCard from './ReplyCard'
+import io from 'socket.io-client'
 
 const SRipleMain = styled.div`
   padding: 5px;
@@ -17,7 +18,11 @@ const SwriteRipple = styled.textarea`
   font-family: none;
 `
 
-const RippleMain = () => {
+interface IPropDocValue {
+  data: DocValue
+}
+const socket = io(`ws://${Port}/doc`, { transports: ['websocket'] })
+const RippleMain: FC<IPropDocValue> = (prop) => {
   const { docNum } = useParams()
   const [replyValue, setReplyValue] = useState<string>('')
 
@@ -46,7 +51,14 @@ const RippleMain = () => {
     {
       onSuccess: (data) => {
         if (data.data.result === 1) alert('로그인부터 하세요;')
+        else socket.emit('createReply', docNum)
         queryClient.invalidateQueries(['readReply', docNum]) // queryKey 유효성 제거
+      },
+      onSettled: () => {
+        socket.emit('writeReply', {
+          docNum: docNum,
+          data: replyValue,
+        })
       },
     },
   )
@@ -77,6 +89,18 @@ const RippleMain = () => {
             }
           }}
         />
+        <button
+          onClick={(e) => {
+            if (replyValue !== '') {
+              e.preventDefault()
+              boxref.current!.style.height = 'auto'
+              setReplyValue('')
+              writeReply.mutate()
+            } else alert('공백은 입력할 수 없습니다.')
+          }}
+        >
+          제출
+        </button>
         {readReply.data?.data.data.map((data: any, i: number) => (
           <ReplyCard key={i} data={data} />
         ))}

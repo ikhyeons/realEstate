@@ -2,7 +2,6 @@ const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
 import { getConnection } from '../dbConnection'
-
 //댓글 작성 라우팅
 router.post('/createReply', async (req: Request, res: Response) => {
   const userNum = req.session.Uid // 유저번호는 세션에서 가져옴
@@ -42,10 +41,13 @@ router.get('/readReply/:docNum', async (req: Request, res: Response) => {
   const connection = await getConnection()
   try {
     //댓글을 불러오는 쿼리
-    const [
-      data,
-    ] = await connection.query(
-      'SELECT repNum, docNum, userName, replyContent, makeDate FROM reply LEFT JOIN user ON user.userNum = reply.replyWriter WHERE docNum = ? and del = 0 ORDER BY repNum DESC',
+    const [data] = await connection.query(
+      `SELECT 
+        repNum, docNum, userName, replyContent, makeDate
+        FROM reply 
+        LEFT JOIN user ON user.userNum = reply.replyWriter
+        WHERE docNum = ? and del = 0 
+        ORDER BY repNum DESC`,
       [docNum],
     )
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함

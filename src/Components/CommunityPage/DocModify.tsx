@@ -67,6 +67,7 @@ const DocModify: React.FC = () => {
     userName: '',
     makeDate: '',
     view: null,
+    docWriter: '',
   })
 
   useEffect(() => {
