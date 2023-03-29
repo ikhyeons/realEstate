@@ -1,4 +1,3 @@
-import { useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { HiBellAlert } from 'react-icons/hi2'
 import { useState } from 'react'
@@ -43,21 +42,11 @@ const SFilterBtn = styled.button`
 const AlarmBtn = () => {
   const [isPopOpen, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-  const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
-  const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
-
-  const AlarmBtnRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    setAnchorEl(AlarmBtnRef.current)
-  }, [])
 
   return (
     <>
       <SAlarm
-        ref={AlarmBtnRef}
         onClick={(event: React.MouseEvent<HTMLElement>) => {
           /*클릭 했을 때*/
           setAnchorEl(
@@ -76,7 +65,6 @@ const AlarmBtn = () => {
       </SAlarm>
       <Popover /*로그인 버튼 클릭 시 나오는 팝업 mui*/
         sx={{ marginTop: '12px' }}
-        id={id} /*해당 팝업의 아이디*/
         open={isPopOpen} /*isPopOpen이 true면 열림, 아니면 닫힘*/
         onClose={() =>
           setIsPopOpen(false)

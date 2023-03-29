@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom'
 
 const HeaderLeft = () => {
   const navigate = useNavigate() /*react route dom url바꿔주는 함수*/
-
+  const muiBtnStyle = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    width: '120px',
+    background: 'none',
+    '&:hover': { background: 'none' },
+  }
   return (
     <Button /*mui 버튼*/
       onClick={() => {
@@ -11,13 +17,7 @@ const HeaderLeft = () => {
         navigate('/')
       }}
       disabled={false} /*버튼 작동, 미작동 설정*/
-      sx={{
-        fontSize: '18px',
-        fontWeight: 'bold',
-        width: '120px',
-        background: 'none',
-        '&:hover': { background: 'none' },
-      }}
+      sx={muiBtnStyle}
       size="large"
       variant="contained" /*버튼 모양 결정*/
     >

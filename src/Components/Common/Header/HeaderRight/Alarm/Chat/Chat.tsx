@@ -1,11 +1,14 @@
 import styled from 'styled-components'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { AcurrentChatRoomId, AisChatAtom } from '../../../../../../AtomStorage'
+import {
+  AchatSocket,
+  AcurrentChatRoomId,
+  AisChatAtom,
+} from '../../../../../../AtomStorage'
 import { useEffect, useState, useRef, useContext } from 'react'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../../../../port'
-import io from 'socket.io-client'
 
 const SChatHeader = styled.div`
   margin-bottom: 5px;
@@ -70,13 +73,13 @@ const SOtherChat = styled.div`
   margin-bottom: 5px;
   padding: 5px;
 `
-const socket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
 const Chat = () => {
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   const [chatValue, setChatValue] = useState<string>('')
   const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
     AcurrentChatRoomId,
   )
+  const [chatSocket] = useRecoilState(AchatSocket)
   const chatViewRef = useRef<HTMLDivElement>(null)
   const [chatData, setChatData] = useState<any[]>([])
 
@@ -105,7 +108,7 @@ const Chat = () => {
   }, [])
 
   useEffect(() => {
-    socket.on('sendChat', (msg: any) => {
+    chatSocket()?.on('sendChat', (msg: any) => {
       console.log(msg)
       if (msg.roomNum === currentChatRoomId)
         setChatData((prev) => [...prev, { my: 0, chatContent: msg.data }])
@@ -144,7 +147,7 @@ const Chat = () => {
         }}
         onKeyPress={(e) => {
           if (e.code === 'Enter' && e.shiftKey === false) {
-            socket.emit('sendChat', {
+            chatSocket()?.emit('sendChat', {
               roomNum: currentChatRoomId,
               data: chatValue,
             })
@@ -155,7 +158,7 @@ const Chat = () => {
       />
       <button
         onClick={() => {
-          socket.emit('sendChat', {
+          chatSocket()?.emit('sendChat', {
             roomNum: currentChatRoomId,
             data: chatValue,
           })

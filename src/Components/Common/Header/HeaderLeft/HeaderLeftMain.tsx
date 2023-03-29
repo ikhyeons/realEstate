@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 
 import SearchMain from './SearchMain'
 
@@ -55,32 +55,59 @@ const HeaderLeft: React.FC = () => {
     year + 7,
     year + 8,
   ]
-  const Options: string[] = ['원룸', '투룸', '세탁기', '침대', '책상']
+  const Options: string[] = [
+    '원룸',
+    '투룸',
+    '세탁기',
+    '침대',
+    '책상',
+    '전자레인지',
+    '가스레인지',
+    '옷장',
+  ]
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [startMonth, setStartMonth] = useState<number>()
-  const [endMonth, setEndMonth] = useState<number>()
   const [startYear, setStartYear] = useState<number>()
-  const [endYear, setEndYear] = useState<number>()
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
 
-  const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
-  const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
+  const muiMenuBtnStyle = {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    width: '120px',
+    background: 'none',
+    margin: '0 5px',
+    '&:hover': { background: 'none' },
+  }
 
+  const muiEndBtnStyle = {
+    fontSize: '12px',
+    fontWeight: 'bold',
+    width: '100px',
+    background: '#FFD400',
+    position: 'absolute',
+    right: '0px',
+    bottom: '0px',
+    '&:hover': { background: '#DDDDDD' },
+  }
+
+  const muiRstBtnStyle = {
+    fontSize: '12px',
+    fontWeight: 'bold',
+    width: '100px',
+    background: '#FFD400',
+    position: 'absolute',
+    right: '105px',
+    bottom: '0px',
+    '&:hover': { background: '#DDDDDD' },
+  }
   return (
     <>
       <SearchMain />
       <Button /*mui 버튼*/
         disabled={false} /*버튼 작동, 미작동 설정*/
-        sx={{
-          fontSize: '18px',
-          fontWeight: 'bold',
-          width: '120px',
-          background: 'none',
-          margin: '0 5px',
-          '&:hover': { background: 'none' },
-        }}
+        sx={muiMenuBtnStyle}
         size="large"
         variant="contained" /*버튼 모양 결정*/
       >
@@ -88,14 +115,7 @@ const HeaderLeft: React.FC = () => {
       </Button>
       <Button /*mui 버튼*/
         disabled={false} /*버튼 작동, 미작동 설정*/
-        sx={{
-          fontSize: '18px',
-          fontWeight: 'bold',
-          width: '120px',
-          background: 'none',
-          margin: '0 5px',
-          '&:hover': { background: 'none' },
-        }}
+        sx={muiMenuBtnStyle}
         size="large"
         variant="contained" /*버튼 모양 결정*/
       >
@@ -103,29 +123,17 @@ const HeaderLeft: React.FC = () => {
       </Button>
       <Button
         onClick={(event: React.MouseEvent<HTMLElement>) => {
-          /*클릭 했을 때*/
-          setAnchorEl(
-            event.currentTarget,
-          ) /*지금 클릭된 버튼을 anchorEl에 저장함*/
-          setIsPopOpen(
-            (prev) => !prev,
-          ) /*isPopOpen은 팝업창을 열림, 닫음을 결정함, 이전값이 열림이면 닫힘으로, 닫힘이면 열림으로*/
+          setAnchorEl(event.currentTarget) //지금 클릭된 버튼을 anchorEl에 저장함
+          setIsPopOpen((prev) => !prev) //isPopOpen은 팝업창을 열림, 닫음을 결정함, 이전값이 열림이면 닫힘으로, 닫힘이면 열림으로
         }}
         disabled={false}
-        sx={{
-          fontSize: '18px',
-          fontWeight: 'bold',
-          width: '130px',
-          background: '#FFD400',
-          '&:hover': { background: '#DDDDDD' },
-        }}
+        sx={muiMenuBtnStyle}
         size="large"
         variant="contained"
       >
         옵션선택
       </Button>
       <Popover
-        id={id} /*해당 팝업의 아이디*/
         sx={{ marginTop: '12px' }}
         open={isPopOpen} /*isPopOpen이 true면 열림, 아니면 닫힘*/
         onClose={() =>
@@ -145,6 +153,8 @@ const HeaderLeft: React.FC = () => {
               <Select
                 sx={{ width: '100px', height: '40px' }}
                 value={startYear}
+                labelId="demo-simple-select-standard-label"
+                id="demo-simple-select-standard"
                 label="Start Month"
                 onChange={(e) => {
                   console.log(e.target.value)
@@ -178,10 +188,10 @@ const HeaderLeft: React.FC = () => {
                 sx={{ width: '145px', height: '40px' }}
                 label="Start Month"
                 onChange={(e) => {
-                  setSelectedOptions((prev) => [
-                    ...prev,
-                    e.target.value as string,
-                  ])
+                  setSelectedOptions((prev) => {
+                    if (prev.includes(e.target.value as string)) return prev
+                    return [...prev, e.target.value as string]
+                  })
                 }}
               >
                 {Options.map((data) => (
@@ -197,40 +207,22 @@ const HeaderLeft: React.FC = () => {
               return (
                 <SSelectedList>
                   {data}
-                  <SDeleteButton>x</SDeleteButton>
+                  <SDeleteButton
+                    onClick={() => {
+                      setSelectedOptions((prev) =>
+                        selectedOptions.filter((data2, i) => data !== data2),
+                      )
+                    }}
+                  >
+                    x
+                  </SDeleteButton>
                 </SSelectedList>
               )
             })}
-            <Button
-              sx={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                width: '100px',
-                background: '#FFD400',
-                position: 'absolute',
-                right: '90px',
-                bottom: '0px',
-                '&:hover': { background: '#DDDDDD' },
-              }}
-              size="large"
-              variant="contained"
-            >
+            <Button sx={muiRstBtnStyle} size="large" variant="contained">
               초기화
             </Button>
-            <Button
-              sx={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                width: '80px',
-                background: '#FFD400',
-                position: 'absolute',
-                right: '0px',
-                bottom: '0px',
-                '&:hover': { background: '#DDDDDD' },
-              }}
-              size="large"
-              variant="contained"
-            >
+            <Button sx={muiEndBtnStyle} size="large" variant="contained">
               완료
             </Button>
           </SBoxRight>

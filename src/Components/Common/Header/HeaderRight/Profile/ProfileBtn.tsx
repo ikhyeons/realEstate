@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
@@ -9,6 +9,8 @@ import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
 import Port from '../../../../../../port'
 import io from 'socket.io-client'
+import { useRecoilState } from 'recoil'
+import { AchatSocket } from '../../../../../AtomStorage'
 
 const SProfile = styled.div`
   border-radius: 50%;
@@ -43,13 +45,13 @@ const SLogout = styled.div`
     background: rgba(0, 0, 0, 0.1);
   }
 `
-const socket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
+
 const ProfileBtn = () => {
+  const [chatSoket] = useRecoilState(AchatSocket)
   const navigate = useNavigate()
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const canBeOpen = isPopOpen && Boolean(anchorEl) // isPopOpen이 true가 되었는가 and 해당 html요소가 있는가? 둘다 참일경우 true
-  const id = canBeOpen ? 'spring-popper' : undefined //만약 둘다 참이면 아이디에 spring-popper가 생김
+
   const [cookies, setCookies] = useCookies(['isLogin'])
   const [first, setFirst] = useState<string>('')
 
@@ -109,7 +111,6 @@ const ProfileBtn = () => {
       {isPopOpen === true ? (
         <Popover /*로그인 버튼 클릭 시 나오는 팝업 mui*/
           sx={{ marginTop: '12px' }}
-          id={id} /*해당 팝업의 아이디*/
           open={isPopOpen} /*isPopOpen이 true면 열림, 아니면 닫힘*/
           onClose={() =>
             setIsPopOpen(false)
@@ -126,7 +127,7 @@ const ProfileBtn = () => {
             <SLogout
               onClick={() => {
                 logOut.mutate()
-                socket.disconnect()
+                chatSoket?.disconnect()
               }}
             >
               로그아웃

@@ -257,8 +257,6 @@ router.get('/readUnCheckReplyDocs', async (req: Request, res: Response) => {
     GROUP BY document.docNum`,
       [req.session.Uid, req.session.Uid],
     )
-
-    console.log(data)
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release()
     //결과가 성공이면 result 0과 데이터를 날림

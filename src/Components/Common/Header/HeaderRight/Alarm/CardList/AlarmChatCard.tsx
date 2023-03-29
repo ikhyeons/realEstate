@@ -1,13 +1,12 @@
 import styled from 'styled-components'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import {
+  AchatSocket,
   AcurrentChatRoomId,
   AisChatAtom,
   ARcvChatToggle,
 } from '../../../../../../AtomStorage'
 import { useEffect, useState } from 'react'
-import io from 'socket.io-client'
-import Port from '../../../../../../../port'
 
 const SAlarmCard = styled.li`
   padding: 5px;
@@ -53,13 +52,14 @@ const SAlarmCardNum = styled.div`
   top: 45px;
   transform: translateY(-50%);
 `
-const socket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
 const AlarmChatCard = (prop: any) => {
   console.log(prop)
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
     AcurrentChatRoomId,
   )
+
+  const [chatSocket] = useRecoilState(AchatSocket)
 
   const [isRcv, setIsRcv] = useRecoilState(ARcvChatToggle)
 
@@ -112,7 +112,7 @@ const AlarmChatCard = (prop: any) => {
   }, [prop.data])
 
   useEffect(() => {
-    socket.on('sendChat', (msg: any) => {
+    chatSocket()?.on('sendChat', (msg: any) => {
       console.log(msg)
       if (String(msg.roomNum) === String(prop.data.chatRoom)) {
         setUpdateChatData((prev: any) => ({

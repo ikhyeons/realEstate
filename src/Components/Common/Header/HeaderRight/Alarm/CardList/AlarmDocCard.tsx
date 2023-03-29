@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import Port from '../../../../../../../port'
-import io from 'socket.io-client'
 import { useEffect, useState } from 'react'
-import { AisAlarmPopOpen, ARcvReplyToggle } from '../../../../../../AtomStorage'
+import {
+  AisAlarmPopOpen,
+  ARcvReplyToggle,
+  AreplySocket,
+} from '../../../../../../AtomStorage'
 import { useRecoilState } from 'recoil'
 
 const SAlarmCard = styled.li`
@@ -52,8 +54,8 @@ interface IReplyData {
   replyContent: string
 }
 
-const socket = io(`ws://${Port}/doc`, { transports: ['websocket'] })
 const AlarmDocCard = (prop: any) => {
+  const [replySocket] = useRecoilState(AreplySocket)
   const [isAlarmPopOpen, setIsAlarmPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [updateReplyData, setUpdateReplyData] = useState<IReplyData>({
     RmakeDate: '',
@@ -72,7 +74,7 @@ const AlarmDocCard = (prop: any) => {
   }, [])
 
   useEffect(() => {
-    socket.on('writeReply', (msg: any) => {
+    replySocket()?.on('writeReply', (msg: any) => {
       console.log(msg)
       if (String(msg.docNum) === String(prop.data.docNum)) {
         setUpdateReplyData((prev: any) => ({

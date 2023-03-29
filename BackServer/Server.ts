@@ -24,7 +24,7 @@ app.use(
   }),
 )
 
-const server = http.createServer(app).listen(3001, function () {
+const server = http.createServer(app).listen(3010, function () {
   console.log('Express server listening')
 })
 
@@ -72,7 +72,6 @@ chatSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈�
 docSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈과 세션 연결
 
 chatSocket.on('connection', async (socket: any) => {
-  console.log('connect chat')
   const connection = await getConnection()
   const [
     data,
@@ -86,8 +85,8 @@ chatSocket.on('connection', async (socket: any) => {
   ])
 
   socket.on('sendChat', async (rcv: any) => {
-    console.log(socket.handshake.session.Uid, 'onChat')
     await createChatF(rcv.roomNum, socket.handshake.session.Uid, rcv.data)
+
     socket.broadcast.to(rcv.roomNum).emit('sendChat', {
       data: rcv.data,
       roomNum: rcv.roomNum,
@@ -96,15 +95,14 @@ chatSocket.on('connection', async (socket: any) => {
   })
 
   socket.on('createChat', async (rcv: any) => {
-    console.log(rcv, 'createChat')
     socket.join(String(rcv))
     socket.broadcast.to(rcv).emit('createChat')
     socket.leave(String(rcv))
   })
+  console.log('소켓 아이디 : ' + socket.id + 'chat')
 })
 
 docSocket.on('connection', async (socket: any) => {
-  console.log('connect doc')
   const connection = await getConnection()
   const [
     data,
@@ -118,22 +116,19 @@ docSocket.on('connection', async (socket: any) => {
   ])
 
   socket.on('writeReply', async (rcv: any) => {
-    console.log(rcv.docNum, 'onReply')
     socket.join(Number(rcv.docNum))
-    console.log(socket.adapter.rooms)
     socket.broadcast.to(Number(rcv.docNum)).emit('writeReply', {
       data: rcv.data,
       docNum: rcv.docNum,
       time: new Date(),
     })
     socket.leave(Number(rcv.docNum))
-    console.log(socket.adapter.rooms)
   })
 
   socket.on('createReply', async (rcv: any) => {
-    console.log(rcv, 'createReply')
     socket.join(String(rcv))
     socket.broadcast.to(rcv).emit('createReply')
     socket.leave(String(rcv))
   })
+  console.log('소켓 아이디 : ' + socket.id + 'reply')
 })

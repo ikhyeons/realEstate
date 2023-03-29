@@ -6,6 +6,8 @@ import Port from '../../../../port'
 import { useParams } from 'react-router-dom'
 import ReplyCard from './ReplyCard'
 import io from 'socket.io-client'
+import { useRecoilState } from 'recoil'
+import { AreplySocket } from '../../../AtomStorage'
 
 const SRipleMain = styled.div`
   padding: 5px;
@@ -21,8 +23,8 @@ const SwriteRipple = styled.textarea`
 interface IPropDocValue {
   data: DocValue
 }
-const socket = io(`ws://${Port}/doc`, { transports: ['websocket'] })
 const RippleMain: FC<IPropDocValue> = (prop) => {
+  const [replySocket] = useRecoilState(AreplySocket)
   const { docNum } = useParams()
   const [replyValue, setReplyValue] = useState<string>('')
 
@@ -51,11 +53,11 @@ const RippleMain: FC<IPropDocValue> = (prop) => {
     {
       onSuccess: (data) => {
         if (data.data.result === 1) alert('로그인부터 하세요;')
-        else socket.emit('createReply', docNum)
+        else replySocket()?.emit('createReply', docNum)
         queryClient.invalidateQueries(['readReply', docNum]) // queryKey 유효성 제거
       },
       onSettled: () => {
-        socket.emit('writeReply', {
+        replySocket()?.emit('writeReply', {
           docNum: docNum,
           data: replyValue,
         })

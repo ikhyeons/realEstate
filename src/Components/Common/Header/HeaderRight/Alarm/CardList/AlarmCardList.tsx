@@ -7,31 +7,31 @@ import AlarmDocCard from './AlarmDocCard'
 import io from 'socket.io-client'
 
 import {
+  AchatSocket,
   AisAlarmPopOpen,
   ARcvChatToggle,
   ARcvReplyToggle,
+  AreplySocket,
 } from '../../../../../../AtomStorage'
 import { useRecoilState } from 'recoil'
 import { useEffect } from 'react'
 
 const SCardList = styled.ul``
 
-const chatSocket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
-const replySocket = io(`ws://${Port}/doc`, { transports: ['websocket'] })
-
 const AlarmCardList = () => {
   const [alarmOpen, setAlarmOpen] = useRecoilState(AisAlarmPopOpen)
   const [isRcvChat, setIsRcvChat] = useRecoilState(ARcvChatToggle)
   const [isRcvReply, setIsRcvReply] = useRecoilState(ARcvReplyToggle)
 
-  useEffect(() => {
-    chatSocket.on('createChat', (msg: any) => {
-      setIsRcvChat((prev: number) => (prev === 0 ? 1 : 0))
-    })
-  }, [])
+  const [chatSocket, setChatSocket] = useRecoilState(AchatSocket)
+  const [replySocket, setReplySocket] = useRecoilState(AreplySocket)
 
   useEffect(() => {
-    replySocket.on('createReply', (msg: any) => {
+    chatSocket()!.on('createChat', (msg: any) => {
+      setIsRcvChat((prev: number) => (prev === 0 ? 1 : 0))
+    })
+
+    replySocket()!.on('createReply', (msg: any) => {
       setIsRcvReply((prev: number) => (prev === 0 ? 1 : 0))
     })
   }, [])

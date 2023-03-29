@@ -7,11 +7,11 @@ import {
   AisChatAtom,
   AcurrentRoomId,
   AcurrentChatRoomId,
+  AchatSocket,
 } from '../../../AtomStorage'
 import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../port'
-import io from 'socket.io-client'
 
 const SInfoModalBack = styled.div`
   height: 100%;
@@ -57,16 +57,12 @@ const SReq = styled.div`
   font-size: 25px;
 `
 
-const socket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
-
 const InfoModalMain = () => {
   const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
   const [isPopOpen, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
-  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
-    AcurrentChatRoomId,
-  )
+  const [chatSocket] = useRecoilState(AchatSocket)
 
   const { status, error, data, refetch } = useQuery(
     ['readRoomInfo', currentRoomId],
@@ -87,9 +83,12 @@ const InfoModalMain = () => {
       ),
     {
       onSuccess: (data) => {
-        if (data.data.result === 1) alert('로그인부터 하세요;')
-        else {
-          socket.emit('sendChat', currentRoomId)
+        if (data.data.result === 2) alert('로그인부터 하세요;')
+        else if (data.data.result === 1) {
+          alert('이미 방이 형성되어 있습니다.')
+          setIsPopOpen(true)
+        } else {
+          chatSocket()?.emit('sendChat', currentRoomId)
           setIsPopOpen(true)
         }
       },

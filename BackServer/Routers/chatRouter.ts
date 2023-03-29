@@ -51,25 +51,40 @@ router.post('/createChatRoom', async (req: Request, res: Response) => {
   if (req.session.isLogin) {
     const connection = await getConnection()
     try {
-      //데이터를 입력하는 쿼리
-      await connection.query(
-        'insert into chatRoom values (default, ?, ?, ?, ?, default), (default, ?, ?, ?, ?, default)',
-        [
-          roomAddress,
-          userNum,
-          otherNum,
-          String(userNum) + 'N' + String(otherNum),
-          roomAddress,
-          otherNum,
-          userNum,
-          String(userNum) + 'N' + String(otherNum),
-        ],
+      //이미 방이 존재하는지 확인하는 쿼리
+      const [
+        data,
+      ]: any = await connection.query(
+        'SELECT * FROM chatRoom WHERE chatRoom = ?',
+        [String(userNum) + 'N' + String(otherNum)],
       )
 
-      //데이터 쿼리 종료 후 대여한 커넥션을 반납함
-      connection.release()
-      //결과가 성공이면 result 0
-      res.send({ result: 0 })
+      if (data[0]) {
+        //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+        connection.release()
+        //결과가 성공이면 result 0
+        res.send({ result: 1 })
+      } else {
+        //데이터를 입력하는 쿼리
+        await connection.query(
+          'insert into chatRoom values (default, ?, ?, ?, ?, default), (default, ?, ?, ?, ?, default)',
+          [
+            roomAddress,
+            userNum,
+            otherNum,
+            String(userNum) + 'N' + String(otherNum),
+            roomAddress,
+            otherNum,
+            userNum,
+            String(userNum) + 'N' + String(otherNum),
+          ],
+        )
+
+        //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+        connection.release()
+        //결과가 성공이면 result 0
+        res.send({ result: 0 })
+      }
     } catch (err) {
       //db에서 에러나 났을 경우 커넥션을 반납하고
       connection.release()

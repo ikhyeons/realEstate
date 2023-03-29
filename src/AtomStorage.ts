@@ -1,5 +1,10 @@
 import { atom } from 'recoil'
+import io from 'socket.io-client'
+import Port from '../port'
+import { Socket } from 'socket.io-client'
 
+const chatSocket = io(`ws://${Port}/chat`, { transports: ['websocket'] })
+const repSocket = io(`ws://${Port}/doc`, { transports: ['websocket'] })
 export const ASelectedAddredss = atom({
   key: 'join/selectedAddress',
   default: {
@@ -100,6 +105,22 @@ export const ARcvChatToggle = atom({
 export const ARcvReplyToggle = atom({
   key: 'reply/RcvReply',
   default: 0,
+})
+
+export const AchatSocket = atom<any>({
+  key: 'socket/chat',
+  //'',
+  default: () => {
+    return chatSocket
+  },
+})
+
+export const AreplySocket = atom<any>({
+  key: 'socket/reply',
+  //'',
+  default: () => {
+    return repSocket
+  },
 })
 
 export default ASelectedAddredss
