@@ -53,7 +53,7 @@ const RippleMain: FC<IPropDocValue> = (prop) => {
     {
       onSuccess: (data) => {
         if (data.data.result === 1) alert('로그인부터 하세요;')
-        else replySocket()?.emit('createReply', docNum)
+        else replySocket()?.emit('createReply', prop.data.docWriter)
         queryClient.invalidateQueries(['readReply', docNum]) // queryKey 유효성 제거
       },
       onSettled: () => {

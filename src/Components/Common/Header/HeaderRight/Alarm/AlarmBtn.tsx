@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { HiBellAlert } from 'react-icons/hi2'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import Chat from './Chat/Chat'
 
@@ -43,10 +43,15 @@ const AlarmBtn = () => {
   const [isPopOpen, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
+  const btnRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    setAnchorEl(btnRef.current)
+  }, [])
 
   return (
     <>
       <SAlarm
+        ref={btnRef}
         onClick={(event: React.MouseEvent<HTMLElement>) => {
           /*클릭 했을 때*/
           setAnchorEl(

@@ -88,7 +88,7 @@ const InfoModalMain = () => {
           alert('이미 방이 형성되어 있습니다.')
           setIsPopOpen(true)
         } else {
-          chatSocket()?.emit('sendChat', currentRoomId)
+          chatSocket()?.emit('createChat', currentRoomId)
           setIsPopOpen(true)
         }
       },

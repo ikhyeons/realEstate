@@ -85,6 +85,17 @@ chatSocket.on('connection', async (socket: any) => {
   ])
 
   socket.on('sendChat', async (rcv: any) => {
+    const [
+      data,
+    ]: any = await connection.query(
+      'select * from chatRoom where chatParticipant = ?',
+      [socket.handshake.session.Uid],
+    )
+    socket.join([
+      ...data.map((data: any, i: number) => data.chatRoom),
+      String(socket.handshake.session.Uid),
+    ])
+
     await createChatF(rcv.roomNum, socket.handshake.session.Uid, rcv.data)
 
     socket.broadcast.to(rcv.roomNum).emit('sendChat', {
@@ -96,10 +107,9 @@ chatSocket.on('connection', async (socket: any) => {
 
   socket.on('createChat', async (rcv: any) => {
     socket.join(String(rcv))
-    socket.broadcast.to(rcv).emit('createChat')
+    socket.broadcast.to(String(rcv)).emit('createChat')
     socket.leave(String(rcv))
   })
-  console.log('소켓 아이디 : ' + socket.id + 'chat')
 })
 
 docSocket.on('connection', async (socket: any) => {
@@ -127,8 +137,7 @@ docSocket.on('connection', async (socket: any) => {
 
   socket.on('createReply', async (rcv: any) => {
     socket.join(String(rcv))
-    socket.broadcast.to(rcv).emit('createReply')
+    socket.broadcast.to(String(rcv)).emit('createReply')
     socket.leave(String(rcv))
   })
-  console.log('소켓 아이디 : ' + socket.id + 'reply')
 })

@@ -38,7 +38,7 @@ const AlarmCardList = () => {
 
   const res = useQueries([
     {
-      queryKey: ['readMyChatRoom', alarmOpen, isRcvChat],
+      queryKey: ['readMyChatRoom', alarmOpen],
       queryFn: () =>
         axios.get(`http://${Port}/chat/readMyChatRoom`, {
           withCredentials: true,
@@ -46,16 +46,20 @@ const AlarmCardList = () => {
       onSuccess: (data: any) => {},
     },
     {
-      queryKey: ['readUnCheckReplyDocs', alarmOpen, isRcvReply],
+      queryKey: ['readUnCheckReplyDocs', alarmOpen],
       queryFn: () =>
         axios.get(`http://${Port}/document/readUnCheckReplyDocs`, {
           withCredentials: true,
         }),
-      onSuccess: (data: any) => {
-        console.log(data.data.data)
-      },
     },
   ])
+
+  useEffect(() => {
+    res[0].refetch()
+  }, [isRcvChat])
+  useEffect(() => {
+    res[1].refetch()
+  }, [isRcvReply])
 
   return (
     <SCardList>
