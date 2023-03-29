@@ -10,3 +10,5 @@ uploadImgs/*
 secretKeysF.ts
 secretKeysB.ts
 port.ts
+dist/index.html
+dist/main.js
