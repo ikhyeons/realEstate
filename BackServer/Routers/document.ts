@@ -3,6 +3,42 @@ import { Request, Response } from "express";
 const router = express.Router();
 
 import { getConnection } from "../dbConnection";
+import { FieldPacket, RowDataPacket } from "mysql2";
+
+interface docCount extends RowDataPacket {
+  "count(*)": number;
+}
+
+interface docNum extends RowDataPacket {
+  docNum: number;
+}
+
+interface docInfo extends RowDataPacket {
+  docNum: number;
+  docTitle: string;
+  docContent: string;
+  makeDate: string;
+  userName: string;
+  docWriter: number;
+}
+
+interface docWriter extends RowDataPacket {
+  docWriter: number;
+}
+
+interface unCheckedReplyInfo extends RowDataPacket {
+  docNum: number;
+  docTitle: string;
+  docContent: string;
+  docWriter: number;
+  view: number;
+  makeDate: string;
+  del: string;
+  cnt: number;
+  userName: string;
+  replyContent: string;
+  RmakeDate: string;
+}
 
 //글 목록 보기
 router.get("/readDocList/:pageNum", async (req: Request, res: Response) => {
@@ -40,14 +76,14 @@ router.get("/readDocCount/", async (req: Request, res: Response) => {
   const connection = await getConnection();
   try {
     //데이터를 입력하는 쿼리
-    const [data]: any = await connection.query(
-      "SELECT COUNT(*) FROM document WHERE del = 0"
+    const [data]: [docCount[], FieldPacket[]] = await connection.query(
+      "SELECT count(*) FROM document WHERE del = 0"
     );
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release();
     //결과가 성공이면 result 0과 데이터를 날림
     res.setHeader("content-type", "application/json");
-    res.send({ result: 0, data: data[0]["COUNT(*)"] });
+    res.send({ result: 0, data: data[0]["count(*)"] });
   } catch (err) {
     //db에서 에러나 났을 경우 커넥션을 반납하고
     connection.release();
@@ -71,7 +107,7 @@ router.post("/writeDoc", async (req: Request, res: Response) => {
         "INSERT INTO document VALUES(default, ?, ?, ?, default, default, default)",
         [title, content, req.session.Uid]
       );
-      const [last]: any = await connection.query(
+      const [last]: [docNum[], FieldPacket[]] = await connection.query(
         "SELECT docNum FROM document ORDER BY docNum DESC LIMIT 1"
       );
 
@@ -100,7 +136,7 @@ router.get("/readDoc/:docNum", async (req: Request, res: Response) => {
 
   try {
     //데이터를 입력하는 쿼리
-    const [data]: any = await connection.query(
+    const [data]: [docInfo[], FieldPacket[]] = await connection.query(
       `SELECT 
         docNum, docTitle, docContent, makeDate, userName, docWriter 
         FROM document 
@@ -136,7 +172,7 @@ router.post("/updateDoc", async (req: Request, res: Response) => {
     const docNum = req.body.docNum; //글 번호
     const title = req.body.docTitle; // 제목
     const content = req.body.docContent; // 내용
-    const [data]: any = await connection.query(
+    const [data]: [docWriter[], FieldPacket[]] = await connection.query(
       "SELECT docWriter FROM document WHERE docNum = ?",
       [docNum]
     );
@@ -176,7 +212,7 @@ router.post("/deleteDoc", async (req: Request, res: Response) => {
     //db연결을 위해 pool에서 커넥션을 대여함
     const connection = await getConnection();
 
-    const [data]: any = await connection.query(
+    const [data]: [docWriter[], FieldPacket[]] = await connection.query(
       "SELECT docWriter FROM document WHERE docNum = ?",
       [docNum]
     );
@@ -241,8 +277,9 @@ router.get("/readUnCheckReplyDocs", async (req: Request, res: Response) => {
   const connection = await getConnection();
   try {
     //데이터를 입력하는 쿼리
-    const [data]: any = await connection.query(
-      `SELECT 
+    const [data]: [unCheckedReplyInfo[], FieldPacket[]] =
+      await connection.query(
+        `SELECT 
       document.*, count(reply.repNum) as cnt, ANY_VALUE(user.userName),
       (SELECT replycontent FROM reply WHERE reply.docNum = document.docNum ORDER BY repNum DESC LIMIT 1) AS replyContent, 
       (SELECT makeDate FROM reply WHERE reply.docNum = document.docNum ORDER BY repNum DESC LIMIT 1) AS RmakeDate
@@ -251,8 +288,8 @@ router.get("/readUnCheckReplyDocs", async (req: Request, res: Response) => {
     LEFT JOIN user ON reply.replyWriter = user.userNum
     WHERE docWriter = ? AND checked = 0 AND NOT reply.replyWriter IN (?) 
     GROUP BY document.docNum`,
-      [req.session.Uid, req.session.Uid]
-    );
+        [req.session.Uid, req.session.Uid]
+      );
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release();
     //결과가 성공이면 result 0과 데이터를 날림
