@@ -2,6 +2,18 @@ const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
 import { getConnection } from '../dbConnection'
+import { FieldPacket, RowDataPacket } from 'mysql2'
+
+interface replyMysql extends RowDataPacket {
+  repNum: number
+  docNum: number
+  replyWriter: number
+  replyContent: string
+  makeDate: string
+  del: number
+  checked: number
+}
+
 //댓글 작성 라우팅
 router.post('/createReply', async (req: Request, res: Response) => {
   const userNum = req.session.Uid // 유저번호는 세션에서 가져옴
@@ -72,9 +84,10 @@ router.post('/updateReply', async (req: Request, res: Response) => {
     //db연결을 위해 pool에서 커넥션을 대여함
     const connection = await getConnection()
 
-    const [
-      data,
-    ]: any = await connection.query(
+    const [data]: [
+      replyMysql[],
+      FieldPacket[],
+    ] = await connection.query(
       'select replyWriter from reply where repNum = ?',
       [replyNum],
     )

@@ -1,4 +1,5 @@
 import { RowDataPacket } from 'mysql2'
+import internal from 'stream'
 
 declare global {
   interface CardPropsStateProp {
@@ -52,6 +53,7 @@ declare global {
     makeDate: string | ''
     view: number | null
     docWriter: string
+    del?: number
   }
 }
 

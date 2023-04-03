@@ -4,6 +4,32 @@ const router = express.Router()
 import { FieldPacket, RowDataPacket } from 'mysql2'
 import { getConnection } from '../dbConnection'
 
+interface roomInfos extends RowDataPacket {
+  userNum: number
+  roomDeposit: number
+  roomMonthly: number
+  roomAddress: string
+  roomDetailAddress: string
+  roomLat: number
+  roomLng: number
+  roomDate: string
+  roomDoc: string
+  roomPicture: string
+  roomOption: string
+}
+
+interface roomOption extends RowDataPacket {
+  optionNum: number
+  userNum: number
+  roomOption: string
+}
+
+interface roomPictures extends RowDataPacket {
+  pictureNum: number
+  userNum: number
+  pictureAddress: string
+}
+
 interface userInfo extends RowDataPacket {
   userNum: number
   userName: string
@@ -76,9 +102,10 @@ router.get('/readUserInfo', async (req: Request, res: Response) => {
         [userNum],
       )
 
-      const [
-        imgs,
-      ]: any = await connection.query(
+      const [imgs]: [
+        roomPictures[],
+        FieldPacket[],
+      ] = await connection.query(
         'SELECT * FROM roomPicture WHERE userNum = ?',
         [req.session.Uid],
       )
@@ -113,19 +140,19 @@ router.get('/readRoomInfo/:id', async (req: Request, res: Response) => {
       [userNum],
     )
 
-    const [
-      imgs,
-    ]: any = await connection.query(
-      'SELECT * FROM roomPicture WHERE userNum = ?',
-      [userNum],
-    )
+    const [imgs]: [
+      roomPictures[],
+      FieldPacket[],
+    ] = await connection.query('SELECT * FROM roomPicture WHERE userNum = ?', [
+      userNum,
+    ])
 
-    const [
-      options,
-    ]: any = await connection.query(
-      'SELECT * FROM roomOption WHERE userNum = ?',
-      [userNum],
-    )
+    const [options]: [
+      roomOption[],
+      FieldPacket[],
+    ] = await connection.query('SELECT * FROM roomOption WHERE userNum = ?', [
+      userNum,
+    ])
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release()
     //결과가 성공이면 result 0
@@ -208,37 +235,54 @@ router.get('/readRooms', async (req: Request, res: Response) => {
   const connection = await getConnection()
   try {
     //데이터를 입력하는 쿼리
-    let data: any = []
     if (req.session.isLogin) {
-      ;[
-        data,
+      const [data]: [
+        roomInfos[],
+        FieldPacket[],
       ] = await connection.query(
-        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, pictureNum, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 AND NOT user.userNum in(?) GROUP BY userNum',
+        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 AND NOT user.userNum in(?) GROUP BY userNum',
         [req.session.Uid],
       )
+
+      const outdata = data.map((data) => {
+        return {
+          ...data,
+          roomPicture: data.roomPicture.split(',')[
+            data.roomPicture.split(',').length - 1
+          ],
+          roomOption: [...new Set(data.roomOption.split(','))],
+        }
+      })
+
+      //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+      connection.release()
+      //결과가 성공이면 result 0
+      res.send({
+        result: 0,
+        data: outdata,
+      })
     } else {
-      ;[data] = await connection.query(
-        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, pictureNum, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 GROUP BY userNum',
+      const [data]: [roomInfos[], FieldPacket[]] = await connection.query(
+        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 GROUP BY userNum',
       )
+      const outdata = data.map((data) => {
+        return {
+          ...data,
+          roomPicture: data.roomPicture.split(',')[
+            data.roomPicture.split(',').length - 1
+          ],
+          roomOption: [...new Set(data.roomOption.split(','))],
+        }
+      })
+
+      //데이터 쿼리 종료 후 대여한 커넥션을 반납함
+      connection.release()
+      //결과가 성공이면 result 0
+      res.send({
+        result: 0,
+        data: outdata,
+      })
     }
-
-    const outdata = data.map((data: any) => {
-      return {
-        ...data,
-        roomPicture: data.roomPicture.split(',')[
-          data.roomPicture.split(',').length - 1
-        ],
-        roomOption: [...new Set(data.roomOption.split(','))],
-      }
-    })
-
-    //데이터 쿼리 종료 후 대여한 커넥션을 반납함
-    connection.release()
-    //결과가 성공이면 result 0
-    res.send({
-      result: 0,
-      data: outdata,
-    })
   } catch (err) {
     //db에서 에러나 났을 경우 커넥션을 반납하고
     connection.release()

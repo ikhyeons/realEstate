@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { Socket } from 'socket.io'
 const cors = require('cors')
 const express = require('express')
 const app = express()
@@ -7,7 +8,39 @@ const http = require('http')
 import mysqlSession from 'express-session'
 import { sessionConfig } from '../secretKeysB'
 import getConnection from './dbConnection'
+import { FieldPacket, RowDataPacket } from 'mysql2'
 const createChatF = require('./Routers/chat')
+
+interface DocValue {
+  docNum: number | null
+  docTitle: string | ''
+  docContent: string | ''
+  userName: string | ''
+  makeDate: string | ''
+  view: number | null
+  docWriter: string
+  del?: number
+}
+
+interface chatRoom extends RowDataPacket {
+  chatRoomNum: number
+  roomAddress: string
+  chatParticipant: number
+  chatOther: number
+  chatRoomroomMakeDate: string
+}
+
+type docValueMysql = DocValue & RowDataPacket
+
+interface chatRcv {
+  roomNum: string
+  data: string
+}
+
+interface replyRcv {
+  docNum: string
+  data: string
+}
 
 app.use(mysqlSession(sessionConfig))
 
@@ -24,7 +57,7 @@ app.use(
   }),
 )
 
-const server = http.createServer(app).listen(3010, function () {
+const server = http.createServer(app).listen(3001, function () {
   console.log('Express server listening')
 })
 
@@ -71,28 +104,30 @@ app.get('/main.js', (req: Request, res: Response) => {
 chatSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈과 세션 연결
 docSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈과 세션 연결
 
-chatSocket.on('connection', async (socket: any) => {
+chatSocket.on('connection', async (socket: Socket) => {
   const connection = await getConnection()
-  const [
-    data,
-  ]: any = await connection.query(
+  const [data]: [
+    chatRoom[],
+    FieldPacket[],
+  ] = await connection.query(
     'select * from chatRoom where chatParticipant = ?',
     [socket.handshake.session.Uid],
   )
   socket.join([
-    ...data.map((data: any, i: number) => data.chatRoom),
+    ...data.map((data, i: number) => data.chatRoom),
     String(socket.handshake.session.Uid),
   ])
 
-  socket.on('sendChat', async (rcv: any) => {
-    const [
-      data,
-    ]: any = await connection.query(
+  socket.on('sendChat', async (rcv: chatRcv) => {
+    const [data]: [
+      chatRoom[],
+      FieldPacket[],
+    ] = await connection.query(
       'select * from chatRoom where chatParticipant = ?',
       [socket.handshake.session.Uid],
     )
     socket.join([
-      ...data.map((data: any, i: number) => data.chatRoom),
+      ...data.map((data, i: number) => data.chatRoom),
       String(socket.handshake.session.Uid),
     ])
 
@@ -105,37 +140,38 @@ chatSocket.on('connection', async (socket: any) => {
     })
   })
 
-  socket.on('createChat', async (rcv: any) => {
+  socket.on('createChat', async (rcv) => {
     socket.join(String(rcv))
     socket.broadcast.to(String(rcv)).emit('createChat')
     socket.leave(String(rcv))
   })
 })
 
-docSocket.on('connection', async (socket: any) => {
+docSocket.on('connection', async (socket: Socket) => {
   const connection = await getConnection()
-  const [
-    data,
-  ]: any = await connection.query(
+  const [data]: [
+    docValueMysql[],
+    FieldPacket[],
+  ] = await connection.query(
     'SELECT * FROM document WHERE docWriter = ? AND del = 0',
     [socket.handshake.session.Uid],
   )
   socket.join([
-    ...data.map((data: any, i: number) => data.docNum),
+    ...data.map((data, i: number) => String(data.docNum)),
     String(socket.handshake.session.Uid),
   ])
 
-  socket.on('writeReply', async (rcv: any) => {
-    socket.join(Number(rcv.docNum))
-    socket.broadcast.to(Number(rcv.docNum)).emit('writeReply', {
+  socket.on('writeReply', async (rcv: replyRcv) => {
+    socket.join(String(rcv.docNum))
+    socket.broadcast.to(String(rcv.docNum)).emit('writeReply', {
       data: rcv.data,
       docNum: rcv.docNum,
       time: new Date(),
     })
-    socket.leave(Number(rcv.docNum))
+    socket.leave(String(rcv.docNum))
   })
 
-  socket.on('createReply', async (rcv: any) => {
+  socket.on('createReply', async (rcv: number) => {
     socket.join(String(rcv))
     socket.broadcast.to(String(rcv)).emit('createReply')
     socket.leave(String(rcv))

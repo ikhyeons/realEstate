@@ -33,7 +33,7 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
   const doc = req.body.doc // 입력된 글
   const lng = req.body.lng // 위경도
   const lat = req.body.lat // 위경도
-  const options = req.body.options // 입력된 방 옵션들(배열)
+  const options: string[] = req.body.options // 입력된 방 옵션들(배열)
 
   //db연결을 위해 pool에서 커넥션을 대여함
   if (req.session.isLogin) {
@@ -45,7 +45,7 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
         userNum,
       ])
 
-      options.map(async (data: any) => {
+      options.map(async (data) => {
         await connection.query('INSERT INTO roomOption VALUES(default, ?, ?)', [
           userNum,
           data,
@@ -98,7 +98,7 @@ router.post(
           req.session.Uid,
         ])
         //사진을 입력하는 쿼리
-        const files: any = req.files
+        const files = req.files as Express.Multer.File[]
         files?.map(async (data: Express.Multer.File) => {
           await connection.query(
             'insert into roompicture values(default, ?, ?)',

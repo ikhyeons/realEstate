@@ -2,16 +2,33 @@ const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
 import { getConnection } from '../dbConnection'
+import { FieldPacket, RowDataPacket } from 'mysql2'
+
+interface userInfoMysql extends RowDataPacket {
+  userNum: number
+  userName: string
+  userID: string
+  userPW: string
+  addressDetail: string
+  isRelease: number
+  roomDeposit: number
+  roomMonthly: number
+  roomAddress: string
+  roomDetailAddress: string
+  roomLat: number
+  roomLng: number
+  roomDate: string
+  roomDoc: string
+}
 
 router.post('/login', async (req: Request, res: Response) => {
   const connection = await getConnection()
   const { userID, password } = req.body
   try {
-    const [
-      data,
-    ]: any = await connection.query('select * from user where userID = ?', [
-      userID,
-    ])
+    const [data]: [
+      userInfoMysql[],
+      FieldPacket[],
+    ] = await connection.query('select * from user where userID = ?', [userID])
     if (data[0]) {
       if (data[0].userPW === password) {
         req.session.isLogin = true
