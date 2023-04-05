@@ -110,6 +110,7 @@ router.get('/readUserInfo', async (req: Request, res: Response) => {
         isRelease,
         GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ", ") as roomOption 
         FROM user 
+        LEFT JOIN roomOption ON user.userNum = roomOption.userNum
         WHERE user.userNum = ?`,
         [userNum],
       )
