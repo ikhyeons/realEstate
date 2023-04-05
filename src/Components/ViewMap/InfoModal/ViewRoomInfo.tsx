@@ -51,7 +51,6 @@ const ViewRoomInfo = () => {
     (data) => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
     {
       onSuccess: (data: any) => {
-        console.log(data.data)
         setCurrentImg(data.data.imgs[0].pictureAddress)
       },
     },
@@ -97,7 +96,7 @@ const ViewRoomInfo = () => {
                 setCurrentImg(data.pictureAddress)
               }}
             >
-              {data ? (
+              {data.pictureAddress ? (
                 <SInnerPicture
                   src={`http://${Port}/releaseRoom/readImg/${data.pictureAddress}`}
                 />

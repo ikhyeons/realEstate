@@ -62,10 +62,12 @@ const SideListCard: React.FC<CardPropsStateProp> = (props) => {
       }}
     >
       <SCardTop>
-        <SCardMainImg
-          src={`http://${Port}/releaseRoom/readImg/${props.data.pictureAddress}`}
-          alt="메인이미지"
-        />
+        {props.data.pictureAddress ? (
+          <SCardMainImg
+            src={`http://${Port}/releaseRoom/readImg/${props.data.pictureAddress}`}
+            alt="메인이미지"
+          />
+        ) : null}
         <SCardTopRight>
           <SCardPeriod>{props.data.date}월 부터</SCardPeriod>
           <SCardValue>{props.data.value}</SCardValue>

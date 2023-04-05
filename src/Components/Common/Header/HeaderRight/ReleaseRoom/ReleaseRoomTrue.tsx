@@ -12,7 +12,7 @@ const SInfoMain = styled.div`
   display: flex;
 `
 const SInfoRight = styled.div`
-  width: 40%;
+  width: 80%;
 `
 const SPictures = styled.div`
   margin-top: 5px;
@@ -91,7 +91,7 @@ const ReleaseRoomTrue: React.FC = () => {
         <SPictureList>
           {data?.data.imgs.map((data: any, i: number) => (
             <SPictureLists key={i}>
-              {data ? (
+              {data.pictureAddress ? (
                 <SInnerPicture
                   onClick={() => {
                     setCurrentImg(data.pictureAddress)
