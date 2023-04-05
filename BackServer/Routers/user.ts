@@ -104,6 +104,7 @@ router.get("/readUserInfo", async (req: Request, res: Response) => {
         isRelease,
         GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ", ") as roomOption 
         FROM user 
+        LEFT JOIN roomOption ON user.userNum = roomOption.userNum
         WHERE user.userNum = ?`,
         [userNum]
       );
@@ -232,7 +233,6 @@ router.get("/readRooms", async (req: Request, res: Response) => {
   const connection = await getConnection();
   try {
     //데이터를 입력하는 쿼리
-    let data: any = [];
     if (req.session.isLogin) {
       const [data]: [roomInfos[], FieldPacket[]] = await connection.query(
         `SELECT 
@@ -308,22 +308,6 @@ router.get("/readRooms", async (req: Request, res: Response) => {
         data: outdata,
       });
     }
-    const outdata = data.map((data: any) => {
-      return {
-        ...data,
-        roomPicture:
-          data.roomPicture.split(",")[data.roomPicture.split(",").length - 1],
-        roomOption: [...new Set(data.roomOption.split(","))],
-      };
-    });
-
-    //데이터 쿼리 종료 후 대여한 커넥션을 반납함
-    connection.release();
-    //결과가 성공이면 result 0
-    res.send({
-      result: 0,
-      data: outdata,
-    });
   } catch (err) {
     //db에서 에러나 났을 경우 커넥션을 반납하고
     connection.release();
