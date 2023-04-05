@@ -64,7 +64,22 @@ router.get("/readUserInfo", async (req: Request, res: Response) => {
     try {
       //데이터를 입력하는 쿼리
       const [data] = await connection.query(
-        "select userName, userAddress, roomDate, roomDeposit, roomMonthly, roomDoc, roomAddress, roomDetailAddress, roomLat, roomLng, isRelease from user where userNum = ?",
+        `SELECT 
+        userName, 
+        userAddress,
+        roomDate, 
+        roomDeposit, 
+        roomMonthly, 
+        roomDoc, 
+        roomAddress, 
+        roomDetailAddress, 
+        roomLat, 
+        roomLng, 
+        isRelease, 
+        GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ", ") as roomOption
+        FROM user 
+        LEFT JOIN roomOption ON user.userNum = roomOption.userNum
+        WHERE user.userNum = ?`,
         [userNum]
       );
 
@@ -195,15 +210,47 @@ router.get("/readRooms", async (req: Request, res: Response) => {
     let data: any = [];
     if (req.session.isLogin) {
       [data] = await connection.query(
-        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 AND NOT user.userNum in(?) GROUP BY userNum',
+        `SELECT 
+        user.userNum, 
+        roomDeposit, 
+        roomMonthly, 
+        roomAddress, 
+        roomDetailAddress, 
+        roomLat, 
+        roomLng, 
+        roomDate, 
+        roomDoc, 
+        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum DESC LIMIT 1) AS roomPicture, 
+        GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption 
+        FROM user 
+        LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum 
+        LEFT JOIN roomOption ON user.userNum = roomOption.userNum 
+        WHERE isRelease = 1 AND NOT user.userNum in(?)
+        GROUP BY userNum
+        `,
         [req.session.Uid]
       );
     } else {
       [data] = await connection.query(
-        'SELECT user.userNum, roomDeposit, roomMonthly, roomAddress, roomDetailAddress, roomLat, roomLng, roomDate, roomDoc, GROUP_CONCAT(pictureAddress ORDER BY pictureNum desc SEPARATOR ",") as roomPicture, GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption FROM user LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum LEFT JOIN roomOption ON user.userNum = roomOption.userNum WHERE isRelease = 1 GROUP BY userNum'
+        `SELECT 
+        user.userNum, 
+        roomDeposit, 
+        roomMonthly, 
+        roomAddress, 
+        roomDetailAddress, 
+        roomLat, 
+        roomLng, 
+        roomDate, 
+        roomDoc, 
+        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum DESC LIMIT 1) AS roomPicture, 
+        GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption 
+        FROM user 
+        LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum 
+        LEFT JOIN roomOption ON user.userNum = roomOption.userNum 
+        WHERE isRelease = 1
+        GROUP BY userNum`
       );
     }
-
     const outdata = data.map((data: any) => {
       return {
         ...data,

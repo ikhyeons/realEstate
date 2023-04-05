@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import SideListCard from './SideListCard'
-import { useQuery } from 'react-query'
-import axios from 'axios'
-import Port from '../../../port'
-import { useCookies } from 'react-cookie'
+import React, { useState } from "react";
+import styled from "styled-components";
+import SideListCard from "./SideListCard";
+import { useQuery } from "react-query";
+import axios from "axios";
+import Port from "../../../port";
+import { useCookies } from "react-cookie";
 
 const SSideList = styled.ul`
   position: absolute;
@@ -25,42 +25,43 @@ const SSideList = styled.ul`
   &::-webkit-scrollbar-track {
     background: #bbaa99;
   }
-`
+`;
 
 const SideList: React.FC = () => {
-  const [cookies, setCookies] = useCookies(['isLogin'])
+  const [cookies, setCookies] = useCookies(["isLogin"]);
 
   const [list, setList] = useState<CardPropsState[]>([
     {
       id: 1,
-      value: '10000/250',
-      location: '진주시 칠암동',
-      content: '우리집 너무 이쁘죠1',
-      date: '',
-      pictureAddress: '',
+      value: "10000/250",
+      location: "진주시 칠암동",
+      content: "우리집 너무 이쁘죠1",
+      date: "",
+      pictureAddress: "",
       options: [],
     },
-  ])
+  ]);
 
   const readRooms = useQuery(
-    ['readRooms', cookies],
+    ["readRooms", cookies],
     () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
       onSuccess: (data: any) => {
+        console.log(data);
         setList((prev: any) =>
           data.data.data.map((data: any, i: number) => ({
             id: data.userNum,
-            value: `${data.roomDeposit + '/' + data.roomMonthly}`,
-            location: `${data.roomAddress + ' ' + data.roomDetailAddress}`,
+            value: `${data.roomDeposit + "/" + data.roomMonthly}`,
+            location: `${data.roomAddress + " " + data.roomDetailAddress}`,
             content: data.roomDoc,
             date: data.roomDate,
             pictureAddress: data.roomPicture,
             option: data.roomOption,
-          })),
-        )
+          }))
+        );
       },
-    },
-  )
+    }
+  );
 
   return (
     <SSideList>
@@ -68,7 +69,7 @@ const SideList: React.FC = () => {
         <SideListCard key={i} data={value} />
       ))}
     </SSideList>
-  )
-}
+  );
+};
 
-export default SideList
+export default SideList;

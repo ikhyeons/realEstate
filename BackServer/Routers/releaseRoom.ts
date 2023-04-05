@@ -8,7 +8,10 @@ const path = require("path");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/uploadImgs");
+    cb(
+      null,
+      "C:/Users/Administrator/Desktop/release/성익현/realEstate/uploadImgs"
+    );
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
@@ -220,6 +223,7 @@ router.get("/readRoomOption", async (req: Request, res: Response) => {
 router.get("/readImg/:fileName", async (req: Request, res: Response) => {
   const fileName = req.params.fileName;
 
+  console.log(fileName);
   //db연결을 위해 pool에서 커넥션을 대여함
   const connection = await getConnection();
   try {
