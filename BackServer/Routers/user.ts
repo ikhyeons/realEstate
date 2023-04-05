@@ -245,7 +245,7 @@ router.get("/readRooms", async (req: Request, res: Response) => {
         roomLng, 
         roomDate, 
         roomDoc, 
-        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum DESC LIMIT 1) AS roomPicture, 
+        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum LIMIT 1) AS roomPicture, 
         GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") AS roomOption 
         FROM user 
         LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum 
