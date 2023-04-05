@@ -95,7 +95,7 @@ const ReleaseRoomTrue: React.FC = () => {
         <SPictureList>
           {data?.data.imgs.map((data: any, i: number) => (
             <SPictureLists key={i}>
-              {data.PictureAddress ? (
+              {data.pictureAddress ? (
                 <SInnerPicture
                   onClick={() => {
                     setCurrentImg(data.pictureAddress);
