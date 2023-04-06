@@ -40,7 +40,7 @@ const SWrap = styled.div`
   height: 100vh;
 `
 
-const CommunityPage: React.FC = () => {
+const CommunityPage = () => {
   return (
     <SWrap>
       <Header />

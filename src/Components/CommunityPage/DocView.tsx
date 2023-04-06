@@ -4,7 +4,7 @@ import RippleMain from './Reply/ReplyMain'
 import { useCookies } from 'react-cookie'
 import axios from 'axios'
 import Port from '../../../port'
-import { useQueries } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 
 import { Viewer } from '@toast-ui/react-editor'
 import DocModify from './DocModify'
@@ -69,37 +69,35 @@ const SWriter = styled.span`
 `
 
 const DocView = () => {
-  const [cookies, setCookies] = useCookies(['lastPageNum'])
+  const [cookies] = useCookies(['lastPageNum'])
   const { docNum } = useParams()
   const [docValue, setDocValue] = useRecoilState(AdocValue)
   const [isModify, setIsModify] = useRecoilState(AisModify)
   const navigate = useNavigate()
 
-  const res = useQueries([
+  const { status, error, data, refetch } = useQuery<readDocData>(
+    ['readDoc', docNum],
+    () =>
+      axios.get(`http://${Port}/document/readDoc/${docNum}`, {
+        withCredentials: true,
+      }),
     {
-      queryKey: ['readDoc', docNum],
-      queryFn: () => {
-        return axios.get(`http://${Port}/document/readDoc/${docNum}`, {
-          withCredentials: true,
-        })
-      },
-      onSuccess: (data: any) => {
+      onSuccess: (data) => {
         setDocValue(data.data.data)
-        console.log(data.data.data)
       },
     },
+  )
+
+  const deleteDoc = useMutation<mutationData>(
+    () =>
+      axios.post(
+        `http://${Port}/document/deleteDoc`,
+        {
+          docNum: docNum,
+        },
+        { withCredentials: true },
+      ),
     {
-      queryKey: ['deleteDoc'],
-      queryFn: () => {
-        return axios.post(
-          `http://${Port}/document/deleteDoc`,
-          {
-            docNum: docNum,
-          },
-          { withCredentials: true },
-        )
-      },
-      enabled: false,
       onSuccess: (data: any) => {
         if (data.data.result === 0) {
           navigate(`/community/List/${Number(cookies.lastPageNum)}`)
@@ -109,7 +107,7 @@ const DocView = () => {
         }
       },
     },
-  ])
+  )
 
   return isModify === false ? (
     <SViewMain>
@@ -151,7 +149,7 @@ const DocView = () => {
 
           <SModifyButton
             onClick={() => {
-              res[1].refetch()
+              deleteDoc.mutate()
             }}
           >
             삭제
@@ -160,7 +158,7 @@ const DocView = () => {
       </STitleBar>
       <hr />
       <SContent>
-        {res[0].status === 'success' && (
+        {status === 'success' && (
           <Viewer
             initialValue={docValue.docContent}
             customHTMLRenderer={{

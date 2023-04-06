@@ -1,11 +1,10 @@
-import { FC, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../port'
 import { useParams } from 'react-router-dom'
 import ReplyCard from './ReplyCard'
-import io from 'socket.io-client'
 import { useRecoilState } from 'recoil'
 import { AreplySocket } from '../../../AtomStorage'
 
@@ -23,24 +22,18 @@ const SwriteRipple = styled.textarea`
 interface IPropDocValue {
   data: DocValue
 }
-const RippleMain: FC<IPropDocValue> = (prop) => {
+const RippleMain = (prop: IPropDocValue) => {
   const [replySocket] = useRecoilState(AreplySocket)
   const { docNum } = useParams()
   const [replyValue, setReplyValue] = useState<string>('')
 
-  const readReply = useQuery(
-    ['readReply', docNum],
-    () => {
-      return axios.get(`http://${Port}/reply/readReply/${docNum}`)
-    },
-    {
-      onSuccess: (data: any) => {},
-    },
+  const readReply = useQuery<IReplys>(['readReply', docNum], () =>
+    axios.get(`http://${Port}/reply/readReply/${docNum}`),
   )
 
   const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
 
-  const writeReply = useMutation(
+  const writeReply = useMutation<mutationData>(
     () =>
       axios.post(
         `http://${Port}/reply/createReply`,
@@ -103,7 +96,7 @@ const RippleMain: FC<IPropDocValue> = (prop) => {
         >
           제출
         </button>
-        {readReply.data?.data.data.map((data: any, i: number) => (
+        {readReply.data?.data.data.map((data, i) => (
           <ReplyCard key={i} data={data} />
         ))}
       </SRipleMain>

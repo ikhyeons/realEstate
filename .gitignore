@@ -12,3 +12,5 @@ secretKeysB.ts
 port.ts
 dist/index.html
 dist/main.js
+dist/main.js.LICENSE.txt
+dist/main.js.map

@@ -44,13 +44,13 @@ const SInnerPicture = styled.img`
 const SContent = styled.div``
 
 const ViewRoomInfo = () => {
-  const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
+  const [currentRoomId] = useRecoilState(AcurrentRoomId)
   const [currentImg, setCurrentImg] = useState<string>('')
-  const { status, error, data, refetch } = useQuery(
+  const { status, error, data, refetch } = useQuery<IRoomInfo>(
     ['readRoomInfo', currentRoomId],
-    (data) => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
+    () => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
     {
-      onSuccess: (data: any) => {
+      onSuccess: (data) => {
         setCurrentImg(data.data.imgs[0].pictureAddress)
       },
     },
@@ -73,7 +73,7 @@ const ViewRoomInfo = () => {
           </p>
           <p>
             옵션 :{' '}
-            {data?.data.options.map((data: any, i: number) => (
+            {data?.data.options.map((data, i: number) => (
               <span key={i}>{data.roomOption + ' '}</span>
             ))}
           </p>
@@ -89,7 +89,7 @@ const ViewRoomInfo = () => {
           ) : null}
         </SPictureViewWrap>
         <SPictureList>
-          {data?.data.imgs.map((data: any, i: number) => (
+          {data?.data.imgs.map((data, i: number) => (
             <SPictureLists
               key={i}
               onClick={() => {

@@ -16,25 +16,22 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 const queryClient = new QueryClient()
-const App: React.FC = () => {
+const App = () => {
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <RecoilRoot>
-          <CookiesProvider>
-            <GlobalStyle />
-            <div></div>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<ViewMap />} />
-                <Route path="/join" element={<JoinPage />} />
-                <Route path="/community/*" element={<CommunityPage />} />
-              </Routes>
-            </BrowserRouter>
-          </CookiesProvider>
-        </RecoilRoot>
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <RecoilRoot>
+        <CookiesProvider>
+          <GlobalStyle />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<ViewMap />} />
+              <Route path="/join" element={<JoinPage />} />
+              <Route path="/community/*" element={<CommunityPage />} />
+            </Routes>
+          </BrowserRouter>
+        </CookiesProvider>
+      </RecoilRoot>
+    </QueryClientProvider>
   )
 }
 

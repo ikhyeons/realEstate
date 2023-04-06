@@ -1,10 +1,8 @@
 import styled from 'styled-components'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Port from '../../../port'
-import { useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 import { Editor } from '@toast-ui/react-editor'
-import { useCookies } from 'react-cookie'
 
 import '@toast-ui/chart/dist/toastui-chart.css'
 import 'tui-color-picker/dist/tui-color-picker.css'
@@ -53,12 +51,10 @@ const SCompleteBtn = styled.button`
   right: 0px;
 `
 
-const DocModify: React.FC = () => {
+const DocModify = () => {
   const editorRef = useRef<Editor>(null)
-  const navigate = useNavigate()
   const [docValue, setDocValue] = useRecoilState(AdocValue)
-  const [isModify, setIsModify] = useRecoilState(AisModify)
-  const [cookies, setCookies] = useCookies(['lastPageNum'])
+  const [, setIsModify] = useRecoilState(AisModify)
   const [initialValue, setInitialValue] = useState<DocValue>()
   const [modifiedValue, setModifiedValue] = useState<DocValue>({
     docNum: null,
@@ -67,7 +63,7 @@ const DocModify: React.FC = () => {
     userName: '',
     makeDate: '',
     view: null,
-    docWriter: '',
+    docWriter: 0,
   })
 
   useEffect(() => {
@@ -75,8 +71,7 @@ const DocModify: React.FC = () => {
     setInitialValue(docValue)
   }, [])
 
-  const { status, data, error, refetch } = useQuery(
-    'modifyDoc',
+  const modifyDoc = useMutation<mutationData>(
     () =>
       axios.post(
         `http://${Port}/document/updateDoc`,
@@ -88,7 +83,6 @@ const DocModify: React.FC = () => {
         { withCredentials: true },
       ),
     {
-      enabled: false,
       onSuccess: (data) => {
         if (data.data.result === 0) {
           setIsModify(false)
@@ -167,7 +161,7 @@ const DocModify: React.FC = () => {
           ) {
             alert('제목이나 내용은 공백이 될 수 없습니다.')
           } else {
-            refetch()
+            modifyDoc.mutate()
           }
         }}
       >

@@ -20,8 +20,8 @@ const SWrap = styled.div`
   height: 100vh;
 `
 
-const JoinPage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(AjoinPageNum)
+const JoinPage = () => {
+  const [currentPage] = useRecoilState<0 | 1>(AjoinPageNum)
 
   return (
     <SWrap>

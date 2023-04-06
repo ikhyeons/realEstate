@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Port from '../../../port'
-import { useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 import { Editor } from '@toast-ui/react-editor'
 
 import '@toast-ui/chart/dist/toastui-chart.css'
@@ -15,7 +15,7 @@ import colorSyntax from '@toast-ui/editor-plugin-color-syntax'
 import chart from '@toast-ui/editor-plugin-chart'
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 
 const SDocHeader = styled.div`
   height: 30px;
@@ -49,18 +49,18 @@ const SCompleteBtn = styled.button`
   right: 0px;
 `
 
-interface IdocData {
-  title: string
-  content: string
+interface writeDocMutate {
+  data: {
+    result: 0 | 1 | 2 | 3 | 4
+    last: number
+  }
 }
-
 const DocWrite = () => {
   const editorRef = useRef<Editor>(null)
   const navigate = useNavigate()
   const [docData, setDocData] = useState<IdocData>({ title: '', content: '' })
 
-  const { status, data, error, refetch } = useQuery(
-    'writeDoc',
+  const writeDoc = useMutation<writeDocMutate>(
     () =>
       axios.post(
         `http://${Port}/document/writeDoc`,
@@ -70,7 +70,6 @@ const DocWrite = () => {
         { withCredentials: true },
       ),
     {
-      enabled: false,
       onSuccess: (data) => {
         if (data.data.result === 0) {
           console.log(data.data)
@@ -142,7 +141,7 @@ const DocWrite = () => {
           ) {
             alert('제목이나 내용은 공백이 될 수 없습니다.')
           } else {
-            refetch()
+            writeDoc.mutate()
           }
         }}
       >

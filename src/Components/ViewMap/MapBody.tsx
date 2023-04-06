@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Map,
   MapMarker,
@@ -14,7 +14,7 @@ import Port from '../../../port'
 import { useCookies } from 'react-cookie'
 
 const MapBody: React.FC = () => {
-  const [cookies, setCookies] = useCookies(['isLogin'])
+  const [cookies] = useCookies(['isLogin'])
   const readRooms = useQuery(
     ['readRooms', cookies],
     () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
@@ -30,22 +30,11 @@ const MapBody: React.FC = () => {
     },
   )
 
-  const [markerData, setMakerData] = useState<
-    {
-      id: string
-      position: { lat: number; lng: number }
-    }[]
-  >([])
+  const [markerData, setMakerData] = useState<IMapMarker[]>([])
 
-  const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
-  const [selectedPoint, setSelectedPoint] = useRecoilState(AselectedPoint)
-  const [currentRoomId, setCurrentRoomId] = useRecoilState<string>(
-    AcurrentRoomId,
-  )
-
-  useEffect(() => {
-    console.log(selectedPoint)
-  }, [selectedPoint])
+  const [, setIsInfoOn] = useRecoilState(AIsInfoOn)
+  const [selectedPoint] = useRecoilState(AselectedPoint)
+  const [, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
 
   return (
     <Map // 지도를 표시할 Container

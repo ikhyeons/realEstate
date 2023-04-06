@@ -27,35 +27,35 @@ const SSideList = styled.ul`
   }
 `
 
-const SideList: React.FC = () => {
-  const [cookies, setCookies] = useCookies(['isLogin'])
+const SideList = () => {
+  const [cookies] = useCookies(['isLogin'])
 
-  const [list, setList] = useState<CardPropsState[]>([
+  const [list, setList] = useState<ISidebarCard[]>([
     {
-      id: 1,
-      value: '10000/250',
-      location: '진주시 칠암동',
-      content: '우리집 너무 이쁘죠1',
+      id: 0,
+      value: '',
+      location: '',
+      content: '',
       date: '',
       pictureAddress: '',
       options: [],
     },
   ])
 
-  const readRooms = useQuery(
+  const readRooms = useQuery<IroomData>(
     ['readRooms', cookies],
     () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
-      onSuccess: (data: any) => {
-        setList((prev: any) =>
-          data.data.data.map((data: any, i: number) => ({
+      onSuccess: (data) => {
+        setList((prev) =>
+          data.data.data.map((data, i: number) => ({
             id: data.userNum,
             value: `${data.roomDeposit + '/' + data.roomMonthly}`,
             location: `${data.roomAddress + ' ' + data.roomDetailAddress}`,
             content: data.roomDoc,
             date: data.roomDate,
             pictureAddress: data.roomPicture,
-            option: data.roomOption,
+            options: data.roomOption,
           })),
         )
       },

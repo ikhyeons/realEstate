@@ -6,7 +6,7 @@ import { AjoinPageNum, AjoinValues } from '../../AtomStorage'
 import { useNavigate } from 'react-router-dom'
 import { TextField } from '@mui/material'
 import Button from '@mui/material/Button'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../port'
 
@@ -19,27 +19,23 @@ const SForm = styled.form`
   margin: 0 auto;
 `
 
-const InfoInputPage: React.FC = () => {
+const InfoInputPage = () => {
   const open = useDaumPostcodePopup()
   const navigate = useNavigate() /*react route dom url바꿔주는 함수*/
-  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(AjoinPageNum)
-  const [joinValue, setJoinValue] = useRecoilState<JoinValue>(AjoinValues)
+  const [, setCurrentPage] = useRecoilState(AjoinPageNum)
+  const [joinValue, setJoinValue] = useRecoilState(AjoinValues)
   const resetJoinValue = useResetRecoilState(AjoinValues)
 
   const onCompleteF = (e: Address) => {
-    console.log(e)
     setJoinValue((prev) => {
       return { ...prev, address: e.address, zonecode: e.zonecode }
     })
   }
 
-  const { status, data, error, refetch } = useQuery(
-    'join',
-    () =>
-      axios.post(`http://${Port}/user/join`, {
-        joinValue,
-      }),
-    { enabled: false },
+  const userJoin = useMutation<mutationData>(() =>
+    axios.post(`http://${Port}/user/join`, {
+      joinValue,
+    }),
   )
 
   return (
@@ -156,7 +152,7 @@ const InfoInputPage: React.FC = () => {
           padding: '0 40px',
         }}
         variant="contained"
-        onClick={(e) => {
+        onClick={() => {
           if (
             joinValue.userID !== '' &&
             joinValue.password !== '' &&
@@ -164,7 +160,7 @@ const InfoInputPage: React.FC = () => {
             joinValue.detail !== '' &&
             joinValue.zonecode !== ''
           ) {
-            refetch()
+            userJoin.mutate()
             navigate('/')
             setCurrentPage(0)
             resetJoinValue()

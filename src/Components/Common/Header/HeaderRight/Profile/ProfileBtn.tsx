@@ -8,9 +8,8 @@ import { useNavigate } from 'react-router-dom'
 import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
 import Port from '../../../../../../port'
-import io from 'socket.io-client'
 import { useRecoilState } from 'recoil'
-import { AchatSocket } from '../../../../../AtomStorage'
+import { AchatSocket, AreplySocket } from '../../../../../AtomStorage'
 
 const SProfile = styled.div`
   border-radius: 50%;
@@ -48,6 +47,7 @@ const SLogout = styled.div`
 
 const ProfileBtn = () => {
   const [chatSoket] = useRecoilState(AchatSocket)
+  const [replySoket] = useRecoilState(AreplySocket)
   const navigate = useNavigate()
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -127,7 +127,8 @@ const ProfileBtn = () => {
             <SLogout
               onClick={() => {
                 logOut.mutate()
-                chatSoket?.disconnect()
+                chatSoket()?.disconnect()
+                replySoket()?.disconnect()
               }}
             >
               로그아웃

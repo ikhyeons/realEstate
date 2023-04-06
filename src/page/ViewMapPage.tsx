@@ -21,8 +21,8 @@ const SWrap = styled.div`
   height: 100vh;
 `
 
-const ViewMap: React.FC = () => {
-  const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
+const ViewMap = () => {
+  const [isInfoOn] = useRecoilState(AIsInfoOn)
   return (
     <SWrap>
       <Header />

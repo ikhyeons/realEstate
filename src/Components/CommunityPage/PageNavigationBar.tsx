@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query'
@@ -92,11 +92,11 @@ const PageNavigationBar = () => {
   const [page10, setPage10] = useState<number[]>([])
   const [cookies, setCookies] = useCookies(['lastPageNum'])
 
-  const { status, data, error, refetch } = useQuery(
+  const { status, data, error, refetch } = useQuery<docCnt>(
     ['readDocCount', pageNum],
     async () => axios.get(`http://${Port}/document/readDocCount/`),
     {
-      onSuccess: (data: any) => {
+      onSuccess: (data) => {
         const pageNumber = Math.ceil(Number(data.data.data) / 28) // 총 페이지 수
         setPage10(() => getNavigater10(Number(pageNum), Number(pageNumber)))
       },

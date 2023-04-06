@@ -4,9 +4,7 @@ import { useRecoilState } from 'recoil'
 import {
   AIsInfoOn,
   AisAlarmPopOpen,
-  AisChatAtom,
   AcurrentRoomId,
-  AcurrentChatRoomId,
   AchatSocket,
 } from '../../../AtomStorage'
 import { useMutation, useQuery } from 'react-query'
@@ -58,17 +56,16 @@ const SReq = styled.div`
 `
 
 const InfoModalMain = () => {
-  const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
-  const [isPopOpen, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
-  const [isChat, setIsChat] = useRecoilState(AisChatAtom)
-  const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
+  const [, setIsInfoOn] = useRecoilState(AIsInfoOn)
+  const [, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
+  const [currentRoomId] = useRecoilState(AcurrentRoomId)
   const [chatSocket] = useRecoilState(AchatSocket)
 
-  const { status, error, data, refetch } = useQuery(
+  const { status, error, data, refetch } = useQuery<IReleaseRoomInfo>(
     ['readRoomInfo', currentRoomId],
-    (data) => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
+    () => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
   )
-  const createChatRoom = useMutation(
+  const createChatRoom = useMutation<mutationData>(
     () =>
       axios.post(
         `http://${Port}/chat/createChatRoom`,

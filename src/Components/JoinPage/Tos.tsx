@@ -14,9 +14,9 @@ const Sform = styled.form`
   margin: 0 auto;
 `
 
-const Tos: React.FC = () => {
+const Tos = () => {
   const [isCheck, setIsCheck] = useState<boolean>(false)
-  const [currentPage, setCurrentPage] = useRecoilState<0 | 1>(AjoinPageNum)
+  const [, setCurrentPage] = useRecoilState<0 | 1>(AjoinPageNum)
   return (
     <Sform>
       <p>저장 정보 : 아이디, 비밀번호, 주소</p>
@@ -36,7 +36,7 @@ const Tos: React.FC = () => {
         required
       />
       <Button
-        onClick={(e) => {
+        onClick={() => {
           if (isCheck === true) {
             setCurrentPage(1)
           } else {

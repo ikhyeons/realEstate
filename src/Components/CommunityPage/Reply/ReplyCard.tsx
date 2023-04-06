@@ -41,7 +41,7 @@ const SRippleBtn = styled.span`
   }
 `
 
-const ReplyCard = (data: any) => {
+const ReplyCard = (prop: { data: IReplyInfo }) => {
   const { docNum } = useParams()
   const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
   const [modify, setModify] = useState<boolean>(false)
@@ -58,7 +58,7 @@ const ReplyCard = (data: any) => {
       axios.post(
         `http://${Port}/reply/updateReply`,
         {
-          repNum: data.data.repNum,
+          repNum: prop.data.repNum,
           content: modifyValue,
         },
         { withCredentials: true },
@@ -74,7 +74,7 @@ const ReplyCard = (data: any) => {
   )
 
   const deleteReply = useMutation(
-    (replyNum) =>
+    (replyNum: number) =>
       axios.post(
         `http://${Port}/reply/deleteReply`,
         {
@@ -95,21 +95,21 @@ const ReplyCard = (data: any) => {
   return (
     <SRippleCard>
       <SRippleInfo>
-        <SRippleWriter>{data.data.userName}</SRippleWriter>
+        <SRippleWriter>{prop.data.userName}</SRippleWriter>
         <SRippleDate>
-          {data.data.makeDate?.slice(2, 4) +
+          {prop.data.makeDate?.slice(2, 4) +
             '.' +
-            data.data.makeDate?.slice(5, 7) +
+            prop.data.makeDate?.slice(5, 7) +
             '.' +
-            data.data.makeDate?.slice(8, 10) +
+            prop.data.makeDate?.slice(8, 10) +
             ' ' +
-            data.data.makeDate?.slice(11, 13) +
+            prop.data.makeDate?.slice(11, 13) +
             ':' +
-            data.data.makeDate?.slice(14, 16)}
+            prop.data.makeDate?.slice(14, 16)}
         </SRippleDate>
         <SRippleBtn
           onClick={() => {
-            setModifyValue(data.data.replyContent)
+            setModifyValue(prop.data.replyContent)
             setModify(true)
           }}
         >
@@ -117,14 +117,14 @@ const ReplyCard = (data: any) => {
         </SRippleBtn>
         <SRippleBtn
           onClick={() => {
-            deleteReply.mutate(data.data.repNum)
+            deleteReply.mutate(prop.data.repNum)
           }}
         >
           삭제
         </SRippleBtn>
       </SRippleInfo>
       {modify === false ? (
-        <SRippleContent>{data.data.replyContent}</SRippleContent>
+        <SRippleContent>{prop.data.replyContent}</SRippleContent>
       ) : (
         <SwriteRipple
           ref={boxref}

@@ -51,9 +51,9 @@ const SCardLocation = styled.div`
   top: -12px;
 `
 
-const SideListCard: React.FC<CardPropsStateProp> = (props) => {
-  const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
-  const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
+const SideListCard = (props: ISidebarCardProp) => {
+  const [, setIsInfoOn] = useRecoilState(AIsInfoOn)
+  const [, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
   return (
     <SCard
       onClick={() => {

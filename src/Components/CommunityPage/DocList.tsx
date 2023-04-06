@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Routes, useNavigate, useParams, Route } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useMutation } from 'react-query'
 import axios from 'axios'
 import Port from '../../../port'
@@ -76,10 +76,8 @@ const DocList: React.FC = () => {
   const { pageNum } = useParams()
   const [c, s, r] = useCookies(['lastPageNum'])
 
-  const [docList, setDocList] = useState([
-    { docNum: '', docTitle: '', makeDate: '', userName: '', view: '' },
-  ])
-  const { status, data, error, refetch } = useQuery(
+  const [docList, setDocList] = useState<IDocRowData[]>([])
+  const { status, data, error, refetch } = useQuery<IDocList>(
     ['readDocList', pageNum],
     async () => {
       if (!pageNum || Number(pageNum) === 0)
@@ -87,8 +85,8 @@ const DocList: React.FC = () => {
       return await axios.get(`http://${Port}/document/readDocList/${pageNum}`)
     },
     {
-      onSuccess: (data: any) => {
-        const modifyedData = data.data.data[0].map((data: any, i: number) => {
+      onSuccess: (data) => {
+        const modifyedData = data.data.data.map((data, i) => {
           return {
             ...data,
             makeDate:
@@ -108,7 +106,7 @@ const DocList: React.FC = () => {
     },
   )
 
-  const countView = useMutation((docNum: string) =>
+  const countView = useMutation((docNum: number) =>
     axios.post(`http://${Port}/document/countView`, {
       docNum: docNum,
     }),
