@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useState } from 'react'
+import { useMutation } from 'react-query'
 import { useCookies } from 'react-cookie'
 import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send'
@@ -19,16 +19,16 @@ const LoginBtnSX = {
   '&:hover': { background: '#DDDDDD' },
 }
 
-const HeaderRightLoginFalse: React.FC = () => {
+const HeaderRightLoginFalse = () => {
   const navigate = useNavigate() /*react route dom url바꿔주는 함수*/
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const [userID, setUserID] = useState('')
   const [password, setPassword] = useState('')
-  const [cookies, setCookies] = useCookies(['isLogin'])
-  const { status, data, error, refetch } = useQuery(
-    'login',
+  const [, setCookies] = useCookies(['isLogin'])
+
+  const login = useMutation<mutationData>(
     () =>
       axios.post(
         `http://${Port}/session/login`,
@@ -39,7 +39,6 @@ const HeaderRightLoginFalse: React.FC = () => {
         { withCredentials: true },
       ),
     {
-      enabled: false,
       onSuccess: (data) => {
         if (data.data.result === 0) setCookies('isLogin', 'true')
         else if (data.data.result === 1) alert('아이디 없음')
@@ -55,7 +54,7 @@ const HeaderRightLoginFalse: React.FC = () => {
   return (
     <>
       <Button
-        onClick={(event: React.MouseEvent<HTMLElement>) => {
+        onClick={(event) => {
           /*클릭 했을 때*/
           setAnchorEl(
             event.currentTarget,
@@ -124,7 +123,7 @@ const HeaderRightLoginFalse: React.FC = () => {
           />
           <Button
             onClick={() => {
-              refetch()
+              login.mutate()
               setIsPopOpen(false)
             }} /*로그인 시 박스 닫기*/
             sx={{

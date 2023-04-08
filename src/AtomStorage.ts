@@ -93,7 +93,7 @@ export const AcurrentRoomId = atom({
 
 export const AcurrentChatRoomId = atom({
   key: 'chat/currentChatRoomId',
-  default: 0,
+  default: '',
 })
 
 export const ARcvChatToggle = atom({

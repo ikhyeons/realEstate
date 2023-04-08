@@ -5,18 +5,13 @@ import ReleaseRoom from './ReleaseRoom/ReleaseRoom'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../../port'
-import { useRecoilState } from 'recoil'
-import { AreplySocket, AchatSocket } from '../../../../AtomStorage'
 
 const SLoginedDiv = styled.div`
   width: 270px;
   display: flex;
 `
 
-const HeaderRightOnLogin: React.FC = () => {
-  const [, setChatSocket] = useRecoilState(AchatSocket)
-  const [, setReplySocket] = useRecoilState(AreplySocket)
-
+const HeaderRightOnLogin = () => {
   const { status, error, data } = useQuery(['readUserInfo'], () => {
     return axios.get(`http://${Port}/user/readUserInfo/`, {
       withCredentials: true,

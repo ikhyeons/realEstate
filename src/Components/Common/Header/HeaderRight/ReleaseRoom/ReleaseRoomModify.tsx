@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
 import Port from '../../../../../../port'
-import { useQueries, useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { useRecoilState } from 'recoil'
 import { ARIsModify, AroomModifyAddressAndL } from '../../../../../AtomStorage'
 import AddressSelect from './AddressSelect'
@@ -145,7 +145,7 @@ const ReleaseRoomModify = () => {
   const [deposit, setDeposit] = useState<string>('')
   const [monthly, setMonthly] = useState<string>('')
   const [doc, setDoc] = useState<string>('')
-  const [isModify, setIsModify] = useRecoilState(ARIsModify)
+  const [, setIsModify] = useRecoilState(ARIsModify)
   const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
   const [imgSuccess, setImgSuccess] = useState(false)
   const [dataSuccess, setDataSuccess] = useState(false)
@@ -176,7 +176,7 @@ const ReleaseRoomModify = () => {
     }
   }
 
-  const modifyRoomRelease = useMutation(
+  const modifyRoomRelease = useMutation<mutationData>(
     () =>
       axios.post(
         `http://${Port}/releaseRoom/setRoomContent`,
@@ -205,7 +205,7 @@ const ReleaseRoomModify = () => {
     },
   )
 
-  const modifyRoomReleaseImg = useMutation(
+  const modifyRoomReleaseImg = useMutation<mutationData>(
     () =>
       axios.post(`http://${Port}/releaseRoom/uploadImgs`, formOutData, {
         headers: { 'content-type': 'multipart/form-data' },

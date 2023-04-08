@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../../../port'
-import { useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { AcurrentImg } from '../../../../../AtomStorage'
 
@@ -46,10 +45,10 @@ const SInnerPicture = styled.img`
 
 const SContent = styled.div``
 
-const ReleaseRoomTrue: React.FC = () => {
+const ReleaseRoomTrue = () => {
   const [currentImg, setCurrentImg] = useRecoilState(AcurrentImg)
 
-  const { status, error, data, refetch } = useQuery(
+  const { status, error, data, refetch } = useQuery<headerUserInfo>(
     ['readUserInfo'],
     () =>
       axios.get(`http://${Port}/user/readUserInfo`, {

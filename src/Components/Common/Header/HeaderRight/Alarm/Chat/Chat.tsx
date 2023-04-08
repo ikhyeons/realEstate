@@ -1,11 +1,11 @@
 import styled from 'styled-components'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 import {
   AchatSocket,
   AcurrentChatRoomId,
   AisChatAtom,
 } from '../../../../../../AtomStorage'
-import { useEffect, useState, useRef, useContext } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../../../../port'
@@ -74,27 +74,27 @@ const SOtherChat = styled.div`
   padding: 5px;
 `
 const Chat = () => {
-  const [isChat, setIsChat] = useRecoilState(AisChatAtom)
+  const [, setIsChat] = useRecoilState(AisChatAtom)
   const [chatValue, setChatValue] = useState<string>('')
-  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
-    AcurrentChatRoomId,
-  )
+  const [currentChatRoomId] = useRecoilState(AcurrentChatRoomId)
   const [chatSocket] = useRecoilState(AchatSocket)
   const chatViewRef = useRef<HTMLDivElement>(null)
-  const [chatData, setChatData] = useState<any[]>([])
+  const [chatData, setChatData] = useState<
+    { my: number; chatContent: string }[]
+  >([])
 
-  const { status, error, data, refetch } = useQuery(
+  const { status, error, data, refetch } = useQuery<chats>(
     ['readChats'],
-    (data) =>
+    () =>
       axios.get(`http://${Port}/chat/readChat/${currentChatRoomId}`, {
         withCredentials: true,
       }),
     {
       enabled: false,
-      onSuccess: (data: any) => {
+      onSuccess: (data) => {
         console.log(data)
         setChatData(
-          data?.data.data.map((data: any, i: number) => ({
+          data?.data.data.map((data, i) => ({
             my: data.my,
             chatContent: data.chatContent,
           })),
@@ -108,11 +108,14 @@ const Chat = () => {
   }, [])
 
   useEffect(() => {
-    chatSocket()?.on('sendChat', (msg: any) => {
-      console.log(msg)
-      if (msg.roomNum === currentChatRoomId)
-        setChatData((prev) => [...prev, { my: 0, chatContent: msg.data }])
-    })
+    chatSocket()?.on(
+      'sendChat',
+      (msg: { data: string; roomNum: string; time: Date }) => {
+        console.log(msg)
+        if (msg.roomNum === currentChatRoomId)
+          setChatData((prev) => [...prev, { my: 0, chatContent: msg.data }])
+      },
+    )
   }, [])
 
   useEffect(() => {
@@ -132,7 +135,7 @@ const Chat = () => {
         양덕동 서안양덕타운 성익현
       </SChatHeader>
       <SChatView ref={chatViewRef}>
-        {chatData.map((data: any, i: number) =>
+        {chatData.map((data, i) =>
           data.my ? (
             <SMyChat key={i}>{data.chatContent}</SMyChat>
           ) : (

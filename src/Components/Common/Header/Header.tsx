@@ -31,7 +31,7 @@ const SHeaderRight = styled.div`
   justify-content: space-around;
 `
 
-const Header: React.FC = () => {
+const Header = () => {
   const currentLocation = useLocation() // 현재 url을 가져올 수 있음
 
   return (

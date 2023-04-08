@@ -52,7 +52,7 @@ const AlarmBtn = () => {
     <>
       <SAlarm
         ref={btnRef}
-        onClick={(event: React.MouseEvent<HTMLElement>) => {
+        onClick={(event) => {
           /*클릭 했을 때*/
           setAnchorEl(
             event.currentTarget,

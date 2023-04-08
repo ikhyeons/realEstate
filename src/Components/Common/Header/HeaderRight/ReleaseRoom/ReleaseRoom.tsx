@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import styled from 'styled-components'
-import { useQueries, useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQueryClient, useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../../../port'
 
@@ -33,11 +33,10 @@ const ReleaseRoom = () => {
     justify-content: space-between;
   `
 
-  const SOFdiv = styled.div<{ release: string }>`
-    color: ${(prop) =>
-      Number(prop.release) == 1 ? 'lightgreen' : 'lightgray'};
+  const SOFdiv = styled.div<{ release: number }>`
+    color: ${(prop) => (prop.release == 1 ? 'lightgreen' : 'lightgray')};
     text-shadow: ${(prop) =>
-      Number(prop.release) == 1
+      prop.release == 1
         ? '-1px 0 rgb(0, 150, 0), 0 1px rgb(0, 150, 0), 1px 0 rgb(0, 150, 0), 0 -1px rgb(0, 150, 0)'
         : '-1px 0 rgb(130, 130, 130), 0 1px rgb(130, 130, 130), 1px 0 rgb(130, 130, 130), 0 -1px rgb(130, 130, 130)'};
 
@@ -48,27 +47,20 @@ const ReleaseRoom = () => {
     margin-left: 1px;
   `
 
-  const res = useQueries([
+  const userInfo = useQuery<headerUserInfo>(
+    ['readUserInfo', isPopOpen],
+    () =>
+      axios.get(`http://${Port}/user/readUserInfo`, {
+        withCredentials: true,
+      }),
     {
-      queryKey: ['readOption'],
-      queryFn: () =>
-        axios.get(`http://${Port}/releaseRoom/readRoomOption`, {
-          withCredentials: true,
-        }),
-    },
-    {
-      queryKey: ['readUserInfo', isPopOpen],
-      queryFn: () =>
-        axios.get(`http://${Port}/user/readUserInfo`, {
-          withCredentials: true,
-        }),
       onSuccess: (data: any) => {
         setCurrentImg(data.data.imgs[0].pictureAddress)
       },
     },
-  ])
+  )
 
-  const setRelease = useMutation(
+  const setRelease = useMutation<mutationData, Error, boolean>(
     (value: boolean) => {
       if (value === false) {
         return axios.post(
@@ -89,7 +81,7 @@ const ReleaseRoom = () => {
       }
     },
     {
-      onSuccess: (data) => {
+      onSuccess: () => {
         queryClient.invalidateQueries(['readUserInfo']) // queryKey 유효성 제거
       },
     },
@@ -119,10 +111,11 @@ const ReleaseRoom = () => {
         }}
       >
         방내놓기
-        {res[1].data && Number(res[1].data?.data.data[0].isRelease) === 1 ? (
-          <SOFdiv release={res[1].data?.data.data[0].isRelease}>on</SOFdiv>
+        {userInfo.data &&
+        Number(userInfo.data?.data.data[0].isRelease) === 1 ? (
+          <SOFdiv release={userInfo.data?.data.data[0].isRelease}>on</SOFdiv>
         ) : (
-          <SOFdiv release={res[1].data?.data.data[0].isRelease}>off</SOFdiv>
+          <SOFdiv release={userInfo.data?.data.data[0].isRelease!}>off</SOFdiv>
         )}
       </Button>
       <Popover /*로그인 버튼 클릭 시 나오는 팝업 mui*/
@@ -143,11 +136,11 @@ const ReleaseRoom = () => {
             <div>
               방을 내놓으시겠습니까?
               <Switch
-                checked={!!res[1].data?.data.data[0].isRelease}
+                checked={!!userInfo.data?.data.data[0].isRelease}
                 onChange={() => {
-                  setRelease.mutate(!!res[1].data?.data.data[0].isRelease)
+                  setRelease.mutate(!!userInfo.data?.data.data[0].isRelease)
                   setIsModify(() => {
-                    if (!!res[1].data?.data.data[0].isRelease === false)
+                    if (!!userInfo.data?.data.data[0].isRelease === false)
                       return false
                     else return true
                   })
@@ -155,7 +148,7 @@ const ReleaseRoom = () => {
               />
             </div>
             {isModify === false &&
-            !!res[1].data?.data.data[0].isRelease === true ? (
+            !!userInfo.data?.data.data[0].isRelease === true ? (
               <button
                 onClick={() => {
                   setIsModify(true)
@@ -165,7 +158,7 @@ const ReleaseRoom = () => {
               </button>
             ) : null}
           </STop>
-          {!!res[1].data?.data.data[0].isRelease === true ? (
+          {!!userInfo.data?.data.data[0].isRelease === true ? (
             isModify === true ? (
               <ReleaseRoomModify />
             ) : (

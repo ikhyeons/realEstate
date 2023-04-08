@@ -8,25 +8,96 @@ declare global {
       result: 0 | 1 | 2 | 3 | 4
     }
   }
+  //헤더 챗
+  interface chats {
+    data: {
+      result: number
+      data: {
+        chatNum: number
+        chatRoomNum: string
+        chatWriter: number
+        chatContent: string
+        makeDate: string
+        checked: number
+        my: number
+      }[]
+    }
+  }
+
+  //헤더영역
+  interface kakaoAddress {
+    data: {
+      meta: {
+        total_count: number
+        pageable_count: number
+        is_end: boolean
+        same_name: {
+          region: string[]
+          keyword: string
+          selected_region: string
+        }
+      }
+      documents: Iaddress[]
+    }
+  }
+
+  interface Iaddress {
+    id: string
+    place_name: string
+    category_name: string
+    category_group_code: string
+    category_group_name: string
+    phone: string
+    address_name: string
+    road_address_name: string
+    x: string
+    y: string
+    place_url: string
+    distance: string
+  }
+
+  interface headerUserInfo {
+    data: {
+      result: number
+      data: {
+        userName: string
+        userAddress: string
+        roomDate: string
+        roomDeposit: number
+        roomMonthly: number
+        roomDoc: string
+        roomAddress: string
+        roomDetailAddress: string
+        roomLat: number
+        roomLng: number
+        isRelease: number
+        roomOption: string
+      }[]
+      imgs: {
+        pictureNum: number
+        userNum: number
+        pictureAddress: string
+      }[]
+    }
+  }
+
   //사이드바 영역
   interface IroomData {
     data: {
       result: 0
-      data: [
-        {
-          userNum: number
-          roomDeposit: number
-          roomMonthly: number
-          roomAddress: string
-          roomDetailAddress: string
-          roomLat: number
-          roomLng: number
-          roomDate: string
-          roomDoc: string
-          roomPicture: string
-          roomOption: string[]
-        },
-      ]
+      data: {
+        userNum: number
+        roomDeposit: number
+        roomMonthly: number
+        roomAddress: string
+        roomDetailAddress: string
+        roomLat: number
+        roomLng: number
+        roomDate: string
+        roomDoc: string
+        roomPicture: string
+        roomOption: string[]
+      }[]
     }
   }
 
@@ -78,23 +149,19 @@ declare global {
   interface IReleaseRoomInfo {
     data: {
       result: number
-      data: [
-        {
-          roomDate: string
-          roomDeposit: number
-          roomMonthly: number
-          roomDoc: string
-          roomAddress: string
-          roomDetailAddress: string
-        },
-      ]
-      imgs: [
-        {
-          pictureNum: number
-          userNum: number
-          pictureAddress: string
-        },
-      ]
+      data: {
+        roomDate: string
+        roomDeposit: number
+        roomMonthly: number
+        roomDoc: string
+        roomAddress: string
+        roomDetailAddress: string
+      }[]
+      imgs: {
+        pictureNum: number
+        userNum: number
+        pictureAddress: string
+      }[]
       options: {
         optionNum: number
         userNum: number
@@ -162,20 +229,6 @@ declare global {
   }
 
   //
-  interface Iaddress {
-    address_name: string
-    category_group_code: string
-    category_group_name: string
-    category_name: string
-    distance: string
-    id: string
-    phone: string
-    place_name: string
-    place_url: string
-    road_address_name: string
-    x: string
-    y: string
-  }
 
   interface addressCompleteData {
     address: string

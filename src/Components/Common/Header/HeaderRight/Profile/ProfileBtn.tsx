@@ -52,10 +52,10 @@ const ProfileBtn = () => {
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
-  const [cookies, setCookies] = useCookies(['isLogin'])
+  const [, setCookies] = useCookies(['isLogin'])
   const [first, setFirst] = useState<string>('')
 
-  const logOut = useMutation(
+  const logOut = useMutation<mutationData>(
     () =>
       axios.post(
         `http://${Port}/session/logout`,
@@ -80,14 +80,14 @@ const ProfileBtn = () => {
     },
   )
 
-  const { status, error, data, refetch } = useQuery(
+  const { status, error, data, refetch } = useQuery<headerUserInfo>(
     ['readUserInfo'],
     () =>
       axios.get(`http://${Port}/user/readUserInfo`, {
         withCredentials: true,
       }),
     {
-      onSuccess: (data: any) => {
+      onSuccess: (data) => {
         setFirst(data.data.data[0].userName[0])
       },
     },

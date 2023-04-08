@@ -4,20 +4,7 @@ import axios from 'axios'
 import { useEffect, useState, useRef } from 'react'
 import { useRecoilState } from 'recoil'
 import { AroomModifyAddressAndL } from '../../../../../AtomStorage'
-interface Iaddress {
-  address_name: string
-  category_group_code: string
-  category_group_name: string
-  category_name: string
-  distance: string
-  id: string
-  phone: string
-  place_name: string
-  place_url: string
-  road_address_name: string
-  x: string
-  y: string
-}
+import { useQuery } from 'react-query'
 
 const Sul = styled.ul`
   position: absolute;
@@ -63,30 +50,29 @@ const AddressSelect = () => {
   const [value, setValue] = useState('')
   const [addressData, setAddressData] = useState<Iaddress[] | null>(null)
   const [onSearch, setOnSearch] = useState(false)
-  const [seletedAddress, setSelectedAddress] = useRecoilState<any>(
-    AroomModifyAddressAndL,
-  )
+  const [, setSelectedAddress] = useRecoilState<any>(AroomModifyAddressAndL)
 
-  useEffect(() => {
-    if (value !== '') {
-      axios
-        .get(
-          `https://dapi.kakao.com/v2/local/search/keyword.json?&query=${value}`,
-          {
-            headers: {
-              Authorization: `KakaoAK ${kakaoKey.restAPI}`,
-            },
+  const AddressData = useQuery<kakaoAddress>(
+    ['kakaoAddress', value],
+    () =>
+      axios.get(
+        `https://dapi.kakao.com/v2/local/search/keyword.json?&query=${value}`,
+        {
+          headers: {
+            Authorization: `KakaoAK ${kakaoKey.restAPI}`,
           },
-        )
-        .then((data) => {
-          setOnSearch(true)
-          setAddressData(data.data.documents)
-          if (value === '' || data.data.documents.length === 0) {
-            setOnSearch(false)
-          }
-        })
-    }
-  }, [value])
+        },
+      ),
+    {
+      onSuccess: (data) => {
+        setOnSearch(true)
+        setAddressData(data.data.documents)
+        if (value === '' || data.data.documents.length === 0) {
+          setOnSearch(false)
+        }
+      },
+    },
+  )
 
   const outFocusHandler = (e: MouseEvent) => {
     if (inputRef.current === e.target) {
