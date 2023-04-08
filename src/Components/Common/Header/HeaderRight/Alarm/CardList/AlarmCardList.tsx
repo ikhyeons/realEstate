@@ -1,14 +1,14 @@
 import styled from 'styled-components'
-import { useQueries } from 'react-query'
+import { useQuery } from 'react-query'
 import axios from 'axios'
 import Port from '../../../../../../../port'
 import AlarmChatCard from './AlarmChatCard'
 import AlarmDocCard from './AlarmDocCard'
-import io from 'socket.io-client'
 
 import {
   AchatSocket,
   AisAlarmPopOpen,
+  AisChatAtom,
   ARcvChatToggle,
   ARcvReplyToggle,
   AreplySocket,
@@ -19,55 +19,57 @@ import { useEffect } from 'react'
 const SCardList = styled.ul``
 
 const AlarmCardList = () => {
-  const [alarmOpen, setAlarmOpen] = useRecoilState(AisAlarmPopOpen)
+  const [alarmOpen] = useRecoilState(AisAlarmPopOpen)
   const [isRcvChat, setIsRcvChat] = useRecoilState(ARcvChatToggle)
   const [isRcvReply, setIsRcvReply] = useRecoilState(ARcvReplyToggle)
 
-  const [chatSocket, setChatSocket] = useRecoilState(AchatSocket)
-  const [replySocket, setReplySocket] = useRecoilState(AreplySocket)
+  const [chatSocket] = useRecoilState(AchatSocket)
+  const [replySocket] = useRecoilState(AreplySocket)
 
   useEffect(() => {
-    chatSocket()!.on('createChat', (msg: any) => {
-      setIsRcvChat((prev: number) => (prev === 0 ? 1 : 0))
+    chatSocket()!.on('createChat', () => {
+      setIsRcvChat((prev) => (prev === 0 ? 1 : 0))
     })
 
-    replySocket()!.on('createReply', (msg: any) => {
-      setIsRcvReply((prev: number) => (prev === 0 ? 1 : 0))
+    replySocket()!.on('createReply', () => {
+      setIsRcvReply((prev) => (prev === 0 ? 1 : 0))
     })
   }, [])
 
-  const res = useQueries([
-    {
-      queryKey: ['readMyChatRoom', alarmOpen],
-      queryFn: () =>
-        axios.get(`http://${Port}/chat/readMyChatRoom`, {
-          withCredentials: true,
-        }),
-      onSuccess: (data: any) => {},
-    },
-    {
-      queryKey: ['readUnCheckReplyDocs', alarmOpen],
-      queryFn: () =>
-        axios.get(`http://${Port}/document/readUnCheckReplyDocs`, {
-          withCredentials: true,
-        }),
-    },
-  ])
+  const chatRoom = useQuery<chatRoom>(['readMyChatRoom', alarmOpen], () =>
+    axios.get(`http://${Port}/chat/readMyChatRoom`, {
+      withCredentials: true,
+    }),
+  )
+
+  const unCheckReplyDocs = useQuery<unCheckedReply>(
+    ['readUnCheckReplyDocs', alarmOpen],
+    () =>
+      axios.get(`http://${Port}/document/readUnCheckReplyDocs`, {
+        withCredentials: true,
+      }),
+  )
 
   useEffect(() => {
-    res[0].refetch()
+    chatRoom.refetch()
   }, [isRcvChat])
   useEffect(() => {
-    res[1].refetch()
+    unCheckReplyDocs.refetch()
   }, [isRcvReply])
 
   return (
     <SCardList>
-      {res[0].data?.data.data.map((data: any, i: number) => (
+      {chatRoom.data?.data.data.map((data, i) => (
         <AlarmChatCard key={i} data={data} />
       ))}
-      {res[1].data?.data.data.map((data: any, i: number) => (
-        <AlarmDocCard refetch={res[1].refetch} key={i} data={data} />
+      {unCheckReplyDocs.data?.data.data.map((data, i) => (
+        <AlarmDocCard
+          refetch={() => {
+            unCheckReplyDocs.refetch()
+          }}
+          key={i}
+          data={data}
+        />
       ))}
     </SCardList>
   )

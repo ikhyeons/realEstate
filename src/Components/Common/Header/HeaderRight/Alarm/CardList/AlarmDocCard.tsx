@@ -54,7 +54,7 @@ interface IReplyData {
   replyContent: string
 }
 
-const AlarmDocCard = (prop: any) => {
+const AlarmDocCard = (prop: { data: unCheckedReplys; refetch: () => void }) => {
   const [replySocket] = useRecoilState(AreplySocket)
   const [, setIsAlarmPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [updateReplyData, setUpdateReplyData] = useState<IReplyData>({
@@ -77,7 +77,7 @@ const AlarmDocCard = (prop: any) => {
     replySocket()?.on('writeReply', (msg: any) => {
       console.log(msg)
       if (String(msg.docNum) === String(prop.data.docNum)) {
-        setUpdateReplyData((prev: any) => ({
+        setUpdateReplyData((prev) => ({
           ...prev,
           RmakeDate: msg.time,
           replyContent: msg.data,

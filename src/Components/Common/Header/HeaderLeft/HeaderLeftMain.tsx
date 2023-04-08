@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Popover from '@mui/material/Popover'
 import MenuItem from '@mui/material/MenuItem'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Select from '@mui/material/Select'
 
 import SearchMain from './SearchMain'
 
@@ -42,7 +42,7 @@ const SDeleteButton = styled.button`
 let now = new Date() // 현재 날짜 및 시간
 let year = now.getFullYear() // 연도
 
-const HeaderLeft: React.FC = () => {
+const HeaderLeft = () => {
   const Month: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   const Year: number[] = [
     year,
@@ -209,8 +209,8 @@ const HeaderLeft: React.FC = () => {
                   {data}
                   <SDeleteButton
                     onClick={() => {
-                      setSelectedOptions((prev) =>
-                        selectedOptions.filter((data2, i) => data !== data2),
+                      setSelectedOptions(() =>
+                        selectedOptions.filter((data2) => data !== data2),
                       )
                     }}
                   >

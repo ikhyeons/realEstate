@@ -8,6 +8,53 @@ declare global {
       result: 0 | 1 | 2 | 3 | 4
     }
   }
+
+  // 채팅 영역
+  interface IChatData {
+    makeDate: string
+    cnt: number
+    chatContent: string
+  }
+  //알람 체크안된 댓글
+  interface unCheckedReply {
+    data: {
+      result: number
+      data: unCheckedReplys[]
+    }
+  }
+  interface unCheckedReplys {
+    docNum: number
+    docTitle: string
+    docContent: string
+    docWriter: number
+    view: number
+    makeDate: string
+    del: number
+    cnt: number
+    userName: string
+    replyContent: string
+    RmakeDate: string
+  }
+  //알람 채팅방
+  interface chatRoom {
+    data: {
+      result: number
+      data: innerChatRoom[]
+    }
+  }
+
+  interface innerChatRoom {
+    chatRoomNum: number
+    roomAddress: string
+    chatParticipant: number
+    chatOther: number
+    chatRoom: string
+    roomMakeDate: string
+    username: string
+    chatContent: string
+    makeDate: string
+    cnt: number
+  }
   //헤더 챗
   interface chats {
     data: {

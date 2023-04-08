@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 import {
   AchatSocket,
   AcurrentChatRoomId,
@@ -52,22 +52,13 @@ const SAlarmCardNum = styled.div`
   top: 45px;
   transform: translateY(-50%);
 `
-const AlarmChatCard = (prop: any) => {
+const AlarmChatCard = (prop: { data: innerChatRoom }) => {
   console.log(prop)
-  const [isChat, setIsChat] = useRecoilState(AisChatAtom)
-  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(
-    AcurrentChatRoomId,
-  )
+  const [, setIsChat] = useRecoilState(AisChatAtom)
+  const [, setCurrentChatRoomId] = useRecoilState(AcurrentChatRoomId)
 
   const [chatSocket] = useRecoilState(AchatSocket)
-
-  const [isRcv, setIsRcv] = useRecoilState(ARcvChatToggle)
-
-  interface IChatData {
-    makeDate: string
-    cnt: number
-    chatContent: string
-  }
+  const [, setIsRcv] = useRecoilState(ARcvChatToggle)
 
   const [updateChatData, setUpdateChatData] = useState<IChatData>({
     makeDate: '',
@@ -76,7 +67,7 @@ const AlarmChatCard = (prop: any) => {
   })
   useEffect(() => {
     //시작하자마자 프롭스 입력
-    setUpdateChatData((prev: any) => {
+    setUpdateChatData(() => {
       if (prop.data.makeDate) {
         return {
           ...prop.data,
@@ -112,18 +103,20 @@ const AlarmChatCard = (prop: any) => {
   }, [prop.data])
 
   useEffect(() => {
-    chatSocket()?.on('sendChat', (msg: any) => {
-      console.log(msg)
-      if (String(msg.roomNum) === String(prop.data.chatRoom)) {
-        setUpdateChatData((prev: any) => ({
-          ...prev,
-          makeDate: msg.time,
-          cnt: prev.cnt + 1,
-          chatContent: msg.data,
-        }))
-      }
-      setIsRcv((prev: number) => (prev === 0 ? 1 : 0))
-    })
+    chatSocket()?.on(
+      'sendChat',
+      (msg: { data: string; roomNum: string; time: string }) => {
+        if (String(msg.roomNum) === String(prop.data.chatRoom)) {
+          setUpdateChatData((prev) => ({
+            ...prev,
+            makeDate: msg.time,
+            cnt: prev.cnt + 1,
+            chatContent: msg.data,
+          }))
+        }
+        setIsRcv((prev) => (prev === 0 ? 1 : 0))
+      },
+    )
   }, [])
   console.log(prop)
 

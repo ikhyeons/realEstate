@@ -50,9 +50,9 @@ const SearchMain = () => {
   const [value, setValue] = useState('')
   const [addressData, setAddressData] = useState<Iaddress[] | null>(null)
   const [onSearch, setOnSearch] = useState(false)
-  const [selectedPoint, setSelectedPoint] = useRecoilState(AselectedPoint)
+  const [, setSelectedPoint] = useRecoilState(AselectedPoint)
 
-  const { status, data, error, refetch } = useQuery(
+  const kakaoAddress = useQuery<kakaoAddress>(
     ['getSearchData'],
     () =>
       axios.get(
@@ -103,7 +103,7 @@ const SearchMain = () => {
         onChange={(e) => {
           setValue(e.target.value)
         }}
-        onFocus={(e) => {
+        onFocus={() => {
           setOnSearch(true)
         }}
         onClick={() => {
