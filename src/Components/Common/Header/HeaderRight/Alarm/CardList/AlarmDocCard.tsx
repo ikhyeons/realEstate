@@ -66,7 +66,7 @@ const AlarmDocCard = (prop: any) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    setUpdateReplyData((prev) => ({
+    setUpdateReplyData(() => ({
       RmakeDate: prop.data.RmakeDate,
       replyContent: prop.data.replyContent,
       cnt: prop.data.cnt,
