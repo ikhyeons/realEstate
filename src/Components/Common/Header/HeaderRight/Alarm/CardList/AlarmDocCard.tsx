@@ -56,13 +56,13 @@ interface IReplyData {
 
 const AlarmDocCard = (prop: any) => {
   const [replySocket] = useRecoilState(AreplySocket)
-  const [isAlarmPopOpen, setIsAlarmPopOpen] = useRecoilState(AisAlarmPopOpen)
+  const [, setIsAlarmPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [updateReplyData, setUpdateReplyData] = useState<IReplyData>({
     RmakeDate: '',
     replyContent: '',
     cnt: 0,
   })
-  const [isRcv, setIsRcv] = useRecoilState(ARcvReplyToggle)
+  const [, setIsRcv] = useRecoilState(ARcvReplyToggle)
   const navigate = useNavigate()
 
   useEffect(() => {
