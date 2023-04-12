@@ -1,11 +1,9 @@
-const express = require("express");
-import { Request, Response } from "express";
-const router = express.Router();
+import express, { Request, Response } from "express";
 import { getConnection } from "../dbConnection";
-
 import multer from "multer";
-const path = require("path");
+import path from "path";
 
+const router = express.Router();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(

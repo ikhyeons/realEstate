@@ -1,6 +1,5 @@
-const express = require("express");
+import express, { Request, Response } from "express";
 const router = express.Router();
-import { Request, Response } from "express";
 import { getConnection } from "../dbConnection";
 import { FieldPacket, RowDataPacket } from "mysql2";
 
