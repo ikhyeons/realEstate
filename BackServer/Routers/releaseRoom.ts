@@ -8,7 +8,14 @@ const path = require('path')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+<<<<<<< HEAD
     cb(null, 'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/uploadImgs')
+=======
+    cb(
+      null,
+      "C:/Users/Administrator/Desktop/release/성익현/realEstate/uploadImgs"
+    );
+>>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname)
@@ -22,6 +29,7 @@ const upload = multer({
 })
 
 //방 내놓기 정보 설정을 위한 라우팅
+<<<<<<< HEAD
 router.post('/setRoomContent', async (req: Request, res: Response) => {
   const userNum = req.session.Uid // 유저번호는 세션에서 가져옴
   const roomDeposit = req.body.deposit // 입력된 보증금
@@ -34,6 +42,20 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
   const lng = req.body.lng // 위경도
   const lat = req.body.lat // 위경도
   const options: string[] = req.body.options // 입력된 방 옵션들(배열)
+=======
+router.post("/setRoomContent", async (req: Request, res: Response) => {
+  const userNum = req.session.Uid; // 유저번호는 세션에서 가져옴
+  const roomDeposit = req.body.deposit; // 입력된 보증금
+  const roomMonthly = req.body.monthly; // 입력된 보증금
+  const address = req.body.address; // 입력된 주소
+  const detailAddress = req.body.detail; // 입력된 주소 상세
+  const year = req.body.roomYear; // 입력된 기간
+  const month = req.body.roomMonth; // 입력된 기간
+  const doc = req.body.doc; // 입력된 글
+  const lng = req.body.lng; // 위경도
+  const lat = req.body.lat; // 위경도
+  const options = req.body.options; // 입력된 방 옵션들(배열)
+>>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
 
   //db연결을 위해 pool에서 커넥션을 대여함
   if (req.session.isLogin) {
@@ -45,8 +67,13 @@ router.post('/setRoomContent', async (req: Request, res: Response) => {
         userNum,
       ])
 
+<<<<<<< HEAD
       options.map(async (data) => {
         await connection.query('INSERT INTO roomOption VALUES(default, ?, ?)', [
+=======
+      options.map(async (data: any) => {
+        await connection.query("INSERT INTO roomOption VALUES(default, ?, ?)", [
+>>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
           userNum,
           data,
         ])
@@ -98,7 +125,11 @@ router.post(
           req.session.Uid,
         ])
         //사진을 입력하는 쿼리
+<<<<<<< HEAD
         const files = req.files as Express.Multer.File[]
+=======
+        const files: any = req.files;
+>>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
         files?.map(async (data: Express.Multer.File) => {
           await connection.query(
             'insert into roompicture values(default, ?, ?)',
@@ -218,6 +249,7 @@ router.get('/readRoomOption', async (req: Request, res: Response) => {
 router.get('/readImg/:fileName', async (req: Request, res: Response) => {
   const fileName = req.params.fileName
 
+  console.log(fileName);
   //db연결을 위해 pool에서 커넥션을 대여함
   const connection = await getConnection()
   try {

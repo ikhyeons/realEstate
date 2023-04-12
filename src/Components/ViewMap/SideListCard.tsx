@@ -1,9 +1,9 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from "react";
+import styled from "styled-components";
 
-import { useRecoilState } from 'recoil'
-import { AcurrentRoomId, AIsInfoOn } from '../../AtomStorage'
-import Port from '../../../port'
+import { useRecoilState } from "recoil";
+import { AcurrentRoomId, AIsInfoOn } from "../../AtomStorage";
+import Port from "../../../port";
 
 const SCard = styled.li`
   width: 100%;
@@ -12,53 +12,59 @@ const SCard = styled.li`
   :hover {
     background: rgba(0, 0, 0, 0.1);
   }
-`
+`;
 
 const SCardTop = styled.div`
   height: 60%;
   display: flex;
-`
+`;
 const SCardBottomContent = styled.div`
   height: 40%;
   font-size: 20px;
   padding: 5px;
-`
+`;
 
 const SCardMainImg = styled.img`
   height: 100%;
   width: 124px;
   background: black;
-`
+`;
 const SCardTopRight = styled.div`
   margin-left: 5px;
-`
+`;
 const SCardPeriod = styled.div`
   font-size: 25px;
   font-weight: bold;
   margin: 1px 0;
   user-select: none;
-`
+`;
 const SCardValue = styled.div`
   font-size: 20px;
   user-select: none;
   position: relative;
   top: -10px;
-`
+`;
 const SCardLocation = styled.div`
   font-size: 17px;
   user-select: none;
   position: relative;
   top: -12px;
-`
+`;
 
+<<<<<<< HEAD
 const SideListCard = (props: ISidebarCardProp) => {
   const [, setIsInfoOn] = useRecoilState(AIsInfoOn)
   const [, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
+=======
+const SideListCard: React.FC<CardPropsStateProp> = (props) => {
+  const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn);
+  const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId);
+>>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
   return (
     <SCard
       onClick={() => {
-        setCurrentRoomId(String(props.data.id))
-        setIsInfoOn(true)
+        setCurrentRoomId(String(props.data.id));
+        setIsInfoOn(true);
       }}
     >
       <SCardTop>
@@ -76,7 +82,7 @@ const SideListCard = (props: ISidebarCardProp) => {
       </SCardTop>
       <SCardBottomContent>{props.data.content}</SCardBottomContent>
     </SCard>
-  )
-}
+  );
+};
 
-export default SideListCard
+export default SideListCard;
