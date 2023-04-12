@@ -245,13 +245,8 @@ router.get("/readRooms", async (req: Request, res: Response) => {
         roomLng, 
         roomDate, 
         roomDoc, 
-<<<<<<< HEAD
-        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum LIMIT 1) as roomPicture, 
-        GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption
-=======
         (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum LIMIT 1) AS roomPicture, 
         GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") AS roomOption 
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
         FROM user 
         LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum 
         LEFT JOIN roomOption ON user.userNum = roomOption.userNum 
@@ -288,13 +283,8 @@ router.get("/readRooms", async (req: Request, res: Response) => {
         roomLng, 
         roomDate, 
         roomDoc, 
-<<<<<<< HEAD
-        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum LIMIT 1) as roomPicture, 
-        GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") as roomOption 
-=======
-        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum DESC LIMIT 1) AS roomPicture, 
+        (SELECT pictureAddress FROM roomPicture WHERE roomPicture.userNum = user.userNum ORDER BY pictureNum LIMIT 1) AS roomPicture, 
         GROUP_CONCAT(roomOption ORDER BY optionNum desc SEPARATOR ",") AS roomOption 
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
         FROM user 
         LEFT JOIN roomPicture ON user.userNum = roomPicture.userNum 
         LEFT JOIN roomOption ON user.userNum = roomOption.userNum 

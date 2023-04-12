@@ -44,25 +44,14 @@ const SInnerPicture = styled.img`
 const SContent = styled.div``;
 
 const ViewRoomInfo = () => {
-<<<<<<< HEAD
-  const [currentRoomId] = useRecoilState(AcurrentRoomId)
-  const [currentImg, setCurrentImg] = useState<string>('')
+  const [currentRoomId] = useRecoilState(AcurrentRoomId);
+  const [currentImg, setCurrentImg] = useState<string>("");
   const { status, error, data, refetch } = useQuery<IRoomInfo>(
-    ['readRoomInfo', currentRoomId],
+    ["readRoomInfo", currentRoomId],
     () => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
     {
       onSuccess: (data) => {
-        setCurrentImg(data.data.imgs[0].pictureAddress)
-=======
-  const [currentRoomId, setCurrentRoomId] = useRecoilState(AcurrentRoomId);
-  const [currentImg, setCurrentImg] = useState<string>("");
-  const { status, error, data, refetch } = useQuery(
-    ["readRoomInfo", currentRoomId],
-    (data) => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
-    {
-      onSuccess: (data: any) => {
         setCurrentImg(data.data.imgs[0].pictureAddress);
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
       },
     }
   );
@@ -83,15 +72,9 @@ const ViewRoomInfo = () => {
               data?.data.data[0].roomDetailAddress}
           </p>
           <p>
-<<<<<<< HEAD
-            옵션 :{' '}
-            {data?.data.options.map((data, i: number) => (
-              <span key={i}>{data.roomOption + ' '}</span>
-=======
             옵션 :{" "}
-            {data?.data.options.map((data: any, i: number) => (
+            {data?.data.options.map((data, i: number) => (
               <span key={i}>{data.roomOption + " "}</span>
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
             ))}
           </p>
         </SInfo>

@@ -27,68 +27,37 @@ const SSideList = styled.ul`
   }
 `;
 
-<<<<<<< HEAD
 const SideList = () => {
-  const [cookies] = useCookies(['isLogin'])
-=======
-const SideList: React.FC = () => {
-  const [cookies, setCookies] = useCookies(["isLogin"]);
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
+  const [cookies] = useCookies(["isLogin"]);
 
   const [list, setList] = useState<ISidebarCard[]>([
     {
-<<<<<<< HEAD
       id: 0,
-      value: '',
-      location: '',
-      content: '',
-      date: '',
-      pictureAddress: '',
-=======
-      id: 1,
-      value: "10000/250",
-      location: "진주시 칠암동",
-      content: "우리집 너무 이쁘죠1",
+      value: "",
+      location: "",
+      content: "",
       date: "",
       pictureAddress: "",
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
       options: [],
     },
   ]);
 
-<<<<<<< HEAD
   const readRooms = useQuery<IroomData>(
-    ['readRooms', cookies],
+    ["readRooms", cookies],
     () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
       onSuccess: (data) => {
         setList((prev) =>
           data.data.data.map((data, i: number) => ({
-=======
-  const readRooms = useQuery(
-    ["readRooms", cookies],
-    () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
-    {
-      onSuccess: (data: any) => {
-        console.log(data);
-        setList((prev: any) =>
-          data.data.data.map((data: any, i: number) => ({
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
             id: data.userNum,
             value: `${data.roomDeposit + "/" + data.roomMonthly}`,
             location: `${data.roomAddress + " " + data.roomDetailAddress}`,
             content: data.roomDoc,
             date: data.roomDate,
             pictureAddress: data.roomPicture,
-<<<<<<< HEAD
             options: data.roomOption,
-          })),
-        )
-=======
-            option: data.roomOption,
           }))
         );
->>>>>>> 839a10f1d4ba630b3548bd737183ffbde2fb724a
       },
     }
   );

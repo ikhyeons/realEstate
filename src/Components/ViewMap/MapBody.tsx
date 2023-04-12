@@ -1,22 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import {
   Map,
   MapMarker,
   MarkerClusterer,
   ZoomControl,
-} from 'react-kakao-maps-sdk'
-import { AIsInfoOn } from '../../AtomStorage'
-import { useRecoilState } from 'recoil'
-import { AselectedPoint, AcurrentRoomId } from '../../AtomStorage'
-import { useQuery } from 'react-query'
-import axios from 'axios'
-import Port from '../../../port'
-import { useCookies } from 'react-cookie'
+} from "react-kakao-maps-sdk";
+import { AIsInfoOn } from "../../AtomStorage";
+import { useRecoilState } from "recoil";
+import { AselectedPoint, AcurrentRoomId } from "../../AtomStorage";
+import { useQuery } from "react-query";
+import axios from "axios";
+import Port from "../../../port";
+import { useCookies } from "react-cookie";
 
 const MapBody: React.FC = () => {
-  const [cookies] = useCookies(['isLogin'])
+  const [cookies] = useCookies(["isLogin"]);
   const readRooms = useQuery(
-    ['readRooms', cookies],
+    ["readRooms", cookies],
     () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
       onSuccess: (data) => {
@@ -24,25 +24,25 @@ const MapBody: React.FC = () => {
           data.data.data.map((data: any, i: number) => ({
             id: data.userNum,
             position: { lat: data.roomLat, lng: data.roomLng },
-          })),
-        )
+          }))
+        );
       },
-    },
-  )
+    }
+  );
 
-  const [markerData, setMakerData] = useState<IMapMarker[]>([])
+  const [markerData, setMakerData] = useState<IMapMarker[]>([]);
 
-  const [, setIsInfoOn] = useRecoilState(AIsInfoOn)
-  const [selectedPoint] = useRecoilState(AselectedPoint)
-  const [, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
+  const [, setIsInfoOn] = useRecoilState(AIsInfoOn);
+  const [selectedPoint] = useRecoilState(AselectedPoint);
+  const [, setCurrentRoomId] = useRecoilState(AcurrentRoomId);
 
   return (
     <Map // 지도를 표시할 Container
       center={selectedPoint}
       style={{
         // 지도의 크기
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
       }}
       level={3} // 지도의 확대 레벨
       isPanto={true} // 지도 부드럽게 이동
@@ -56,8 +56,8 @@ const MapBody: React.FC = () => {
             key={data.id}
             clickable={true}
             onClick={(e) => {
-              setCurrentRoomId(String(data.id))
-              setIsInfoOn(true)
+              setCurrentRoomId(String(data.id));
+              setIsInfoOn(true);
             }}
             position={data.position}
           ></MapMarker>
@@ -65,7 +65,7 @@ const MapBody: React.FC = () => {
       </MarkerClusterer>
       <ZoomControl position={kakao.maps.ControlPosition.TOPRIGHT} />
     </Map>
-  )
-}
+  );
+};
 
-export default MapBody
+export default MapBody;
