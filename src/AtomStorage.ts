@@ -122,4 +122,19 @@ export const AreplySocket = atom({
   },
 })
 
+export const AroomToggle = atom({
+  key: 'room/toggle',
+  default: 0,
+})
+
+export const AoptionFilter = atom<optionFilter>({
+  key: 'room/optionFilter',
+  default: {
+    optionOn: false,
+    year: null,
+    month: null,
+    additional: null,
+  },
+})
+
 export default ASelectedAddredss

@@ -53,7 +53,7 @@ const ReplyCard = (prop: { data: IReplyInfo }) => {
     setModify(false)
   })
 
-  const modifyReply = useMutation(
+  const modifyReply = useMutation<mutationData>(
     () =>
       axios.post(
         `http://${Port}/reply/updateReply`,

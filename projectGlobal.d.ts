@@ -1,6 +1,3 @@
-import { RowDataPacket } from 'mysql2'
-import internal from 'stream'
-
 declare global {
   //공용
   interface mutationData {
@@ -72,6 +69,14 @@ declare global {
   }
 
   //헤더영역
+
+  interface optionFilter {
+    optionOn: boolean
+    year: number | null
+    month: number | null
+    additional: string[] | null
+  }
+
   interface kakaoAddress {
     data: {
       meta: {

@@ -1,15 +1,14 @@
 import { Request, Response } from 'express'
 import { Socket } from 'socket.io'
-const cors = require('cors')
-const express = require('express')
-const app = express()
-const http = require('http')
+import express from 'express'
+import cors from 'cors'
+import http from 'http'
 
 import mysqlSession from 'express-session'
 import { sessionConfig } from '../secretKeysB'
 import getConnection from './dbConnection'
 import { FieldPacket, RowDataPacket } from 'mysql2'
-const createChatF = require('./Routers/chat')
+import { createChatF } from './Routers/chat'
 
 interface DocValue {
   docNum: number | null
@@ -42,6 +41,8 @@ interface replyRcv {
   data: string
 }
 
+const app = express()
+
 app.use(mysqlSession(sessionConfig))
 
 app.use(express.json())
@@ -70,9 +71,6 @@ const io = require('socket.io')(server, {
   },
 })
 
-const docSocket = io.of('/doc')
-const chatSocket = io.of('/chat')
-
 const session = require('./Routers/session')
 const user = require('./Routers/user')
 const releaseRoom = require('./Routers/releaseRoom')
@@ -100,6 +98,8 @@ app.get('/main.js', (req: Request, res: Response) => {
 })
 
 //소켓 통신
+const docSocket = io.of('/doc')
+const chatSocket = io.of('/chat')
 
 chatSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈과 세션 연결
 docSocket.use(ios(mysqlSession(sessionConfig), { autoSave: true })) // 모듈과 세션 연결

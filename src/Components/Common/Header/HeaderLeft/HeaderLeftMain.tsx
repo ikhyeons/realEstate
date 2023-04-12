@@ -8,6 +8,8 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 
 import SearchMain from './SearchMain'
+import { useRecoilState } from 'recoil'
+import { AoptionFilter, AroomToggle } from '../../../../AtomStorage'
 
 const SBoxLeft = styled.div`
   width: 360px;
@@ -22,6 +24,35 @@ const SDateRange = styled.div`
   display: flex;
   align-items: center;
   margin: 5px 0;
+`
+
+const SBtnWrap = styled.div`
+  position: relative;
+  margin-right: 5px;
+  width: 118px;
+`
+
+const SBtnUnderbar = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-left: 6px;
+  bottom: 2px;
+`
+
+const SRoomBar = styled.div<{ now: number; key: number }>`
+  width: 30%;
+  height: 3px;
+  background: ${(prop) => (prop.now ? 'yellow' : 'white')};
+  border: ${(prop) => (prop.now ? '1px solid yellow' : '1px solid white')};
+`
+
+const SOptionBar = styled.div`
+  width: 80%;
+  height: 3px;
+  background: lightgreen;
+  border: 1px solid lightgreen;
 `
 
 const SMoreOptions = styled.div`
@@ -69,6 +100,9 @@ const HeaderLeft = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [startMonth, setStartMonth] = useState<number>()
   const [startYear, setStartYear] = useState<number>()
+  const [roomToggle, setRoomToggle] = useRecoilState(AroomToggle)
+  const [nowlist] = useState([0, 1, 2])
+  const [optionFilter, setOptionFilter] = useRecoilState(AoptionFilter)
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>([])
 
@@ -105,34 +139,50 @@ const HeaderLeft = () => {
   return (
     <>
       <SearchMain />
-      <Button /*mui 버튼*/
-        disabled={false} /*버튼 작동, 미작동 설정*/
-        sx={muiMenuBtnStyle}
-        size="large"
-        variant="contained" /*버튼 모양 결정*/
-      >
-        원룸
-      </Button>
-      <Button /*mui 버튼*/
-        disabled={false} /*버튼 작동, 미작동 설정*/
-        sx={muiMenuBtnStyle}
-        size="large"
-        variant="contained" /*버튼 모양 결정*/
-      >
-        투룸
-      </Button>
-      <Button
-        onClick={(event: React.MouseEvent<HTMLElement>) => {
-          setAnchorEl(event.currentTarget) //지금 클릭된 버튼을 anchorEl에 저장함
-          setIsPopOpen((prev) => !prev) //isPopOpen은 팝업창을 열림, 닫음을 결정함, 이전값이 열림이면 닫힘으로, 닫힘이면 열림으로
-        }}
-        disabled={false}
-        sx={muiMenuBtnStyle}
-        size="large"
-        variant="contained"
-      >
-        옵션선택
-      </Button>
+      <SBtnWrap>
+        <Button /*mui 버튼*/
+          disabled={false} /*버튼 작동, 미작동 설정*/
+          sx={muiMenuBtnStyle}
+          size="large"
+          variant="contained" /*버튼 모양 결정*/
+          onClick={() => {
+            setRoomToggle((prev) => {
+              if (prev === 0) return 1
+              else if (prev === 1) return 2
+              else return 0
+            })
+          }}
+        >
+          {roomToggle === 0 ? '전체' : roomToggle === 1 ? '원룸' : '투룸'}
+        </Button>
+        <SBtnUnderbar>
+          {nowlist.map((data, i) =>
+            data === roomToggle ? (
+              <SRoomBar key={i} now={1}></SRoomBar>
+            ) : (
+              <SRoomBar key={i} now={0}></SRoomBar>
+            ),
+          )}
+        </SBtnUnderbar>
+      </SBtnWrap>
+
+      <SBtnWrap>
+        <Button
+          onClick={(event: React.MouseEvent<HTMLElement>) => {
+            setAnchorEl(event.currentTarget) //지금 클릭된 버튼을 anchorEl에 저장함
+            setIsPopOpen((prev) => !prev) //isPopOpen은 팝업창을 열림, 닫음을 결정함, 이전값이 열림이면 닫힘으로, 닫힘이면 열림으로
+          }}
+          disabled={false}
+          sx={muiMenuBtnStyle}
+          size="large"
+          variant="contained"
+        >
+          옵션선택
+        </Button>
+        <SBtnUnderbar>
+          {optionFilter.optionOn ? <SOptionBar /> : null}
+        </SBtnUnderbar>
+      </SBtnWrap>
       <Popover
         sx={{ marginTop: '12px' }}
         open={isPopOpen} /*isPopOpen이 true면 열림, 아니면 닫힘*/
@@ -219,10 +269,29 @@ const HeaderLeft = () => {
                 </SSelectedList>
               )
             })}
-            <Button sx={muiRstBtnStyle} size="large" variant="contained">
+            <Button
+              onClick={() => {
+                setOptionFilter((prev) => ({ ...prev, optionOn: false }))
+              }}
+              sx={muiRstBtnStyle}
+              size="large"
+              variant="contained"
+            >
               초기화
             </Button>
-            <Button sx={muiEndBtnStyle} size="large" variant="contained">
+            <Button
+              onClick={() => {
+                if (startMonth && startYear) {
+                  setOptionFilter((prev) => ({ ...prev, optionOn: true }))
+                  setIsPopOpen(false)
+                } else {
+                  alert('선택하지 않은 옵션이 있습니다.')
+                }
+              }}
+              sx={muiEndBtnStyle}
+              size="large"
+              variant="contained"
+            >
               완료
             </Button>
           </SBoxRight>
