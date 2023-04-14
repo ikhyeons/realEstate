@@ -128,12 +128,12 @@ export const AroomToggle = atom({
 })
 
 export const AoptionFilter = atom<optionFilter>({
-  key: 'room/optionFilter',
+  key: 'filter/optionFilter',
   default: {
     optionOn: false,
     year: null,
     month: null,
-    additional: null,
+    additional: [],
   },
 })
 

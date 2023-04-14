@@ -310,8 +310,8 @@ router.get('/readRooms', async (req: Request, res: Response) => {
       const outdata = data.map((data) => {
         return {
           ...data,
-          roomPicture: data.roomPicture.split(',')[
-            data.roomPicture.split(',').length - 1
+          roomPicture: data.roomPicture?.split(',')[
+            data.roomPicture?.split(',').length - 1
           ],
           roomOption: [...new Set(data.roomOption.split(','))],
         }

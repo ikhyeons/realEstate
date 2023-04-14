@@ -56,13 +56,13 @@ const SReq = styled.div`
 `
 
 const InfoModalMain = () => {
-  const [, setIsInfoOn] = useRecoilState(AIsInfoOn)
+  const [isInfoOn, setIsInfoOn] = useRecoilState(AIsInfoOn)
   const [, setIsPopOpen] = useRecoilState(AisAlarmPopOpen)
   const [currentRoomId] = useRecoilState(AcurrentRoomId)
   const [chatSocket] = useRecoilState(AchatSocket)
 
   const { status, error, data, refetch } = useQuery<IReleaseRoomInfo>(
-    ['readRoomInfo', currentRoomId],
+    ['readRoomInfo', currentRoomId, isInfoOn],
     () => axios.get(`http://${Port}/user/readRoomInfo/${currentRoomId}`),
   )
   const createChatRoom = useMutation<mutationData>(
