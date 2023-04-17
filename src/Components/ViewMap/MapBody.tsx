@@ -1,11 +1,16 @@
-import { useState } from 'react'
+import { useRef, useState, useMemo, useEffect } from 'react'
 import {
   Map,
   MapMarker,
   MarkerClusterer,
   ZoomControl,
 } from 'react-kakao-maps-sdk'
-import { AIsInfoOn, AoptionFilter, AroomToggle } from '../../AtomStorage'
+import {
+  AIsInfoOn,
+  AMapAria,
+  AoptionFilter,
+  AroomToggle,
+} from '../../AtomStorage'
 import { useRecoilState } from 'recoil'
 import { AselectedPoint, AcurrentRoomId } from '../../AtomStorage'
 import { useQuery } from 'react-query'
@@ -124,23 +129,56 @@ const MapBody = () => {
     },
   )
 
-  console.log(readRooms.data)
-
   const [markerData, setMakerData] = useState<IMapMarker[]>([])
-
   const [, setIsInfoOn] = useRecoilState(AIsInfoOn)
   const [selectedPoint] = useRecoilState(AselectedPoint)
   const [, setCurrentRoomId] = useRecoilState(AcurrentRoomId)
+  const [mapAria, setMapAria] = useRecoilState(AMapAria)
+  const [isLoad, setIsLoad] = useState(0)
+  useEffect(() => {
+    setMapAria({
+      sw: { lat: 0, lng: 0 },
+      ne: { lat: 200, lng: 200 },
+    })
 
+    console.log(isLoad)
+  }, [isLoad])
   return (
     <Map // 지도를 표시할 Container
       center={selectedPoint}
+      onCreate={(e) => {
+        setIsLoad(1)
+      }}
+      onZoomChanged={(e) => {
+        setMapAria({
+          sw: {
+            lat: e.getBounds().getSouthWest().getLat(),
+            lng: e.getBounds().getSouthWest().getLng(),
+          },
+          ne: {
+            lat: e.getBounds().getNorthEast().getLat(),
+            lng: e.getBounds().getNorthEast().getLng(),
+          },
+        })
+      }}
+      onDragEnd={(e) => {
+        setMapAria({
+          sw: {
+            lat: e.getBounds().getSouthWest().getLat(),
+            lng: e.getBounds().getSouthWest().getLng(),
+          },
+          ne: {
+            lat: e.getBounds().getNorthEast().getLat(),
+            lng: e.getBounds().getNorthEast().getLng(),
+          },
+        })
+      }}
       style={{
         // 지도의 크기
         width: '100%',
         height: '100%',
       }}
-      level={3} // 지도의 확대 레벨
+      level={13} // 지도의 확대 레벨
       isPanto={true} // 지도 부드럽게 이동
     >
       <MarkerClusterer

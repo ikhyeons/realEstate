@@ -10,11 +10,38 @@ import Box from '@mui/material/Box'
 import Switch from '@mui/material/Switch'
 
 import ReleaseRoomTrue from './ReleaseRoomTrue'
-import ReleaseRoomModify from './ReleaseRoomModify'
+import ReleaseRoomModify from './RoomModifyPages/ReleaseRoomModify'
 import { useRecoilState } from 'recoil'
 import { AcurrentImg, ARIsModify } from '../../../../../AtomStorage'
 
+const STop = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const SOFdiv = styled.div<{ release: number }>`
+  color: ${(prop) => (prop.release == 1 ? 'lightgreen' : 'lightgray')};
+  text-shadow: ${(prop) =>
+    prop.release == 1
+      ? '-1px 0 rgb(0, 150, 0), 0 1px rgb(0, 150, 0), 1px 0 rgb(0, 150, 0), 0 -1px rgb(0, 150, 0)'
+      : '-1px 0 rgb(130, 130, 130), 0 1px rgb(130, 130, 130), 1px 0 rgb(130, 130, 130), 0 -1px rgb(130, 130, 130)'};
+
+  border-radius: 50%;
+  width: 40px;
+  height: 33px;
+  font-size: 17px;
+  margin-left: 1px;
+`
+
 const ReleaseRoom = () => {
+  const nextPrevBtn = {
+    fontSize: '16px',
+    fontWeight: 'bold',
+    width: '78px',
+    background: '#ee5',
+    '&:hover': { background: '#dd2' },
+  }
+
   const [, setCurrentImg] = useRecoilState(AcurrentImg)
   const queryClient = useQueryClient() // 등록된 quieryClient 가져오기
   const [isPopOpen, setIsPopOpen] = useState(false)
@@ -23,29 +50,10 @@ const ReleaseRoom = () => {
 
   const dropdownSX = {
     padding: '6px',
-    width: '600px',
+    width: '800px',
     display: 'flex',
     flexDirection: 'column',
   }
-
-  const STop = styled.div`
-    display: flex;
-    justify-content: space-between;
-  `
-
-  const SOFdiv = styled.div<{ release: number }>`
-    color: ${(prop) => (prop.release == 1 ? 'lightgreen' : 'lightgray')};
-    text-shadow: ${(prop) =>
-      prop.release == 1
-        ? '-1px 0 rgb(0, 150, 0), 0 1px rgb(0, 150, 0), 1px 0 rgb(0, 150, 0), 0 -1px rgb(0, 150, 0)'
-        : '-1px 0 rgb(130, 130, 130), 0 1px rgb(130, 130, 130), 1px 0 rgb(130, 130, 130), 0 -1px rgb(130, 130, 130)'};
-
-    border-radius: 50%;
-    width: 40px;
-    height: 33px;
-    font-size: 17px;
-    margin-left: 1px;
-  `
 
   const userInfo = useQuery<headerUserInfo>(
     ['readUserInfo', isPopOpen],
@@ -149,13 +157,17 @@ const ReleaseRoom = () => {
             </div>
             {isModify === false &&
             !!userInfo.data?.data.data[0].isRelease === true ? (
-              <button
+              <Button
+                disabled={false} /*버튼 작동, 미작동 설정*/
+                sx={nextPrevBtn}
+                size="large"
+                variant="contained" /*버튼 모양 결정*/
                 onClick={() => {
                   setIsModify(true)
                 }}
               >
                 수정
-              </button>
+              </Button>
             ) : null}
           </STop>
           {!!userInfo.data?.data.data[0].isRelease === true ? (

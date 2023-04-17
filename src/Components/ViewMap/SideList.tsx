@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
 import SideListCard from './SideListCard'
 import { useQuery } from 'react-query'
@@ -6,7 +6,7 @@ import axios from 'axios'
 import Port from '../../../port'
 import { useCookies } from 'react-cookie'
 import { useRecoilState } from 'recoil'
-import { AoptionFilter, AroomToggle } from '../../AtomStorage'
+import { AMapAria, AoptionFilter, AroomToggle } from '../../AtomStorage'
 
 const SSideList = styled.ul`
   position: absolute;
@@ -66,12 +66,14 @@ const SideList = () => {
     },
   ])
 
+  const [mapAria, setMapAria] = useRecoilState(AMapAria)
   const readRooms = useQuery<IroomData>(
-    ['readRooms', cookies, roomToggle, optionFilter],
+    ['readRooms', cookies, roomToggle, optionFilter, mapAria],
     () => axios.get(`http://${Port}/user/readRooms`, { withCredentials: true }),
     {
       onSuccess: (data) => {
-        setList((prev) =>
+        console.log(data)
+        setList(() =>
           data.data.data.map((data, i: number) => ({
             id: data.userNum,
             value: `${data.roomDeposit + '/' + data.roomMonthly}`,
@@ -84,13 +86,29 @@ const SideList = () => {
         )
       },
       select: (data) => {
+        const onAriaData: IroomData = {
+          ...data,
+          data: {
+            ...data.data,
+            data: data.data.data.filter((data, i) => {
+              if (
+                mapAria.ne.lat > data.roomLat &&
+                mapAria.sw.lat < data.roomLat &&
+                mapAria.ne.lng > data.roomLng &&
+                mapAria.sw.lng < data.roomLng
+              )
+                return true
+              else return false
+            }),
+          },
+        }
         switch (roomToggle) {
           case 0:
             return {
-              ...data,
+              ...onAriaData,
               data: {
-                ...data.data,
-                data: data.data.data.filter((data) =>
+                ...onAriaData.data,
+                data: onAriaData.data.data.filter((data) =>
                   optionFilter.optionOn === true
                     ? compareDateWithStandardf(
                         optionFilter.year!,
@@ -109,10 +127,10 @@ const SideList = () => {
 
           case 1:
             return {
-              ...data,
+              ...onAriaData,
               data: {
-                ...data.data,
-                data: data.data.data.filter((data) =>
+                ...onAriaData.data,
+                data: onAriaData.data.data.filter((data) =>
                   optionFilter.optionOn === true
                     ? data.roomOption.includes('원룸') &&
                       compareDateWithStandardf(
@@ -132,10 +150,10 @@ const SideList = () => {
 
           default:
             return {
-              ...data,
+              ...onAriaData,
               data: {
-                ...data.data,
-                data: data.data.data.filter((data) =>
+                ...onAriaData.data,
+                data: onAriaData.data.data.filter((data) =>
                   optionFilter.optionOn === true
                     ? data.roomOption.includes('투룸') &&
                       compareDateWithStandardf(

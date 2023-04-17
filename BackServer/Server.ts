@@ -3,6 +3,7 @@ import { Socket } from 'socket.io'
 import express from 'express'
 import cors from 'cors'
 import http from 'http'
+import path from 'path'
 
 import mysqlSession from 'express-session'
 import { sessionConfig } from '../secretKeysB'
@@ -45,7 +46,7 @@ const app = express()
 
 app.use(mysqlSession(sessionConfig))
 
-app.use(express.json())
+app.use(express.json({ limit: '50mb' }))
 app.use(
   cors({
     origin: [
@@ -86,15 +87,11 @@ app.use('/reply', reply)
 app.use('/chat', chat)
 
 app.get('/', (req: Request, res: Response) => {
-  res.sendFile(
-    'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/dist/index.html',
-  )
+  res.sendFile(path.join(__dirname, '..', '/dist/index.html'))
 })
 
 app.get('/main.js', (req: Request, res: Response) => {
-  res.sendFile(
-    'C:/Users/skant/OneDrive/Desktop/Projects/RealEstate/dist/main.js',
-  )
+  res.sendFile(path.join(__dirname, '..', '/dist/main.js'))
 })
 
 //소켓 통신
