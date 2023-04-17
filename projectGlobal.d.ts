@@ -74,7 +74,7 @@ declare global {
     optionOn: boolean
     year: number | null
     month: number | null
-    additional: string[] | null
+    additional: string[]
   }
 
   interface kakaoAddress {

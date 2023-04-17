@@ -6,10 +6,7 @@ import path from "path";
 const router = express.Router();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(
-      null,
-      "C:/Users/Administrator/Desktop/release/익현/realEstate/uploadImgs"
-    );
+    cb(null, "../uploadImgs");
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
@@ -21,7 +18,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({
-  limits: { fieldSize: 25 * 1024 * 1024 },
+  limits: { fieldSize: 25 * 1024 * 1024 * 1024 },
   storage: storage,
 });
 
@@ -30,14 +27,14 @@ router.post("/setRoomContent", async (req: Request, res: Response) => {
   const userNum = req.session.Uid; // 유저번호는 세션에서 가져옴
   const roomDeposit = req.body.deposit; // 입력된 보증금
   const roomMonthly = req.body.monthly; // 입력된 보증금
-  const address = req.body.address; // 입력된 주소
-  const detailAddress = req.body.detail; // 입력된 주소 상세
-  const year = req.body.roomYear; // 입력된 기간
-  const month = req.body.roomMonth; // 입력된 기간
+  const address = req.body.addressL.address; // 입력된 주소
+  const detailAddress = req.body.detailAddress; // 입력된 주소 상세
+  const year = req.body.startYear; // 입력된 기간
+  const month = req.body.startMonth; // 입력된 기간
   const doc = req.body.doc; // 입력된 글
-  const lng = req.body.lng; // 위경도
-  const lat = req.body.lat; // 위경도
-  const options: string[] = req.body.options; // 입력된 방 옵션들(배열)
+  const lng = req.body.addressL.lng; // 위경도
+  const lat = req.body.addressL.lat; // 위경도
+  const options: string[] = req.body.selectedOption; // 입력된 방 옵션들(배열)
 
   //db연결을 위해 pool에서 커넥션을 대여함
   if (req.session.isLogin) {
@@ -229,9 +226,7 @@ router.get("/readImg/:fileName", async (req: Request, res: Response) => {
     //데이터 쿼리 종료 후 대여한 커넥션을 반납함
     connection.release();
     //결과가 성공이면 result 0
-    res.sendFile(
-      `C:/Users/Administrator/Desktop/release/익현/realEstate/uploadImgs/${fileName}`
-    );
+    res.sendFile(path.join(__dirname, "..", "..", `uploadImgs/${fileName}`));
   } catch (err) {
     //db에서 에러나 났을 경우 커넥션을 반납하고
     connection.release();

@@ -294,7 +294,9 @@ router.get("/readRooms", async (req: Request, res: Response) => {
         return {
           ...data,
           roomPicture:
-            data.roomPicture.split(",")[data.roomPicture.split(",").length - 1],
+            data.roomPicture?.split(",")[
+              data.roomPicture?.split(",").length - 1
+            ],
           roomOption: [...new Set(data.roomOption.split(","))],
         };
       });

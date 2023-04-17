@@ -77,15 +77,6 @@ export const AcurrentImg = atom<string>({
   default: '',
 })
 
-export const AroomModifyAddressAndL = atom({
-  key: 'roomRelease/modifyAddressAL',
-  default: {
-    address: '',
-    lng: '',
-    lat: '',
-  },
-})
-
 export const AcurrentRoomId = atom({
   key: 'viewMap/currentRoomId',
   default: '',
@@ -128,12 +119,52 @@ export const AroomToggle = atom({
 })
 
 export const AoptionFilter = atom<optionFilter>({
-  key: 'room/optionFilter',
+  key: 'filter/optionFilter',
   default: {
     optionOn: false,
     year: null,
     month: null,
-    additional: null,
+    additional: [],
+  },
+})
+
+export const AMapAria = atom({
+  key: 'map/mapAria',
+  default: {
+    sw: { lat: 30, lng: 140 },
+    ne: { lat: 40, lng: 120 },
+  },
+})
+
+export const AModifyStep = atom<'first' | 'second' | 'third'>({
+  key: 'releaseRoom/modifyStep',
+  default: 'first',
+})
+
+export const AModifyData = atom<{
+  startYear: string
+  startMonth: string
+  selectedOption: string[]
+  deposit: string
+  monthly: string
+  doc: string
+  addressL: { lat: string; lng: string; address: string }
+  detailAddress: string
+  formOutData: FormData | null
+  inputImages: string[]
+}>({
+  key: 'release/modify',
+  default: {
+    startYear: '',
+    startMonth: '',
+    selectedOption: [],
+    deposit: '',
+    monthly: '',
+    doc: '',
+    addressL: { lat: '', lng: '', address: '' },
+    detailAddress: '',
+    formOutData: new FormData(),
+    inputImages: [],
   },
 })
 

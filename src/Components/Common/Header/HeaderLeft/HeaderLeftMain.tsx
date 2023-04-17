@@ -98,13 +98,10 @@ const HeaderLeft = () => {
   ]
   const [isPopOpen, setIsPopOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [startMonth, setStartMonth] = useState<number>()
-  const [startYear, setStartYear] = useState<number>()
   const [roomToggle, setRoomToggle] = useRecoilState(AroomToggle)
   const [nowlist] = useState([0, 1, 2])
   const [optionFilter, setOptionFilter] = useRecoilState(AoptionFilter)
-
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([])
+  const [nowAdditional, setNowAdditional] = useState<string[]>([])
 
   const muiMenuBtnStyle = {
     fontSize: '18px',
@@ -202,13 +199,16 @@ const HeaderLeft = () => {
               기간 : &nbsp;
               <Select
                 sx={{ width: '100px', height: '40px' }}
-                value={startYear}
+                value={optionFilter.year}
                 labelId="demo-simple-select-standard-label"
                 id="demo-simple-select-standard"
                 label="Start Month"
                 onChange={(e) => {
                   console.log(e.target.value)
-                  setStartYear(e.target.value as number)
+                  setOptionFilter((prev) => ({
+                    ...prev,
+                    year: e.target.value as number,
+                  }))
                 }}
               >
                 {Year.map((data) => (
@@ -219,10 +219,13 @@ const HeaderLeft = () => {
               </Select>
               <Select
                 sx={{ width: '80px', height: '40px' }}
-                value={startMonth}
+                value={optionFilter.month}
                 label="Start Month"
                 onChange={(e) => {
-                  setStartMonth(e.target.value as number)
+                  setOptionFilter((prev) => ({
+                    ...prev,
+                    month: e.target.value as number,
+                  }))
                 }}
               >
                 {Month.map((data) => (
@@ -238,7 +241,7 @@ const HeaderLeft = () => {
                 sx={{ width: '145px', height: '40px' }}
                 label="Start Month"
                 onChange={(e) => {
-                  setSelectedOptions((prev) => {
+                  setNowAdditional((prev) => {
                     if (prev.includes(e.target.value as string)) return prev
                     return [...prev, e.target.value as string]
                   })
@@ -253,14 +256,14 @@ const HeaderLeft = () => {
             </SMoreOptions>
           </SBoxLeft>
           <SBoxRight>
-            {selectedOptions.map((data, i) => {
+            {nowAdditional.map((data, i) => {
               return (
                 <SSelectedList>
                   {data}
                   <SDeleteButton
                     onClick={() => {
-                      setSelectedOptions(() =>
-                        selectedOptions.filter((data2) => data !== data2),
+                      setNowAdditional((prev) =>
+                        prev.filter((data2) => data !== data2),
                       )
                     }}
                   >
@@ -271,7 +274,13 @@ const HeaderLeft = () => {
             })}
             <Button
               onClick={() => {
-                setOptionFilter((prev) => ({ ...prev, optionOn: false }))
+                setOptionFilter({
+                  optionOn: false,
+                  year: null,
+                  month: null,
+                  additional: [],
+                })
+                setNowAdditional([])
               }}
               sx={muiRstBtnStyle}
               size="large"
@@ -281,8 +290,12 @@ const HeaderLeft = () => {
             </Button>
             <Button
               onClick={() => {
-                if (startMonth && startYear) {
-                  setOptionFilter((prev) => ({ ...prev, optionOn: true }))
+                if (optionFilter.month && optionFilter.year) {
+                  setOptionFilter((prev) => ({
+                    ...prev,
+                    optionOn: true,
+                    additional: nowAdditional,
+                  }))
                   setIsPopOpen(false)
                 } else {
                   alert('선택하지 않은 옵션이 있습니다.')

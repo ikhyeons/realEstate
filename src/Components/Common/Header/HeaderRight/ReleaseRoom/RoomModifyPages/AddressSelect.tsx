@@ -1,19 +1,19 @@
 import styled from 'styled-components'
-import { kakaoKey } from '../../../../../../secretKeysF'
+import { kakaoKey } from '../../../../../../../secretKeysF'
 import axios from 'axios'
 import { useEffect, useState, useRef } from 'react'
 import { useRecoilState } from 'recoil'
-import { AroomModifyAddressAndL } from '../../../../../AtomStorage'
+import { AModifyData } from '../../../../../../AtomStorage'
 import { useQuery } from 'react-query'
 
 const Sul = styled.ul`
   position: absolute;
-  left: 5px;
-  top: 100px;
+  right: 5px;
+  top: 50px;
   background: white;
   border-radius: 5px;
-  min-width: 450px;
-  max-height: min(500px, 100vh - 62px);
+  min-width: 520px;
+  max-height: min(390px, 100vh - 62px);
   overflow-y: auto;
   border: 2px solid black;
   &::-webkit-scrollbar {
@@ -40,7 +40,7 @@ const Sli = styled.li`
 
 const Sinput = styled.input`
   padding: 3px;
-  font-size: 15px;
+  font-size: 24px;
   width: 250px;
 `
 
@@ -50,7 +50,7 @@ const AddressSelect = () => {
   const [value, setValue] = useState('')
   const [addressData, setAddressData] = useState<Iaddress[] | null>(null)
   const [onSearch, setOnSearch] = useState(false)
-  const [, setSelectedAddress] = useRecoilState<any>(AroomModifyAddressAndL)
+  const [modifyData, setModifyData] = useRecoilState(AModifyData)
 
   const AddressData = useQuery<kakaoAddress>(
     ['kakaoAddress', value],
@@ -71,6 +71,7 @@ const AddressSelect = () => {
           setOnSearch(false)
         }
       },
+      enabled: false,
     },
   )
 
@@ -94,12 +95,17 @@ const AddressSelect = () => {
     })
   }, [])
 
+  useEffect(() => {
+    if (!(value === '')) AddressData.refetch()
+  }, [value])
+
   return (
     <>
       <Sinput
         ref={inputRef}
         value={value}
         onChange={(e) => {
+          e.preventDefault()
           setValue(e.target.value)
         }}
         onFocus={(e) => {
@@ -117,12 +123,15 @@ const AddressSelect = () => {
             ? addressData.map((data, i) => (
                 <Sli
                   onClick={() => {
-                    setValue(data.address_name)
-                    setSelectedAddress({
-                      address: data.address_name,
-                      lng: data.x,
-                      lat: data.y,
-                    })
+                    setValue('')
+                    setModifyData((prev) => ({
+                      ...prev,
+                      addressL: {
+                        address: data.address_name,
+                        lng: data.x,
+                        lat: data.y,
+                      },
+                    }))
                     setOnSearch(false)
                   }}
                   key={i}

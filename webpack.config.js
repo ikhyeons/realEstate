@@ -25,13 +25,13 @@ module.exports = (env, argv) => {
     resolve: {
       modules: ['node_modules'],
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.css'], // 배열 안 확장자에 따라서 번들링을 처리함
-      fallback: {
-        path: require.resolve('path-browserify'),
-        stream: require.resolve('stream-browserify'),
-        crypto: require.resolve('crypto-browserify'),
-        timers: require.resolve('timers-browserify'),
-        fs: require.resolve('browserify-fs'),
-      },
+      // fallback: {
+      //   path: require.resolve('path-browserify'),
+      //   stream: require.resolve('stream-browserify'),
+      //   crypto: require.resolve('crypto-browserify'),
+      //   timers: require.resolve('timers-browserify'),
+      //   fs: require.resolve('browserify-fs'),
+      // },
     },
     module: {
       //loader 설정
