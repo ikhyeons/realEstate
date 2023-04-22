@@ -11,6 +11,9 @@ import Popover from '@mui/material/Popover'
 import Box from '@mui/material/Box'
 
 import AlarmCardList from './CardList/AlarmCardList'
+import { useQuery } from 'react-query'
+import Port from '../../../../../../port'
+import axios from 'axios'
 
 const SAlarm = styled.div`
   border-radius: 50%;
@@ -44,9 +47,34 @@ const AlarmBtn = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [isChat, setIsChat] = useRecoilState(AisChatAtom)
   const btnRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     setAnchorEl(btnRef.current)
   }, [])
+
+  const chatRoom = useQuery<chatRoom, unknown, number>(
+    ['readMyChatRoom', isPopOpen],
+    () =>
+      axios.get(`http://${Port}/chat/readMyChatRoom`, {
+        withCredentials: true,
+      }),
+    {
+      select: (data) =>
+        data.data.data.reduce((acc, current) => acc + current.cnt, 0),
+    },
+  )
+
+  const unCheckReplyDocs = useQuery<unCheckedReply, unknown, number>(
+    ['readUnCheckReplyDocs', isPopOpen],
+    () =>
+      axios.get(`http://${Port}/document/readUnCheckReplyDocs`, {
+        withCredentials: true,
+      }),
+    {
+      select: (data) =>
+        data.data.data.reduce((acc, current) => acc + current.cnt, 0),
+    },
+  )
 
   return (
     <>
@@ -66,7 +94,7 @@ const AlarmBtn = () => {
         <HiBellAlert
           style={{ transform: 'translate(0, 5px)', fontSize: '20px' }}
         />
-        <SAlarmNumber>99</SAlarmNumber>
+        <SAlarmNumber>{chatRoom.data! + unCheckReplyDocs.data!}</SAlarmNumber>
       </SAlarm>
       <Popover /*로그인 버튼 클릭 시 나오는 팝업 mui*/
         sx={{ marginTop: '12px' }}

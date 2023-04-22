@@ -1,4 +1,3 @@
-const express = require('express')
 import { getConnection } from '../dbConnection'
 
 //채팅 작성하는 함수
@@ -25,4 +24,4 @@ export const createChatF = async (
   }
 }
 
-module.exports = createChatF
+export default createChatF

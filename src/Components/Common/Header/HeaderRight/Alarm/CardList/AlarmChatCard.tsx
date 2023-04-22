@@ -53,7 +53,6 @@ const SAlarmCardNum = styled.div`
   transform: translateY(-50%);
 `
 const AlarmChatCard = (prop: { data: innerChatRoom }) => {
-  console.log(prop)
   const [, setIsChat] = useRecoilState(AisChatAtom)
   const [, setCurrentChatRoomId] = useRecoilState(AcurrentChatRoomId)
 
@@ -118,7 +117,6 @@ const AlarmChatCard = (prop: { data: innerChatRoom }) => {
       },
     )
   }, [])
-  console.log(prop)
 
   return (
     <SAlarmCard

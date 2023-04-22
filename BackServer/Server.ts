@@ -2,8 +2,9 @@ import { Request, Response } from 'express'
 import { Socket } from 'socket.io'
 import express from 'express'
 import cors from 'cors'
-import http from 'http'
+
 import path from 'path'
+const http = require('http')
 
 import mysqlSession from 'express-session'
 import { sessionConfig } from '../secretKeysB'
@@ -128,13 +129,15 @@ chatSocket.on('connection', async (socket: Socket) => {
       String(socket.handshake.session.Uid),
     ])
 
-    await createChatF(rcv.roomNum, socket.handshake.session.Uid, rcv.data)
-
-    socket.broadcast.to(rcv.roomNum).emit('sendChat', {
-      data: rcv.data,
-      roomNum: rcv.roomNum,
-      time: new Date(),
-    })
+    createChatF(rcv.roomNum, socket.handshake.session.Uid, rcv.data).then(
+      () => {
+        socket.broadcast.to(rcv.roomNum).emit('sendChat', {
+          data: rcv.data,
+          roomNum: rcv.roomNum,
+          time: new Date(),
+        })
+      },
+    )
   })
 
   socket.on('createChat', async (rcv) => {
