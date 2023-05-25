@@ -1,0 +1,20 @@
+on: [push]
+
+jobs:
+  test:
+    name: Test on node 
+    runs-on: ubunto-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.x
+
+    - name: npm install, build and test
+      run: |
+        npm install
+        npm run build
+        cd BackServer
+        nodemon Server.ts
